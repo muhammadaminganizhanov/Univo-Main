@@ -1,0 +1,89 @@
+/* The footer: the title block of the drawing set, standing on the ground line. */
+.footer {
+  padding-block: 0 clamp(24px, 3vw, 40px);
+}
+.ground {
+  display: block;
+  height: 12px;
+  margin-bottom: clamp(32px, 4vw, 56px);
+  border-top: 2px solid var(--color-fg);
+  background: repeating-linear-gradient(-45deg, var(--univo-dark-border) 0 1px, transparent 1px 8px);
+}
+.block {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  border: 1px solid var(--univo-dark-border);
+  background: var(--univo-dark-border);
+}
+.col {
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  min-width: 0;
+  padding: 16px 20px 20px;
+  background: var(--color-bg);
+}
+.sign {
+  grid-column: 1 / -1;
+  align-content: space-between;
+  gap: 32px;
+}
+.col ul,
+.list {
+  display: grid;
+}
+.heading {
+  margin-bottom: 6px;
+  color: var(--color-muted);
+  font-size: var(--text-small);
+}
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  color: var(--color-fg);
+  text-decoration: none;
+}
+.link:hover,
+.link[aria-current="true"] {
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+.soonTag {
+  white-space: nowrap;
+  color: var(--color-muted);
+  font-size: var(--text-small);
+}
+.wordmark {
+  display: block;
+  width: auto;
+  height: clamp(36px, 3.4vw, 48px);
+  color: var(--univo-brand-white);
+}
+.copy {
+  color: var(--color-muted);
+  font-size: var(--text-small);
+}
+.bottom {
+  margin-top: 16px;
+  color: var(--color-muted);
+  font-size: var(--text-small);
+}
+.legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+}
+.legal a {
+  color: inherit;
+}
+@media (min-width: 1024px) {
+  .block {
+    grid-template-columns: 2fr 1fr 1.5fr 1.3fr 1fr;
+  }
+  .sign {
+    grid-column: auto;
+  }
+}

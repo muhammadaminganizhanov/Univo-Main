@@ -2,7 +2,7 @@ import { LOCALES, LOCALE_META } from "@univo/config";
 import { onest } from "@univo/brand/font";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import { Footer } from "@/components/layout/Footer";
+import { Footer } from "@/v2/shell/Footer";
 import { Header } from "@/components/layout/Header";
 import { MOTION_HEAD_SCRIPT, MotionRoot } from "@/components/layout/MotionRoot";
 import { groupSwitcherItems } from "@/lib/group";

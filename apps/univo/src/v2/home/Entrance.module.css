@@ -19,7 +19,8 @@
 /* The arch: a full semicircle on top, straight sides, standing on the ground line. */
 .arch {
   position: relative;
-  padding: clamp(96px, 12vw, 180px) clamp(24px, 4vw, 64px) 0;
+  --pad-x: clamp(24px, 4vw, 64px);
+  padding: clamp(96px, 12vw, 180px) var(--pad-x) 0;
   border: 2px solid var(--color-fg);
   border-bottom: 0;
   border-radius: 999px 999px 0 0; /* scales down to exactly half the width: a semicircle */
@@ -108,9 +109,10 @@
 /* the ground line: where the arch stands and the result lands */
 .ground {
   display: block;
-  height: 2px;
-  margin-inline: calc(clamp(24px, 4vw, 64px) * -1 - 2px);
-  background: var(--color-fg);
+  height: 12px;
+  margin-inline: calc(var(--pad-x) * -1 - 18px);
+  border-top: 2px solid var(--color-fg);
+  background: repeating-linear-gradient(-45deg, var(--color-fg) 0 1px, transparent 1px 8px);
 }
 :global(.motion) :global([data-scene]) .step {
   opacity: 0;
@@ -139,5 +141,6 @@
   }
   .arch {
     grid-column: 6 / -1;
+    --pad-x: clamp(72px, 8vw, 120px);
   }
 }
