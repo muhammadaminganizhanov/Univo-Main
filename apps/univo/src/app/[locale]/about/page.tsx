@@ -22,7 +22,7 @@ export default async function AboutPage({ params }: LocaleParams) {
       <Qualification ctx={ctx} />
       <Standards ctx={ctx} />
       <Character ctx={ctx} />
-      <Ending title={t.end.title} body={t.end.body} href={localeHref(locale, ROUTES.contact)} action={t.common.cta.discuss} />
+      <Ending title={t.end.title} body={t.end.body} href={localeHref(locale, ROUTES.contact)} action={t.common.cta.discuss} dot={false} />
     </>
   );
 }

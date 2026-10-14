@@ -1,5 +1,6 @@
 .section {
   padding-block: clamp(72px, 8vw, 128px) clamp(56px, 6vw, 96px);
+  overflow: clip;
 }
 .grid {
   display: grid;
@@ -110,7 +111,7 @@
 .ground {
   display: block;
   height: 12px;
-  margin-inline: calc(var(--pad-x) * -1 - 18px);
+  margin-inline: calc(var(--pad-x) * -1 - 12px);
   border-top: 2px solid var(--color-fg);
   background: repeating-linear-gradient(-45deg, var(--color-fg) 0 1px, transparent 1px 8px);
 }

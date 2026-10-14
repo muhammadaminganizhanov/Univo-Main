@@ -21,7 +21,7 @@ export default async function EcosystemPage({ params }: LocaleParams) {
       <Exploded ctx={ctx} />
       <Sheets ctx={ctx} />
       <Together ctx={ctx} />
-      <Ending title={t.end.title} body={t.end.body} href={localeHref(locale, ROUTES.contact)} action={t.common.cta.discuss} />
+      <Ending title={t.end.title} body={t.end.body} href={localeHref(locale, ROUTES.contact)} action={t.common.cta.discuss} dot={false} />
     </>
   );
 }

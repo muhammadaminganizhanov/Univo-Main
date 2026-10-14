@@ -102,3 +102,25 @@ Glassmorphism, gradients, glow, blobs, particles, WebGL, cursor followers, magne
 hijacking, horizontal scroll, marquees, loaders, fake UI/dashboards/terminals, tech-logo orbits,
 "design tool" overlays, fake metrics or clients, giant type everywhere, generic fade-up on every section,
 cards with radius and shadow, rainbow sections.
+
+## I. Implementation (branch `concept/univo-v2`)
+
+All V2 code lives in the UNIVO app: `apps/univo/src/v2/` — nothing in shared packages, no runtime
+coupling with TECH / PRODUCTION / RETAIL / SLOT (external links only, `getEcosystemUrl`).
+
+| Area | Files |
+|---|---|
+| Model geometry (isometric, exploded split, hidden-line axis) | `v2/geometry.ts`, `v2/Model.tsx`, `v2/group.tsx` |
+| Home | `v2/home/{Hero,Plan,Section,Entrance}.tsx` |
+| Ecosystem | `v2/ecosystem/{Exploded,Sheets,Together}.tsx` (title block + key plan reused on early-access pages) |
+| About | `v2/about/{Elevation,Parts}.tsx` |
+| Contact | `app/[locale]/contact/page.tsx` + `v2/contact/Contact.module.css` |
+| Shell | `v2/shell/Footer.tsx` (title block on the ground line), `v2/Ending.tsx`, `v2/motion.css` |
+
+- No new dependencies, no client JavaScript added: every V2 component is a server component;
+  interaction is CSS (`:has()` for callout/floor highlights and the contact route model).
+- Scroll-driven qualification uses `animation-timeline: view()` inside `@supports` and
+  `prefers-reduced-motion: no-preference`; otherwise the final state is shown.
+- Copy: `t.v2.*` in `i18n/ru.ts` and `i18n/en.ts`; KY falls back to RU by design.
+
+Run locally: `pnpm install && pnpm --filter @univo/site-univo dev` → http://localhost:3100/ru

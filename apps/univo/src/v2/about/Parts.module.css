@@ -167,6 +167,9 @@
   max-width: 28ch;
   color: var(--color-muted);
 }
+.start .stopWord {
+  white-space: nowrap;
+}
 .start .stopWord,
 .end .stopWord {
   color: var(--color-muted);
