@@ -8,7 +8,7 @@ import styles from "./Products.module.css";
 
 function Identity({ e, ctx }: { e: Entity; ctx: LocaleContext }) {
   const { t, locale } = ctx;
-  const link = resolveEntityLink(e, locale);
+  const link = resolveEntityLink(e, locale, t);
   const segments = e.segments ? pick(e.segments, locale) : null;
   return (
     <div className={styles.identity}>

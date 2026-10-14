@@ -44,27 +44,29 @@ pnpm qa:visual   # Playwright screenshots + overflow / a11y smoke (needs `pnpm s
 |---|---|---|
 | `SITE_ENV` | `staging` | `production` allows indexing **only** together with `SITE_URL` |
 | `SITE_URL` | — | Public origin of the current app. Domains are not purchased: never hardcode one |
-| `UNIVO_SITE_URL` / `TECH_SITE_URL` / `PRODUCTION_SITE_URL` | — | Cross-links between apps. Without them, direction CTAs fall back to the UNIVO contact form |
+| `TECH_URL` / `PRODUCTION_URL` / `RETAIL_URL` / `SLOT_URL` | — | External URLs of the independent ecosystem sites. Unset: directions → contact form, products → early-access page |
+| `UNIVO_URL` | — | Used by the TECH / PRODUCTION placeholder apps to link back to the master site |
 | `LEAD_DELIVERY` | `staging` | `staging` validates and discards — UI says so. Any other value = live mode with no adapter → honest failure |
 
 Staging is `noindex, nofollow` three ways: `X-Robots-Tag`, meta robots, `robots.txt`.
 
-## Deploy (Vercel, one project with services)
+## Architecture & deploy
 
-`vercel.json` defines three services in one project on one domain:
+UNIVO is unified at the **brand** level, not at runtime. Every entity (UNIVO, TECH, PRODUCTION, RETAIL,
+SLOT) is an independent website with its own domain, deployment, SEO and release cycle. The master site
+only presents the ecosystem and links out with ordinary external links (`TECH_URL`, … — one config:
+`getEcosystemUrl` in `@univo/config`). No microfrontends, no shared shell, no runtime coupling.
 
-| Service | Root | Public path |
+This repository is a monorepo of independent apps:
+
+| App | Deploy as | Notes |
 |---|---|---|
-| `univo` | `apps/univo` | `/` (catch-all, last rewrite) |
-| `tech` | `apps/tech` | `/tech`, `/tech/*` — Next `basePath: "/tech"` |
-| `production` | `apps/production` | `/production`, `/production/*` — Next `basePath: "/production"` |
+| `apps/univo` | its own project (Root Directory `apps/univo`) | the master site |
+| `apps/tech` | optional, its own project | placeholder until the TECH site is built |
+| `apps/production` | optional, its own project | placeholder until the PRODUCTION site is built |
 
-`packages/*` are workspace libraries compiled into each app — not services.
-There are no bindings: the apps never call each other server-side; they only link to each other in the
-browser, by same-origin path (`APP_BASE_PATH` in `@univo/config`). Leave `*_SITE_URL` empty on Vercel.
+`packages/*` are build-time libraries (tokens, logo, Onest, locales, ecosystem data, UI primitives,
+lead validation) compiled into each app — nothing is loaded from another app at runtime.
 
-Project env vars (shared by all services): `SITE_ENV` (`staging` by default), `SITE_URL` (only with a real
-domain, enables indexing together with `SITE_ENV=production`), `LEAD_DELIVERY` (`staging`).
-
-Local check of the combined setup: `vercel dev` (Vercel CLI). Without it, run `pnpm dev:all` with the
-`*_SITE_URL` values from `.env.example`.
+Vercel: import the repo, set **Root Directory** to the app folder (e.g. `apps/univo`), framework Next.js;
+Vercel installs the pnpm workspace from the repo root. Env vars per project: see `.env.example`.

@@ -7,12 +7,23 @@
  */
 export type SiteEnv = "staging" | "production";
 
+/** Apps in this repository (each built and deployed on its own). */
 export type AppId = "univo" | "tech" | "production";
 
-const URL_ENV: Record<AppId, string> = {
-  univo: "UNIVO_SITE_URL",
-  tech: "TECH_SITE_URL",
-  production: "PRODUCTION_SITE_URL",
+/** Ecosystem entities — independent websites / products, each on its own domain. */
+export type EcosystemId = "univo" | "tech" | "production" | "retail" | "slot";
+
+/**
+ * THE place where ecosystem URLs are configured. Every entity is an independent site with its own
+ * domain, deployment and SEO; the master site only links out to it. Unset = not public yet.
+ * Domains are not purchased: never hardcode them here.
+ */
+const ECOSYSTEM_URL_ENV: Record<EcosystemId, string> = {
+  univo: "UNIVO_URL",
+  tech: "TECH_URL",
+  production: "PRODUCTION_URL",
+  retail: "RETAIL_URL",
+  slot: "SLOT_URL",
 };
 
 const LOCAL_PORT: Record<AppId, number> = { univo: 3100, tech: 3101, production: 3102 };
@@ -32,32 +43,18 @@ export function getSiteEnv(): SiteEnv {
   return process.env.SITE_ENV === "production" ? "production" : "staging";
 }
 
-/** Explicit public origin of an app, or null when not configured. */
-export function getAppUrl(app: AppId): string | null {
-  return clean(process.env[URL_ENV[app]]);
+/** External URL of an ecosystem entity, or null when it has no public site yet. */
+export function getEcosystemUrl(id: EcosystemId): string | null {
+  return clean(process.env[ECOSYSTEM_URL_ENV[id]]);
 }
 
-/** Origin of the current app: SITE_URL, else the app's own URL env, else localhost. */
+/** Origin of the current app (metadata, canonical): SITE_URL, else localhost. */
 export function getSelfUrl(app: AppId): { url: string; explicit: boolean } {
-  const explicit = clean(process.env.SITE_URL) ?? getAppUrl(app);
+  const explicit = clean(process.env.SITE_URL);
   return explicit ? { url: explicit, explicit: true } : { url: `http://localhost:${LOCAL_PORT[app]}`, explicit: false };
 }
 
 /** Indexing needs BOTH an explicit production env and an explicit public SITE_URL. */
-/**
- * Public path of every app when all apps are served from one domain (Vercel services:
- * see vercel.json rewrites). Must match each app's `basePath` in next.config.ts.
- */
-export const APP_BASE_PATH: Record<AppId, string> = { univo: "", tech: "/tech", production: "/production" };
-
-/**
- * Link target for another app. An explicit `*_SITE_URL` wins (separate domains, or local dev where
- * each app runs on its own port); otherwise the same-origin public path from APP_BASE_PATH.
- */
-export function getAppHref(app: AppId): string {
-  return getAppUrl(app) ?? APP_BASE_PATH[app];
-}
-
 export function isIndexable(): boolean {
   return getSiteEnv() === "production" && clean(process.env.SITE_URL) !== null;
 }

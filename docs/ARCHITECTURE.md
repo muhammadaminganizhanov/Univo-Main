@@ -22,10 +22,13 @@ Master files: `~/Brand/brand/univo/master-assets/` (logo, symbol, icons, Onest, 
 
 ```
 UNIVO               masterbrand  live
-├── UNIVO TECH      service      live        own site → TECH_SITE_URL (placeholder shell now)
-├── UNIVO PRODUCTION service     live        own site → PRODUCTION_SITE_URL (placeholder shell now)
-├── UNIVO RETAIL    product      launching   early access on the master site
-└── UNIVO SLOT      product      launching   early access on the master site
+├── UNIVO TECH      service      live        independent site → TECH_URL (placeholder app now)
+├── UNIVO PRODUCTION service     live        independent site → PRODUCTION_URL (placeholder app now)
+├── UNIVO RETAIL    product      launching   early access on the master site; RETAIL_URL when it has a site
+└── UNIVO SLOT      product      launching   early access on the master site; SLOT_URL when it has a site
+
+Unified at the brand level, not at runtime: each entity is an independent site (own domain, deploy,
+SEO). The master site links out with plain external URLs — see `getEcosystemUrl` in `@univo/config`.
 ```
 
 Statuses: `live | launching | development | private | archived`. Only `live` and `launching` are public.

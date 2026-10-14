@@ -4,7 +4,7 @@ import type { CSSProperties } from "react";
 import { entityDot, entityState } from "@/components/system/GroupStroke";
 import type { LocaleContext } from "@/i18n";
 import { resolveEntityLink } from "@/lib/entities";
-import { AppLink } from "@/components/shared/AppLink";
+import Link from "next/link";
 import styles from "./EcoMap.module.css";
 
 /**
@@ -51,11 +51,11 @@ export function EcoMap({ ctx }: { ctx: LocaleContext }) {
                 <span className="t-meta">{m.source}</span>
               </li>
               {members.map((e, i) => {
-                const link = resolveEntityLink(e, locale);
-                const href = link.href;
+                const link = resolveEntityLink(e, locale, t);
+                const href = link.available || e.type === "product" ? link.href : `#${e.slug}`;
                 return (
                   <li key={e.id} className={styles.member} data-entity={e.id} data-segment={i + 1}>
-                    <AppLink href={href} external={link.external} className={styles.memberLink}>
+                    <Link href={href} className={styles.memberLink}>
                       <span className={styles.stem} aria-hidden="true" />
                       <Dot
                         color={entityDot(e)}
@@ -81,7 +81,7 @@ export function EcoMap({ ctx }: { ctx: LocaleContext }) {
                           </span>
                         ) : null}
                       </span>
-                    </AppLink>
+                    </Link>
                   </li>
                 );
               })}

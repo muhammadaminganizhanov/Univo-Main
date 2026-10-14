@@ -1,10 +1,11 @@
 import { skylineGeometry } from "@univo/brand";
 import { STATUS_LABEL, getEntity, getMembers, pick, type Entity } from "@univo/content";
 import { Stroke, type StrokeItem } from "@univo/ui";
-import { AppLink } from "@/components/shared/AppLink";
+import Link from "next/link";
 import type { ReactNode } from "react";
 import type { LocaleContext } from "@/i18n";
 import { resolveEntityLink } from "@/lib/entities";
+import { ROUTES, localeHref } from "@/lib/routes";
 import styles from "./GroupStroke.module.css";
 
 export const entityDot = (e: Entity) => `var(${e.accent})`;
@@ -29,11 +30,11 @@ function crestsFor(members: Entity[]) {
 
 /** Home hero: the group as an identity path — source stem, then one crest per member. */
 export function GroupStroke({ ctx, sourceMeta, id }: { ctx: LocaleContext; sourceMeta: ReactNode; id?: string }) {
-  const { locale } = ctx;
+  const { t, locale } = ctx;
   const univo = getEntity("univo");
   const members = getMembers();
 
-  const label = (e: Entity, href: string | null, meta: ReactNode, external = false) => {
+  const label = (e: Entity, href: string | null, meta: ReactNode) => {
     const name = (
       <>
         {e.word ? <span className="visually-hidden">UNIVO </span> : null}
@@ -49,9 +50,9 @@ export function GroupStroke({ ctx, sourceMeta, id }: { ctx: LocaleContext; sourc
       </>
     );
     return href ? (
-      <AppLink href={href} external={external} className={`${styles.label} ${styles.link}`} data-entity={e.id} data-node-link={e.id}>
+      <Link href={href} className={`${styles.label} ${styles.link}`} data-entity={e.id} data-node-link={e.id}>
         {body}
-      </AppLink>
+      </Link>
     ) : (
       <div className={styles.label} data-entity={e.id}>
         {body}
@@ -61,10 +62,10 @@ export function GroupStroke({ ctx, sourceMeta, id }: { ctx: LocaleContext; sourc
 
   const source: StrokeItem = { id: univo.id, color: entityDot(univo), label: label(univo, null, sourceMeta) };
   const nodes: StrokeItem[] = members.map((e) => {
-    const link = resolveEntityLink(e, locale);
-    const href = link.href;
+    const link = resolveEntityLink(e, locale, t);
+    const href = e.type === "product" || link.available ? link.href : `${localeHref(locale, ROUTES.ecosystem)}#${e.slug}`;
     const meta = e.status === "launching" ? pick(STATUS_LABEL[e.status], locale) : pick(e.role, locale);
-    return { id: e.id, color: entityDot(e), state: entityState(e), label: label(e, href, meta, link.external) };
+    return { id: e.id, color: entityDot(e), state: entityState(e), label: label(e, href, meta) };
   });
 
   return (
