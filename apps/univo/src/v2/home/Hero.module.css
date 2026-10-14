@@ -36,9 +36,9 @@
     align-items: center;
   }
   .text {
-    grid-column: 1 / span 4;
+    grid-column: 1 / span 5;
   }
   .model {
-    grid-column: 5 / -1;
+    grid-column: 6 / -1;
   }
 }

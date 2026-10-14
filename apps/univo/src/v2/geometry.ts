@@ -43,15 +43,26 @@ export interface SlabShape {
 
 export interface ModelGeometry {
   viewBox: [number, number, number, number];
-  /** Back-to-front drawing order: slabs and axis segments interleaved. */
-  layers: ({ kind: "slab"; slab: SlabShape; step: number } | { kind: "axis"; from: Pt; to: Pt; step: number })[];
+  /** Back-to-front drawing order of the slabs. */
+  layers: { kind: "slab"; slab: SlabShape; step: number }[];
+  /**
+   * The axis, drawn like a technical drawing: solid where visible (source → top floor),
+   * dashed where it runs hidden through the floors; a pierce mark on every level.
+   */
+  axis: { visible: [Pt, Pt]; hidden: [Pt, Pt]; pierces: { level: string; at: Pt; step: number }[] };
   source: Pt;
   slabs: SlabShape[];
 }
 
 export function buildModel(
   levels: ModelLevel[],
-  { width = 220, depth = 150, gap = 76, thickness = 14, sourceRise = 64 }: Partial<Record<"width" | "depth" | "gap" | "thickness" | "sourceRise", number>> = {},
+  {
+    width = 220,
+    depth = 150,
+    gap = 96,
+    thickness = 14,
+    sourceRise = 150,
+  }: Partial<Record<"width" | "depth" | "gap" | "thickness" | "sourceRise", number>> = {},
 ): ModelGeometry {
   const x0 = -width / 2;
   const y0 = -depth / 2;
@@ -76,7 +87,8 @@ export function buildModel(
         top: pts([project(a, y0, z), project(b, y0, z), project(b, y1, z), project(a, y1, z)]),
         front: pts([project(a, y1, z), project(b, y1, z), project(b, y1, z - thickness), project(a, y1, z - thickness)]),
         side: pts([project(b, y0, z), project(b, y1, z), project(b, y1, z - thickness), project(b, y0, z - thickness)]),
-        node: project((a + b) / 2, 0, z),
+        // on the visible front strip, not on the top face (the floor above would hide it)
+        node: project((a + b) / 2, y1, z - thickness / 2),
         // outermost corner on screen: left members → (a, y1), everything else → (b, y0)
         anchor: parts.length > 1 && (a + b) / 2 < 0 ? project(a, y1, z - thickness / 2) : project(b, y0, z - thickness / 2),
         side_: parts.length > 1 && (a + b) / 2 < 0 ? "left" : "right",
@@ -86,8 +98,6 @@ export function buildModel(
       slabs.push(slab);
       layers.push({ kind: "slab", slab, step: n - 1 - i });
     });
-    const above = i > 0 ? zOf(i - 1) - thickness : zOf(0) + sourceRise;
-    layers.push({ kind: "axis", from: project(0, 0, z), to: project(0, 0, above), step: n - 1 - i });
   }
 
   const source = project(0, 0, zOf(0) + sourceRise);
@@ -97,9 +107,15 @@ export function buildModel(
   const pad = 8;
   const minX = Math.min(...xs) - pad;
   const minY = Math.min(...ys) - pad;
+  const top = project(0, 0, zOf(0));
   return {
     viewBox: [r(minX), r(minY), r(Math.max(...xs) + pad - minX), r(Math.max(...ys) + pad - minY)],
     layers,
+    axis: {
+      visible: [source, top],
+      hidden: [top, project(0, 0, zOf(n - 1))],
+      pierces: levels.map((lv, i) => ({ level: lv.id, at: project(0, 0, zOf(i)), step: n - 1 - i })),
+    },
     source,
     slabs,
   };

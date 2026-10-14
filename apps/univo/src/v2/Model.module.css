@@ -39,6 +39,17 @@
   stroke-width: 3;
   stroke-linecap: round;
 }
+/* Hidden-line convention: the axis where it runs inside the floors. */
+.hidden {
+  stroke-width: 1.25;
+  stroke-dasharray: 6 4;
+  stroke-linecap: butt;
+}
+.pierce {
+  fill: var(--univo-brand-white);
+  stroke: var(--univo-brand-ink);
+  stroke-width: 1.5;
+}
 .source {
   fill: var(--univo-brand-tangerine);
 }
@@ -95,6 +106,7 @@
   padding-inline: 8px;
 }
 .cname {
+  white-space: nowrap;
   font-size: var(--text-h3);
   font-weight: 600;
   letter-spacing: -0.01em;
@@ -121,6 +133,7 @@ a.clink:focus-visible .cname {
 }
 
 /* ── Construction (only with html.motion, once the scene is in view) ── */
+:global(.motion) :global([data-scene]) .shaft,
 :global(.motion) :global([data-scene]) .slab {
   opacity: 0;
   transform: translateY(-26px);
@@ -128,17 +141,30 @@ a.clink:focus-visible .cname {
     opacity var(--m-deliberate) var(--m-construct) var(--d, 0ms),
     transform var(--m-deliberate) var(--m-construct) var(--d, 0ms);
 }
+:global(.motion) :global([data-scene][data-in]) .shaft,
 :global(.motion) :global([data-scene][data-in]) .slab {
   opacity: 1;
   transform: none;
 }
-:global(.motion) :global([data-scene]) .axis {
+:global(.motion) :global([data-scene]) .axis:not(.hidden) {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
-  transition: stroke-dashoffset var(--m-standard) var(--m-construct) var(--d, 0ms);
+  transition: stroke-dashoffset var(--m-standard) var(--m-construct) var(--m-stagger);
 }
-:global(.motion) :global([data-scene][data-in]) .axis {
+:global(.motion) :global([data-scene][data-in]) .axis:not(.hidden) {
   stroke-dashoffset: 0;
+}
+:global(.motion) :global([data-scene]) .hidden,
+:global(.motion) :global([data-scene]) .pierce {
+  opacity: 0;
+  transition: opacity var(--m-standard) var(--m-ease) calc(var(--d, 0ms) + var(--m-standard));
+}
+:global(.motion) :global([data-scene]) .hidden {
+  transition-delay: calc(var(--m-stagger) * 3);
+}
+:global(.motion) :global([data-scene][data-in]) .hidden,
+:global(.motion) :global([data-scene][data-in]) .pierce {
+  opacity: 1;
 }
 :global(.motion) :global([data-scene]) .source {
   transform: scale(0);
@@ -204,5 +230,8 @@ a.clink:focus-visible .cname {
   }
   .cmeta {
     grid-column: 2;
+  }
+  .cname {
+    white-space: normal;
   }
 }

@@ -72,52 +72,59 @@ export function Model({
         }
       >
         <svg viewBox={`${box.x} ${box.y} ${box.w} ${box.h}`} aria-hidden="true" focusable="false" className={styles.svg}>
-          {geo.layers.map((layer, i) =>
-            layer.kind === "axis" ? (
-              <line
-                key={`a${i}`}
-                className={styles.axis}
-                x1={layer.from[0]}
-                y1={layer.from[1]}
-                x2={layer.to[0]}
-                y2={layer.to[1]}
-                pathLength={1}
-                data-route="axis"
-                style={delay(layer.step)}
-              />
-            ) : (
-              <g
-                key={layer.slab.id}
-                className={`${styles.slab} ${layer.slab.ghost ? styles.ghost : ""}`}
-                data-slab={layer.slab.id}
-                data-level={layer.slab.level}
-                style={delay(layer.step)}
-              >
-                <polygon className={styles.front} points={layer.slab.front} />
-                <polygon className={styles.side} points={layer.slab.side} />
-                <polygon className={styles.top} points={layer.slab.top} />
-                {layer.slab.member ? (
-                  <circle
-                    className={styles.node}
-                    data-node={layer.slab.id}
-                    data-state={layer.slab.member.state}
-                    cx={layer.slab.node[0]}
-                    cy={layer.slab.node[1]}
-                    r={layer.slab.member.state === "ring" ? 5.5 : 7}
-                    style={{ "--c": layer.slab.member.color } as CSSProperties}
-                  />
-                ) : null}
-                {byId.has(layer.slab.id) && margin ? (
-                  <Leader slabAnchor={layer.slab.anchor} side={layer.slab.side_} minX={minX} maxX={maxX} id={layer.slab.id} />
-                ) : null}
-                {number.has(layer.slab.id) ? (
-                  <text className={styles.num} x={layer.slab.node[0] + 11} y={layer.slab.node[1] + 4}>
-                    {number.get(layer.slab.id)}
-                  </text>
-                ) : null}
-              </g>
-            ),
-          )}
+          {geo.layers.map(({ slab, step }) => (
+            <g
+              key={slab.id}
+              className={`${styles.slab} ${slab.ghost ? styles.ghost : ""}`}
+              data-slab={slab.id}
+              data-level={slab.level}
+              style={delay(step)}
+            >
+              <polygon className={styles.front} points={slab.front} />
+              <polygon className={styles.side} points={slab.side} />
+              <polygon className={styles.top} points={slab.top} />
+              {slab.member && slab.level !== "master" ? (
+                <circle
+                  className={styles.node}
+                  data-node={slab.id}
+                  data-state={slab.member.state}
+                  cx={slab.node[0]}
+                  cy={slab.node[1]}
+                  r={slab.member.state === "ring" ? 5.5 : 7}
+                  style={{ "--c": slab.member.color } as CSSProperties}
+                />
+              ) : null}
+              {byId.has(slab.id) && margin ? (
+                <Leader slabAnchor={slab.anchor} side={slab.side_} minX={minX} maxX={maxX} id={slab.id} />
+              ) : null}
+              {number.has(slab.id) ? (
+                <text className={styles.num} x={slab.node[0] - 11} y={slab.node[1] + 4} textAnchor="end">
+                  {number.get(slab.id)}
+                </text>
+              ) : null}
+            </g>
+          ))}
+          {/* The axis as drawn: dashed where hidden inside the floors, solid where visible. */}
+          <line
+            className={`${styles.axis} ${styles.hidden}`}
+            x1={geo.axis.hidden[0][0]}
+            y1={geo.axis.hidden[0][1]}
+            x2={geo.axis.hidden[1][0]}
+            y2={geo.axis.hidden[1][1]}
+            data-route="axis-hidden"
+          />
+          {geo.axis.pierces.map((p) => (
+            <circle key={p.level} className={styles.pierce} cx={p.at[0]} cy={p.at[1]} r={3.5} style={delay(p.step)} />
+          ))}
+          <line
+            className={styles.axis}
+            x1={geo.axis.visible[0][0]}
+            y1={geo.axis.visible[0][1]}
+            x2={geo.axis.visible[1][0]}
+            y2={geo.axis.visible[1][1]}
+            pathLength={1}
+            data-route="axis"
+          />
           <circle className={styles.source} cx={geo.source[0]} cy={geo.source[1]} r={10} data-node="source" />
         </svg>
 

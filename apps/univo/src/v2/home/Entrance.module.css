@@ -22,7 +22,7 @@
   padding: clamp(96px, 12vw, 180px) clamp(24px, 4vw, 64px) 0;
   border: 2px solid var(--color-fg);
   border-bottom: 0;
-  border-radius: 999px 999px 0 0 / clamp(160px, 22vw, 320px) clamp(160px, 22vw, 320px) 0 0;
+  border-radius: 999px 999px 0 0; /* scales down to exactly half the width: a semicircle */
 }
 .route {
   position: relative;
