@@ -1,0 +1,187 @@
+.section {
+  padding-block: clamp(72px, 8vw, 128px);
+}
+.grid {
+  display: grid;
+  gap: clamp(32px, 4vw, 56px);
+}
+.intro {
+  display: grid;
+  gap: 16px;
+}
+.intro h2 {
+  max-width: 18ch;
+}
+.lead {
+  max-width: 44ch;
+}
+
+/* ── The drawing: floors (slabs) and five columns through them ── */
+.drawing {
+  position: relative;
+  margin: 0;
+  padding-top: 34px;
+}
+.columns {
+  position: absolute;
+  inset: 0 0 0 34%;
+  pointer-events: none;
+}
+.column {
+  position: absolute;
+  top: 0;
+  bottom: 6px;
+  left: calc((var(--i) + 0.5) / var(--cols) * 100%);
+  width: 12px;
+  margin-left: -6px;
+  border: 1.25px solid var(--univo-brand-ink);
+  border-top: 0;
+  background: var(--univo-brand-paper);
+  transition: background-color var(--m-standard) var(--m-ease);
+}
+.colNum {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--color-muted);
+  font-size: var(--text-label);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.floors {
+  position: relative;
+  display: grid;
+}
+.floor {
+  position: relative;
+  display: grid;
+  grid-template-columns: 34% 1fr;
+  align-items: end;
+  gap: 2px 0;
+  padding-top: 26px;
+}
+.floorName {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-fg);
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+.floorRole {
+  grid-column: 1;
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  padding-right: 16px;
+}
+/* the slab: a thick floor plate on the right; columns stand on it */
+.slab {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: end;
+  position: relative;
+  z-index: 1;
+  height: 12px;
+  margin-bottom: 4px;
+  border: 1.25px solid var(--univo-brand-ink);
+  background: var(--univo-brand-white);
+}
+.next .floorName {
+  color: var(--color-muted);
+  font-weight: 500;
+}
+.next .slab {
+  grid-row: 1;
+  border-style: dashed;
+  border-color: var(--univo-brand-stone);
+  background: transparent;
+}
+
+/* ── The standards: the readable content ── */
+.standards {
+  display: grid;
+  border-top: 2px solid var(--color-fg);
+}
+.standard {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 4px 8px;
+  padding-block: 16px;
+  border-bottom: 1px solid var(--color-rule);
+}
+.num {
+  grid-row: span 3;
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  font-variant-numeric: tabular-nums;
+  padding-top: 4px;
+}
+.stTitle {
+  color: var(--color-fg);
+  font-size: var(--text-h3);
+  font-weight: 600;
+}
+.rule {
+  max-width: 44ch;
+}
+.check {
+  max-width: 44ch;
+  color: var(--color-muted);
+  font-size: var(--text-small);
+}
+
+/* Hover a standard → its column carries the colour through every floor. */
+.grid:has(.standard[data-col="1"]:hover) .column[data-col="1"],
+.grid:has(.standard[data-col="2"]:hover) .column[data-col="2"],
+.grid:has(.standard[data-col="3"]:hover) .column[data-col="3"],
+.grid:has(.standard[data-col="4"]:hover) .column[data-col="4"],
+.grid:has(.standard[data-col="5"]:hover) .column[data-col="5"] {
+  background: var(--univo-brand-tangerine);
+}
+.standard {
+  transition: background-color var(--m-standard) var(--m-ease);
+}
+.standard:hover {
+  background: var(--univo-brand-paper);
+}
+
+/* Construction: columns rise from the ground floor up, after the slabs. */
+:global(.motion) :global([data-scene]) .column {
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition:
+    transform var(--m-deliberate) var(--m-construct) calc(var(--m-stagger) * var(--i)),
+    background-color var(--m-standard) var(--m-ease);
+}
+:global(.motion) :global([data-scene][data-in]) .column {
+  transform: none;
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter);
+    align-items: start;
+  }
+  .intro {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter);
+    align-items: end;
+  }
+  .intro h2 {
+    grid-column: 1 / span 6;
+  }
+  .lead {
+    grid-column: 8 / span 5;
+  }
+  .drawing {
+    grid-column: 1 / span 7;
+    position: sticky;
+    top: calc(var(--header-h) + 40px);
+  }
+  .standards {
+    grid-column: 9 / span 4;
+  }
+}

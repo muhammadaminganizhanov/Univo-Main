@@ -1,4 +1,5 @@
 @import "@univo/brand/base.css";
+@import "../v2/motion.css";
 
 /* ── Layout primitives (master site) ─────────────────────────────────── */
 @media (min-width: 1024px) {

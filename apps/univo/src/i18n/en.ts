@@ -301,6 +301,34 @@ export const en: Dictionary = {
     note: "The product is preparing to launch. Features and timing may change.",
   },
 
+  v2: {
+    model: {
+      label: "Structure of the group",
+      next: "Next level",
+      nextMeta: "Room for a new direction or product",
+    },
+    plan: {
+      title: "Inside the group",
+      lead: "Two levels under one name. Directions do the work for your business. Products are systems your business uses on its own.",
+      services: "Directions",
+      products: "Products",
+      next: "Next level — a new direction or product joins the same axis",
+    },
+    section: {
+      title: "Five standards carry every business in the group",
+      lead: "Like columns in a building: they run through every level, whatever business it holds.",
+      drawing: "Section: the standards run through every part of the group",
+    },
+    entrance: {
+      title: "One entrance for the whole group",
+      lead: "A task enters UNIVO once. From there, the group builds the route.",
+    },
+    qualification: {
+      title: "How a new business becomes part of UNIVO",
+      lead: "A business passes four checks. The type of client does not matter.",
+    },
+  },
+
   forms: {
     optional: "optional",
     required: "required",

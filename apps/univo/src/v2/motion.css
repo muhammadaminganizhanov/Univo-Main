@@ -1,0 +1,19 @@
+/* V2 motion tokens — one place, no scattered numbers. Reduced motion → 0 via base.css rule. */
+:root {
+  --m-fast: 160ms;
+  --m-standard: 320ms;
+  --m-deliberate: 640ms;
+  --m-page: 900ms;
+  --m-stagger: 90ms;
+  --m-ease: cubic-bezier(0.2, 0, 0, 1); /* arrive */
+  --m-construct: cubic-bezier(0.65, 0, 0.35, 1); /* assemble: precise, slightly mechanical */
+}
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --m-fast: 0ms;
+    --m-standard: 0ms;
+    --m-deliberate: 0ms;
+    --m-page: 0ms;
+    --m-stagger: 0ms;
+  }
+}
