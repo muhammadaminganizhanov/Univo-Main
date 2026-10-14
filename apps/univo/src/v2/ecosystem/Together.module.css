@@ -1,0 +1,175 @@
+.section {
+  padding-block: clamp(72px, 8vw, 128px);
+}
+.grid {
+  display: grid;
+  gap: clamp(40px, 5vw, 72px);
+}
+.head {
+  display: grid;
+  gap: 16px;
+}
+.lead {
+  max-width: 40ch;
+}
+
+/*
+ * The route in elevation. Two level lines (dashed): the masterbrand level and the floor of directions.
+ * The route runs on the upper level, drops to the directions for the crafts, and comes back up.
+ * Phones: the same drawing turned 90°.
+ */
+.route {
+  --up: 16px;
+  --drop: 64px;
+  --ink: var(--univo-brand-ink);
+  position: relative;
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  column-gap: 12px;
+  padding-bottom: 28px;
+}
+.step::before {
+  content: "";
+  position: absolute;
+  left: var(--up);
+  top: 0;
+  bottom: 0;
+  border-left: 2px solid var(--ink);
+}
+.step:first-child::before {
+  top: 10px;
+}
+.step:last-child::before {
+  bottom: auto;
+  height: 10px;
+}
+.step[data-level="down"]::before {
+  width: calc(var(--drop) - var(--up) - 18px);
+  top: 0;
+  bottom: 0;
+  border: 2px solid var(--ink);
+  border-left: 0;
+}
+.mark {
+  grid-row: span 2;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 4px;
+  padding-left: calc(var(--up) - 8px);
+}
+.step[data-level="down"] .mark {
+  flex-direction: column;
+  padding-left: calc(var(--drop) - 18px - 8px);
+  padding-top: 10px;
+}
+.point,
+.craft {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--ink);
+  box-shadow: 0 0 0 3px var(--color-bg);
+}
+.craft {
+  background: var(--c);
+}
+.point[data-kind="in"] {
+  background: var(--color-bg);
+  box-shadow:
+    inset 0 0 0 2.5px var(--ink),
+    0 0 0 3px var(--color-bg);
+}
+.point[data-kind="result"] {
+  background: var(--univo-brand-tangerine);
+}
+.word {
+  color: var(--color-fg);
+  font-size: var(--text-h3);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.text {
+  max-width: 34ch;
+  margin-top: 6px;
+  color: var(--color-text);
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter);
+  }
+  .head {
+    grid-column: 1 / span 5;
+  }
+  .route {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    padding-top: 0;
+  }
+  /* the two level lines */
+  .route::before,
+  .route::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    border-top: 1px dashed var(--univo-brand-stone);
+  }
+  .route::before {
+    top: var(--up);
+  }
+  .route::after {
+    top: var(--drop);
+  }
+  .step {
+    grid-template-columns: none;
+    grid-template-rows: calc(var(--drop) + 32px) auto 1fr;
+    padding: 0 24px 0 0;
+  }
+  .step::before,
+  .step:first-child::before,
+  .step:last-child::before {
+    left: 0;
+    right: 0;
+    top: var(--up);
+    bottom: auto;
+    width: auto;
+    height: 0;
+    border: 0;
+    border-top: 2px solid var(--ink);
+  }
+  .step:first-child::before {
+    left: 9px;
+  }
+  .step:last-child::before {
+    right: auto;
+    width: 9px;
+  }
+  .step[data-level="down"]::before {
+    top: var(--up);
+    right: -9px;
+    height: calc(var(--drop) - var(--up));
+    width: auto;
+    border: 2px solid var(--ink);
+    border-top: 0;
+  }
+  .mark,
+  .step[data-level="down"] .mark {
+    grid-row: auto;
+    flex-direction: row;
+    padding: calc(var(--up) - 9px) 0 0 0;
+  }
+  .step[data-level="down"] .mark {
+    padding: calc(var(--drop) - 9px) 0 0 24px;
+  }
+}

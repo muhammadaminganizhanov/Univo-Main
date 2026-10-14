@@ -32,7 +32,7 @@ export function Model({
 }) {
   const geo = buildModel(
     levels,
-    variant === "exploded" ? { gap: 118, thickness: 12 } : variant === "mini" ? { gap: 64, thickness: 12 } : {},
+    variant === "exploded" ? { gap: 124, thickness: 12, split: 36, sourceRise: 120 } : variant === "mini" ? { gap: 64, thickness: 12 } : {},
   );
   const margin = variant === "mini" ? 0 : 168;
   const [vx, vy, vw, vh] = geo.viewBox;

@@ -95,6 +95,9 @@
 .left {
   text-align: right;
 }
+.exploded .callout {
+  max-width: 15rem;
+}
 .clink {
   display: grid;
   gap: 2px;
@@ -233,5 +236,8 @@ a.clink:focus-visible .cname {
   }
   .cname {
     white-space: normal;
+  }
+  .exploded .callout {
+    max-width: none;
   }
 }

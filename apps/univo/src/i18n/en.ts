@@ -327,6 +327,20 @@ export const en: Dictionary = {
       title: "How a new business becomes part of UNIVO",
       lead: "A business passes four checks. The type of client does not matter.",
     },
+    ecosystem: {
+      lead: "The group taken apart: what stands on each level, what already works and what is getting ready to launch.",
+      drawing: "Exploded view: the levels of the group and their parts",
+      sheets: "Parts of the group",
+      sheetsLead: "One sheet per part: what it does and how its work is built.",
+      sheet: "Sheet",
+      keyPlan: "Place in the group",
+      noMarket: "To be decided",
+      techGrid: "Grid of capabilities",
+      slotDay: "One day of bookings",
+      specNo: "No.",
+      specItem: "Item",
+      togetherLead: "For a client, the group works like one building with one entrance.",
+    },
   },
 
   forms: {

@@ -62,7 +62,8 @@ export function buildModel(
     gap = 96,
     thickness = 14,
     sourceRise = 150,
-  }: Partial<Record<"width" | "depth" | "gap" | "thickness" | "sourceRise", number>> = {},
+    split = 0,
+  }: Partial<Record<"width" | "depth" | "gap" | "thickness" | "sourceRise" | "split", number>> = {},
 ): ModelGeometry {
   const x0 = -width / 2;
   const y0 = -depth / 2;
@@ -79,7 +80,9 @@ export function buildModel(
     const parts = level.ghost ? [undefined] : level.members;
     const w = width / parts.length;
     parts.forEach((member, k) => {
-      const a = x0 + k * w;
+      // exploded view: parts of one floor move apart along x, opening their shared edge
+      const shift = (k - (parts.length - 1) / 2) * split;
+      const a = x0 + k * w + shift;
       const b = a + w;
       const slab: SlabShape = {
         id: member?.id ?? level.id,

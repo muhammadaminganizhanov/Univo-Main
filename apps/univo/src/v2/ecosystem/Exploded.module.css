@@ -1,0 +1,38 @@
+.hero {
+  padding-block: clamp(40px, 5vw, 72px) clamp(8px, 2vw, 24px);
+  overflow: clip;
+}
+.grid {
+  display: grid;
+  gap: 20px;
+}
+.title {
+  color: var(--color-fg);
+  font-size: clamp(2.5rem, 1.6rem + 3vw, 4.5rem);
+  font-weight: 600;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+.lead {
+  max-width: 40ch;
+}
+.model {
+  margin-top: clamp(24px, 4vw, 48px);
+}
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter);
+    align-items: end;
+  }
+  .title {
+    grid-column: 1 / span 6;
+  }
+  .lead {
+    grid-column: 8 / -1;
+  }
+  .model {
+    grid-column: 3 / span 8;
+  }
+}
