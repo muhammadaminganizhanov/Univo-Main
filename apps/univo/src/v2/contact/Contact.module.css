@@ -1,0 +1,168 @@
+.page {
+  padding-block: clamp(32px, 4vw, 56px) clamp(72px, 8vw, 128px);
+}
+.layout {
+  display: grid;
+  gap: clamp(40px, 5vw, 64px);
+}
+
+/* ── The entrance: the brand arch holds the heading in its dome and the form below; it stands on the ground ── */
+.entrance {
+  position: relative;
+  min-width: 0;
+}
+.arch {
+  display: grid;
+  gap: clamp(40px, 5vw, 56px);
+  padding: clamp(96px, 12vw, 168px) clamp(20px, 6vw, 72px) clamp(40px, 5vw, 64px);
+  border: 2px solid var(--univo-brand-ink);
+  border-bottom: 0;
+  border-radius: 9999px 9999px 0 0;
+  background: var(--univo-brand-white);
+}
+.head {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  text-align: center;
+}
+.title {
+  color: var(--color-fg);
+  font-size: clamp(2.5rem, 1.6rem + 3vw, 4.25rem);
+  font-weight: 600;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+.lead {
+  max-width: 30ch;
+}
+/* the ground line the arch stands on */
+.ground {
+  display: block;
+  height: 14px;
+  margin-inline: -16px;
+  border-top: 2px solid var(--univo-brand-ink);
+  background: repeating-linear-gradient(-45deg, var(--univo-brand-ink) 0 1px, transparent 1px 8px);
+}
+
+/* ── Beside it: where the task goes ── */
+.aside {
+  display: grid;
+  align-content: start;
+  gap: 48px;
+}
+.destination {
+  display: grid;
+  gap: 16px;
+}
+.asideTitle {
+  color: var(--color-fg);
+  font-size: var(--text-h3);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.mini {
+  max-width: 300px;
+}
+.mini [data-slab] {
+  transition: opacity var(--m-standard) var(--m-ease);
+}
+.now {
+  min-height: 1.5em;
+  color: var(--color-fg);
+  font-weight: 600;
+}
+.nowLabel {
+  color: var(--color-muted);
+  font-weight: 400;
+}
+.choice {
+  display: none;
+}
+.steps {
+  display: grid;
+  margin: 8px 0 0;
+  border-top: 1px solid var(--univo-brand-ink);
+}
+.steps li {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 10px;
+  padding-block: 12px;
+  border-bottom: 1px solid var(--color-rule);
+  color: var(--color-text);
+  font-size: var(--text-small);
+}
+.stepNum {
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+}
+.more {
+  display: grid;
+  gap: 40px;
+}
+@media (min-width: 768px) {
+  .more {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.products {
+  display: grid;
+  gap: 12px;
+}
+.products ul {
+  display: grid;
+  gap: 8px;
+}
+.small {
+  color: var(--color-text);
+  font-size: var(--text-small);
+}
+.direct {
+  display: grid;
+  gap: 12px;
+  margin: 16px 0 0;
+}
+.direct dt {
+  color: var(--color-muted);
+  font-size: var(--text-small);
+}
+.direct dd {
+  margin: 0;
+  color: var(--color-fg);
+}
+
+@media (min-width: 1024px) {
+  .layout {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter);
+    align-items: start;
+  }
+  .entrance {
+    grid-column: 1 / span 8;
+  }
+  .more {
+    grid-column: 1 / span 8;
+  }
+  .aside {
+    grid-column: 10 / -1;
+    grid-row: 1;
+    position: sticky;
+    top: calc(var(--header-h) + 32px);
+    padding-top: 48px;
+  }
+}
+/* phones and tablets: the small model first, then the entrance — a top-rounded frame */
+@media (max-width: 1023.98px) {
+  .mini {
+    max-width: 240px;
+  }
+  .arch {
+    border-radius: 160px 160px 0 0;
+    padding-top: 72px;
+  }
+}
+/* inside the arch the choices need a little more room per option */
+.arch [class*="choices"] {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 248px), 1fr));
+}

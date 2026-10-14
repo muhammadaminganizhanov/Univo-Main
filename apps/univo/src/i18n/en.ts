@@ -354,6 +354,10 @@ export const en: Dictionary = {
       gate: "Check",
       exit: "Exit without the name",
     },
+    contact: {
+      model: "Where the task goes",
+      now: "Current route:",
+    },
   },
 
   forms: {
