@@ -1,0 +1,10 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+minimumReleaseAgeExclude:
+  - playwright-core@1.64.1
+  - playwright@1.64.1
+
+# Native resolver ships prebuilt binaries; its install script is not needed.
+allowBuilds:
+  unrs-resolver: false

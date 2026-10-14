@@ -1,0 +1,69 @@
+/* UNIVO tokens · версия 1.2.2 */
+:root {
+  /* brand — цвета мастер-бренда */
+  --univo-brand-ink: #121214;
+  --univo-brand-paper: #F4F1EC;
+  --univo-brand-white: #FFFFFF;
+  --univo-brand-tangerine: #FF5F1F;
+  --univo-brand-graphite: #3B3A37;
+  --univo-brand-stone: #6E6C66;
+  --univo-brand-line: #E2DED6;
+  /* division — идентификаторы направлений; не состояния */
+  --univo-division-dev: #586EFB;
+  --univo-division-production: #EC417B;
+  --univo-reserve-teal: #0F9494;
+  --univo-reserve-violet: #AB61F0;
+  --univo-reserve-slate: #667F99;
+  /* semantic — состояния интерфейса; не цвета бренда */
+  --univo-semantic-success: #1A7F37;
+  --univo-semantic-success-bg: #E7F4EA;
+  --univo-semantic-success-on-dark: #6FCF97;
+  --univo-semantic-warning: #8A6100;
+  --univo-semantic-warning-bg: #FFF3CD;
+  --univo-semantic-warning-on-dark: #F2C94C;
+  --univo-semantic-error: #C62828;
+  --univo-semantic-error-bg: #FCE9E7;
+  --univo-semantic-error-on-dark: #FF8A80;
+  --univo-semantic-info: #1F5FA8;
+  --univo-semantic-info-bg: #E6EEF8;
+  --univo-semantic-info-on-dark: #8AB4F8;
+  --univo-semantic-focus: #121214;
+  --univo-semantic-focus-on-dark: #FFFFFF;
+  --univo-semantic-neutral: #6E6C66;
+  /* data — палитра графиков */
+  --univo-data-1: #121214;
+  --univo-data-2: #7D4A73;
+  --univo-data-3: #3F6B73;
+  --univo-data-4: #9A8660;
+  --univo-data-5: #85837B;
+  /* dark — поверхности тёмной темы */
+  --univo-dark-surface: #121214;
+  --univo-dark-surface-raised: #1C1C1F;
+  --univo-dark-border: #2E2E32;
+  --univo-dark-text: #FFFFFF;
+  --univo-dark-text-muted: #A19F98;
+  /* space — шкала отступов */
+  --univo-space-1: 4px;
+  --univo-space-2: 8px;
+  --univo-space-3: 12px;
+  --univo-space-4: 16px;
+  --univo-space-5: 24px;
+  --univo-space-6: 32px;
+  --univo-space-7: 48px;
+  --univo-space-8: 64px;
+  /* radius, type, motion */
+  --univo-radius-ui: 6px;
+  --univo-radius-full: 999px;
+  --univo-font: "Onest", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --univo-text-body: 16px;
+  --univo-text-ui-min: 13px;   /* рабочий текст интерфейса — не мельче */
+  --univo-text-label-min: 12px; /* только служебные подписи и метки */
+  --univo-ease: cubic-bezier(0.2, 0, 0, 1);
+  --univo-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --univo-duration-utility: 160ms;
+  --univo-duration-content: 400ms;
+  --univo-duration-brand: 750ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root { --univo-duration-utility: 0ms; --univo-duration-content: 0ms; --univo-duration-brand: 0ms; }
+}

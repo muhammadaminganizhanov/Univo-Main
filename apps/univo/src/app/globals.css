@@ -1,0 +1,52 @@
+@import "@univo/brand/base.css";
+
+/* ── Layout primitives (master site) ─────────────────────────────────── */
+@media (min-width: 1024px) {
+  :root {
+    --header-h: 72px;
+  }
+}
+
+.container {
+  width: 100%;
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding-inline: var(--page-margin);
+}
+
+/* 12 columns ≥ 1024, 6 on tablets, single column on phones. Gutter = one 24 px step. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+}
+
+.section {
+  padding-block: var(--section-y);
+}
+.section-tight {
+  padding-block: var(--section-y-tight);
+}
+
+.surface-white {
+  background: var(--univo-brand-white);
+}
+
+.locale-notice {
+  border-bottom: 1px solid var(--color-rule);
+  background: var(--univo-brand-white);
+  color: var(--color-text);
+  font-size: var(--text-small);
+  line-height: 1.45;
+}
+.locale-notice .container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding-block: 8px;
+}
+
+main:focus {
+  outline: none;
+}

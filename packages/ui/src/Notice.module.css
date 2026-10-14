@@ -1,0 +1,55 @@
+/* Message = colour + icon + text (Brand Book p. 56). Functional colours only. */
+.notice {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: var(--radius-ui);
+  border: 1px solid;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+.notice svg {
+  margin-top: 1px;
+}
+.title {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--univo-brand-ink);
+  font-weight: 600;
+}
+.body {
+  color: var(--univo-brand-graphite);
+}
+.success {
+  background: var(--univo-semantic-success-bg);
+  border-color: color-mix(in srgb, var(--univo-semantic-success) 35%, transparent);
+  color: var(--univo-semantic-success);
+}
+.warning {
+  background: var(--univo-semantic-warning-bg);
+  border-color: color-mix(in srgb, var(--univo-semantic-warning) 35%, transparent);
+  color: var(--univo-semantic-warning);
+}
+.error {
+  background: var(--univo-semantic-error-bg);
+  border-color: color-mix(in srgb, var(--univo-semantic-error) 35%, transparent);
+  color: var(--univo-semantic-error);
+}
+.info {
+  background: var(--univo-semantic-info-bg);
+  border-color: color-mix(in srgb, var(--univo-semantic-info) 35%, transparent);
+  color: var(--univo-semantic-info);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .notice {
+    animation: arrive var(--univo-duration-content) var(--univo-ease);
+  }
+}
+@keyframes arrive {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}

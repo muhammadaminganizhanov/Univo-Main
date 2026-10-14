@@ -1,0 +1,119 @@
+{
+  "version": "1.2.2",
+  "brand": {
+    "ink": "#121214",
+    "paper": "#F4F1EC",
+    "white": "#FFFFFF",
+    "tangerine": "#FF5F1F",
+    "graphite": "#3B3A37",
+    "stone": "#6E6C66",
+    "line": "#E2DED6"
+  },
+  "division": {
+    "dev": "#586EFB",
+    "production": "#EC417B"
+  },
+  "reserve": {
+    "teal": "#0F9494",
+    "violet": "#AB61F0",
+    "slate": "#667F99"
+  },
+  "dark": {
+    "surface": "#121214",
+    "surfaceRaised": "#1C1C1F",
+    "border": "#2E2E32",
+    "text": "#FFFFFF",
+    "textMuted": "#A19F98"
+  },
+  "space": {
+    "1": "4px",
+    "2": "8px",
+    "3": "12px",
+    "4": "16px",
+    "5": "24px",
+    "6": "32px",
+    "7": "48px",
+    "8": "64px"
+  },
+  "semantic": {
+    "success": {
+      "text": "#1A7F37",
+      "bg": "#E7F4EA",
+      "onDark": "#6FCF97"
+    },
+    "warning": {
+      "text": "#8A6100",
+      "bg": "#FFF3CD",
+      "onDark": "#F2C94C"
+    },
+    "error": {
+      "text": "#C62828",
+      "bg": "#FCE9E7",
+      "onDark": "#FF8A80"
+    },
+    "info": {
+      "text": "#1F5FA8",
+      "bg": "#E6EEF8",
+      "onDark": "#8AB4F8"
+    },
+    "focus": {
+      "light": "#121214",
+      "dark": "#FFFFFF",
+      "width": "2px",
+      "offset": "2px"
+    },
+    "neutral": {
+      "text": "#6E6C66",
+      "bg": "#F4F1EC"
+    }
+  },
+  "data": [
+    "#121214",
+    "#7D4A73",
+    "#3F6B73",
+    "#9A8660",
+    "#85837B"
+  ],
+  "radius": {
+    "brand": [
+      "0",
+      "999px"
+    ],
+    "ui": "6px",
+    "full": "999px"
+  },
+  "type": {
+    "family": "Onest",
+    "weights": [
+      400,
+      500,
+      600
+    ],
+    "web": "\"Onest\", system-ui, -apple-system, \"Segoe UI\", Roboto, Arial, sans-serif",
+    "email": "Arial, Helvetica, sans-serif",
+    "office": "Arial",
+    "bodyPx": 16,
+    "uiMinPx": 13,
+    "labelMinPx": 12,
+    "breakpoints": [
+      390,
+      768,
+      1024,
+      1440
+    ]
+  },
+  "motion": {
+    "ease": "cubic-bezier(0.2, 0, 0, 1)",
+    "easeExit": "cubic-bezier(0.4, 0, 1, 1)",
+    "duration": {
+      "utility": "160ms",
+      "content": "400ms",
+      "brand": "750ms"
+    },
+    "logo": {
+      "signature": "1400ms",
+      "short": "700ms",
+      "symbol": "500ms"
+    }
+  }
+}

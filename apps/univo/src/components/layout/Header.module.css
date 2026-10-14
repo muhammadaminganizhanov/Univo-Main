@@ -1,0 +1,118 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--univo-brand-paper);
+  border-bottom: 1px solid var(--color-rule);
+}
+/* The page as a route: the header's edge fills as you move through it (no JS, no hijacking). */
+.header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--univo-brand-ink);
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .header::after {
+      animation: progress linear both;
+      animation-timeline: scroll(root block);
+    }
+  }
+}
+@keyframes progress {
+  to {
+    transform: scaleX(1);
+  }
+}
+.inner {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: var(--header-h);
+}
+.logoLink {
+  display: inline-flex;
+  align-items: center;
+  /* 44 px target around a 24 px logo; clear space X = ⅓ of logo height is kept by the padding. */
+  min-height: 44px;
+  padding-block: 10px;
+  margin-right: auto;
+  color: var(--color-fg);
+  border-radius: var(--radius-ui);
+}
+.logo {
+  height: 24px;
+  width: auto;
+}
+.nav {
+  display: none;
+}
+.navList {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.navLink {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 14px;
+  color: var(--color-fg);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+/* "You are here" = the dot over the item, the way the dot sits over the i. Not a colour change. */
+.navLink::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  border-radius: 50%;
+  background: currentColor;
+  transform: scale(0);
+  transition: transform var(--univo-duration-utility) var(--univo-ease);
+}
+.navLink:hover::before {
+  transform: scale(0.6);
+}
+.navLink[aria-current="page"]::before {
+  transform: scale(1);
+}
+.tools {
+  display: none;
+  align-items: center;
+  gap: 16px;
+}
+.cta {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .cta {
+    display: inline-flex;
+  }
+}
+
+@media (min-width: 1024px) {
+  .inner {
+    gap: 32px;
+  }
+  .nav,
+  .tools {
+    display: flex;
+  }
+  .menuSlot {
+    display: none;
+  }
+}

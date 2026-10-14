@@ -1,0 +1,102 @@
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 4px 0 12px;
+  border: 0;
+  background: none;
+  color: var(--color-fg);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* Full-screen sheet, not a shrunken desktop: large targets, one column, CTA within thumb reach. */
+.dialog {
+  overscroll-behavior: contain;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+.dialog::backdrop {
+  background: color-mix(in srgb, var(--univo-brand-ink) 32%, transparent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dialog[open] {
+    animation: sheet var(--univo-duration-content) var(--univo-ease);
+  }
+}
+@keyframes sheet {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+.sheet {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--header-h);
+  border-bottom: 1px solid var(--color-rule);
+}
+.logo {
+  height: 24px;
+  width: auto;
+  color: var(--color-fg);
+}
+.body {
+  display: grid;
+  align-content: start;
+  gap: 40px;
+  flex: 1;
+  padding-block: 28px 32px;
+}
+.nav ul {
+  display: grid;
+}
+.navLink {
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  border-bottom: 1px solid var(--color-rule);
+  color: var(--color-fg);
+  font-size: clamp(1.625rem, 1.2rem + 1.8vw, 2.25rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  text-decoration: none;
+}
+.navLink {
+  position: relative;
+  gap: 14px;
+}
+.navLink[aria-current="page"]::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.block {
+  display: grid;
+  gap: 8px;
+}
+.bottom {
+  position: sticky;
+  bottom: 0;
+  padding-block: 16px max(16px, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--color-rule);
+  background: var(--color-bg);
+}

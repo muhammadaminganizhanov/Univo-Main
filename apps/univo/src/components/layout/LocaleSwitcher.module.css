@@ -1,0 +1,52 @@
+.list {
+  display: flex;
+  align-items: center;
+}
+.link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  min-height: 44px;
+  padding: 0 6px;
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  transition: color var(--univo-duration-utility) var(--univo-ease);
+}
+.link:hover {
+  color: var(--color-fg);
+}
+.link {
+  position: relative;
+}
+.link[aria-current="true"] {
+  color: var(--color-fg);
+}
+.link[aria-current="true"]::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  margin-left: -2.5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.large .link[aria-current="true"]::before {
+  left: 0;
+  margin-left: 0;
+  top: 6px;
+}
+.large {
+  gap: 20px;
+}
+.large .link {
+  min-width: 44px;
+  justify-content: flex-start;
+  padding: 0;
+  font-size: 0.9375rem;
+}

@@ -1,0 +1,199 @@
+.section {
+  padding-block: clamp(72px, 8vw, 120px) clamp(64px, 7vw, 104px);
+}
+.grid {
+  display: grid;
+}
+.statement {
+  max-width: 22ch;
+}
+.caption {
+  max-width: 40ch;
+  margin-top: 20px;
+  color: var(--color-muted);
+}
+/* Member names: once, above the axes, on the same columns as the nodes. */
+.legend {
+  display: grid;
+  grid-template-columns: repeat(var(--_n), minmax(0, 1fr));
+  margin-top: clamp(40px, 5vw, 72px);
+  padding-bottom: 12px;
+}
+.legend li {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  color: var(--color-fg);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.list {
+  display: grid;
+}
+.row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  column-gap: 8px;
+  row-gap: 6px;
+  padding-block: 20px 22px;
+}
+.num {
+  grid-row: 1;
+  padding-top: 0.45em;
+}
+.title {
+  grid-row: 1;
+  color: var(--color-fg);
+  font-size: clamp(1.375rem, 1.1rem + 1vw, 2rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+.text {
+  grid-column: 2;
+  max-width: 42ch;
+}
+/* The check: what makes this standard verifiable — the nuance between five lines of one system. */
+.check {
+  grid-column: 2;
+  max-width: 42ch;
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  line-height: 1.45;
+}
+.check::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 2px;
+  margin: 0 8px 0.28em 0;
+  vertical-align: middle;
+  background: var(--color-fg);
+}
+.threads {
+  display: none;
+}
+/* The axis: one straight 3 px line through every node, then dashed — the next one. */
+.axis {
+  position: relative;
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(var(--_n), minmax(0, 1fr));
+  align-items: center;
+  height: 16px;
+  margin-top: 10px;
+}
+.axis::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(90deg, var(--color-fg) 0 calc(100% - 40px), transparent calc(100% - 40px)),
+    repeating-linear-gradient(90deg, var(--color-rule) 0 6px, transparent 6px 12px);
+  transform-origin: left center;
+}
+.node {
+  position: relative;
+  justify-self: center;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-fg);
+  box-shadow: 0 0 0 4px var(--color-bg);
+  transition:
+    background-color var(--univo-duration-content) var(--univo-ease),
+    transform var(--univo-duration-content) var(--univo-ease);
+}
+/* Activation: the standard passes through each member, each in its own colour. */
+.row:hover .node {
+  background: var(--entity-accent);
+  transform: scale(1.4);
+}
+.row:hover .node:nth-child(2) {
+  transition-delay: 40ms;
+}
+.row:hover .node:nth-child(3) {
+  transition-delay: 80ms;
+}
+.row:hover .node:nth-child(4) {
+  transition-delay: 120ms;
+}
+.more {
+  margin-top: 28px;
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter);
+  }
+  .intro {
+    grid-column: 1 / span 7;
+  }
+  .legend {
+    grid-column: 7 / -1;
+    grid-row: 2;
+    margin-top: clamp(56px, 6vw, 96px);
+  }
+  /* Member threads: faint, in each member's colour, from the legend through every standard. */
+  .threads {
+    grid-column: 7 / -1;
+    grid-row: 3;
+    display: grid;
+    grid-template-columns: repeat(var(--_n), minmax(0, 1fr));
+    pointer-events: none;
+  }
+  .threads span {
+    justify-self: center;
+    width: 2px;
+    background: color-mix(in srgb, var(--entity-accent) 26%, transparent);
+  }
+  .legend li {
+    font-size: var(--text-small);
+  }
+  .list {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+  .row {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter);
+    align-items: center;
+    padding-block: 18px;
+    border-top: 1px solid var(--color-rule);
+  }
+  .row:last-child {
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .num {
+    grid-column: 1;
+    padding-top: 0;
+  }
+  .title {
+    grid-column: 2 / span 3;
+  }
+  .text {
+    grid-column: 5 / span 2;
+    grid-row: 1;
+    font-size: var(--text-small);
+    line-height: 1.45;
+  }
+  .check {
+    grid-column: 2 / span 5;
+    grid-row: 2;
+  }
+  .axis {
+    grid-column: 7 / -1;
+    grid-row: 1;
+    margin-top: 0;
+  }
+  .more {
+    grid-column: 1 / -1;
+    grid-row: 4;
+    margin-top: 36px;
+  }
+}

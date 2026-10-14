@@ -1,0 +1,26 @@
+{
+  "name": "univo-websites",
+  "private": true,
+  "packageManager": "pnpm@12.11.2",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @univo/site-univo dev",
+    "dev:all": "pnpm --parallel --filter \"./apps/*\" dev",
+    "build": "pnpm --filter \"./apps/*\" build",
+    "start": "pnpm --filter @univo/site-univo start",
+    "lint": "eslint .",
+    "typecheck": "pnpm -r --no-bail typecheck",
+    "test": "node --test --experimental-strip-types \"packages/*/test/*.test.ts\"",
+    "qa:visual": "node scripts/visual-qa.mjs",
+    "brand:lockups": "node packages/brand/scripts/generate-lockups.mjs",
+    "brand:sync-icons": "node packages/brand/scripts/sync-icons.mjs"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.1",
+    "eslint-config-next": "16.4.0",
+    "playwright": "1.64.1",
+    "typescript": "~5.9.3"
+  }
+}

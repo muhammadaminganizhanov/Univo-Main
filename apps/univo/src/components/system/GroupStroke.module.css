@@ -1,0 +1,49 @@
+.stroke {
+  --stroke-label-gap: 22px;
+  --stroke-label-h: 68px;
+}
+.label {
+  display: grid;
+  gap: 4px;
+}
+.link {
+  color: inherit;
+  text-decoration: none;
+  padding-block: 4px;
+  margin-block: -4px;
+}
+.name {
+  justify-self: start;
+  color: var(--color-fg);
+  font-size: var(--text-h3);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+.word {
+  background-image: linear-gradient(var(--entity-accent), var(--entity-accent));
+  background-size: 0 2px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size var(--univo-duration-content) var(--univo-ease);
+}
+/* Hover/focus: the member's colour draws a short segment under its name. */
+.link:hover .word,
+.link:focus-visible .word {
+  background-size: 100% 2px;
+}
+.meta {
+  max-width: 24ch;
+  color: var(--color-text);
+  font-size: var(--text-small);
+  line-height: 1.4;
+}
+@media (max-width: 767.98px) {
+  .stroke {
+    --_v-width: 104px;
+  }
+  /* Vertical path: the source sits close to the first crest — its name is enough here. */
+  .label[data-entity="univo"] .meta {
+    display: none;
+  }
+}

@@ -1,0 +1,183 @@
+/* ==========================================================================
+   UNIVO digital tokens
+   Layer 1 — master tokens: verbatim from Brand Book v1.2.2 · master-assets/tokens.
+   Layer 2 — web roles: how the website uses them. Apps consume ONLY layer 2
+   (plus --univo-* when a rule names a master token directly).
+   ========================================================================== */
+
+:root {
+  /* ── Layer 1 · brand (master palette) ───────────────────────────────── */
+  --univo-brand-ink: #121214;
+  --univo-brand-paper: #f4f1ec;
+  --univo-brand-white: #ffffff;
+  --univo-brand-tangerine: #ff5f1f;
+  --univo-brand-graphite: #3b3a37;
+  --univo-brand-stone: #6e6c66;
+  --univo-brand-line: #e2ded6;
+
+  /* ── Layer 1 · division identifiers (who speaks) — never states ─────── */
+  /* Brand Book v1.2.2 values (kept for reference; superseded by --accent-* below). */
+  --univo-division-dev: #586efb;
+  --univo-division-production: #ec417b;
+  --univo-reserve-teal: #0f9494;
+  --univo-reserve-violet: #ab61f0;
+  --univo-reserve-slate: #667f99;
+
+  /* ── Layer 1 · semantic (interface states) — never brand colours ────── */
+  --univo-semantic-success: #1a7f37;
+  --univo-semantic-success-bg: #e7f4ea;
+  --univo-semantic-success-on-dark: #6fcf97;
+  --univo-semantic-warning: #8a6100;
+  --univo-semantic-warning-bg: #fff3cd;
+  --univo-semantic-warning-on-dark: #f2c94c;
+  --univo-semantic-error: #c62828;
+  --univo-semantic-error-bg: #fce9e7;
+  --univo-semantic-error-on-dark: #ff8a80;
+  --univo-semantic-info: #1f5fa8;
+  --univo-semantic-info-bg: #e6eef8;
+  --univo-semantic-info-on-dark: #8ab4f8;
+  --univo-semantic-neutral: #6e6c66;
+
+  /* ── Layer 1 · dark surfaces ─────────────────────────────────────────── */
+  --univo-dark-surface: #121214;
+  --univo-dark-surface-raised: #1c1c1f;
+  --univo-dark-border: #2e2e32;
+  --univo-dark-text: #ffffff;
+  --univo-dark-text-muted: #a19f98;
+
+  /* ── Layer 1 · space (interface steps: 8, no others) ─────────────────── */
+  --univo-space-1: 4px;
+  --univo-space-2: 8px;
+  --univo-space-3: 12px;
+  --univo-space-4: 16px;
+  --univo-space-5: 24px;
+  --univo-space-6: 32px;
+  --univo-space-7: 48px;
+  --univo-space-8: 64px;
+
+  /* ── Layer 1 · radius / motion ───────────────────────────────────────── */
+  --univo-radius-ui: 6px;
+  --univo-radius-full: 999px;
+  --univo-ease: cubic-bezier(0.2, 0, 0, 1);
+  --univo-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --univo-duration-utility: 160ms;
+  --univo-duration-content: 400ms;
+  --univo-duration-brand: 750ms;
+
+  /* ======================================================================
+     Layer 2 · web roles
+     ====================================================================== */
+
+  /* Surfaces & text — light theme is the masterbrand default (Paper dominates). */
+  --color-bg: var(--univo-brand-paper);
+  --color-surface: var(--univo-brand-white);
+  --color-inverse: var(--univo-brand-ink);
+  --color-fg: var(--univo-brand-ink);            /* headings, logo letters */
+  --color-text: var(--univo-brand-graphite);     /* body: 10.1:1 on Paper */
+  --color-muted: var(--univo-brand-stone);       /* captions, labels: 4.7:1 on Paper */
+  --color-rule: var(--univo-brand-line);         /* hairlines between shared edges */
+  --color-control: var(--univo-brand-stone);     /* form control borders: 4.7:1 on Paper, 5.3:1 on White */
+  --color-accent: var(--univo-brand-tangerine);  /* the masterbrand dot. Identity only — never a signal. */
+  --color-focus: var(--univo-brand-ink);
+
+  /*
+   * Entity accents (dot colour = who speaks). Owner decision 14.10.2026 supersedes the
+   * Brand Book v1.2.2 division colours. Identity signals only: dots, nodes, short segments,
+   * hover. Never surfaces, never body text (TECH / SLOT are below 4.5:1 on light surfaces).
+   * States stay distinguishable from TECH green / SLOT cyan by icon + text, never colour alone.
+   */
+  --accent-univo: var(--univo-brand-tangerine);
+  --accent-tech: #16a36a;
+  --accent-production: #e5483f;
+  --accent-retail: #3558d4;
+  --accent-slot: #17a8d1;
+  --accent-neutral: currentColor;
+
+  /* Typography — Onest only. Fluid between 390 and 1440 px (Brand Book p. 24). */
+  --font-sans: var(--font-onest, "Onest"), system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --text-mega: clamp(4.5rem, 1.9rem + 10.6vw, 11.5rem);      /* 72 → 184 — one word, one moment */
+  --text-display: clamp(3rem, 1.6rem + 5.71vw, 6.75rem);       /* 48 → 108 */
+  --text-statement: clamp(1.75rem, 1.2rem + 2.3vw, 3.25rem);   /* 28 → 52 — a sentence that is the point */
+  --text-h1: clamp(2.125rem, 1.614rem + 2.095vw, 3.5rem);     /* 34 → 56 */
+  --text-h2: clamp(1.5rem, 1.314rem + 0.762vw, 2rem);         /* 24 → 32 */
+  --text-h3: clamp(1.125rem, 1.079rem + 0.19vw, 1.25rem);     /* 18 → 20 */
+  --text-lead: clamp(1.125rem, 1.079rem + 0.19vw, 1.25rem);   /* 18 → 20 */
+  --text-body: 1rem;                                          /* 16 */
+  --text-small: 0.8125rem;                                    /* 13 — UI minimum */
+  --text-label: 0.75rem;                                      /* 12 — labels only */
+  --leading-display: 0.92;
+  --leading-h1: 1;
+  --leading-h2: 1.12;
+  --leading-h3: 1.25;
+  --leading-lead: 1.42;
+  --leading-body: 1.5;
+  --tracking-display: -0.045em;
+  --tracking-h1: -0.035em;
+  --tracking-h2: -0.022em;
+  --tracking-h3: -0.008em;
+  --tracking-label: 0.12em;
+  --measure: 62ch; /* 45–75 characters */
+
+  /* Layout — 12 columns, margin ≈ short side ÷ 15 on brand layouts; 24 px gutter. */
+  --page-max: 1520px;
+  --page-margin: clamp(20px, 5vw, 72px);
+  --gutter: clamp(16px, 1.6vw, 24px);
+  --header-h: 64px;
+  /* Section rhythm: multiples of the 24 px gutter step (3 → 6 steps). */
+  --section-y: clamp(72px, 9vw, 144px);
+  --section-y-tight: clamp(48px, 6vw, 96px);
+
+  /* Graphic language */
+  --line-weight: 3px;          /* constant stroke, round caps */
+  --dot-size: 12px;            /* ≈ x-height of adjacent 20 px text */
+  --dot-gap: 10px;             /* the line stops, then the dot: as in the master OG / page footer */
+
+  /* Components */
+  --radius-ui: var(--univo-radius-ui);
+  --radius-full: var(--univo-radius-full);
+  --control-h: 48px;           /* ≥ 44 × 44 touch target */
+  --control-h-sm: 44px;
+}
+
+/* Surfaces. Paper = narrative · White = information · Ink = system / ending. */
+[data-surface="paper"] {
+  --color-bg: var(--univo-brand-paper);
+  --color-surface: var(--univo-brand-white);
+  background: var(--color-bg);
+}
+[data-surface="white"] {
+  --color-bg: var(--univo-brand-white);
+  --color-surface: var(--univo-brand-paper);
+  background: var(--color-bg);
+}
+
+/* Who speaks: the dot colour of an entity. Set data-entity on any container. */
+[data-entity="univo"] { --entity-accent: var(--accent-univo); }
+[data-entity="tech"] { --entity-accent: var(--accent-tech); }
+[data-entity="production"] { --entity-accent: var(--accent-production); }
+[data-entity="retail"] { --entity-accent: var(--accent-retail); }
+[data-entity="slot"] { --entity-accent: var(--accent-slot); }
+
+/* Dark surfaces inside the light site. */
+.surface-dark,
+[data-surface="ink"],
+[data-surface="dark"] {
+  --color-bg: var(--univo-dark-surface);
+  --color-surface: var(--univo-dark-surface-raised);
+  --color-fg: var(--univo-dark-text);
+  --color-text: var(--univo-dark-text);
+  --color-muted: var(--univo-dark-text-muted);
+  --color-rule: var(--univo-dark-border);
+  --color-control: var(--univo-dark-text-muted);
+  --color-focus: var(--univo-dark-text);
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --univo-duration-utility: 0ms;
+    --univo-duration-content: 0ms;
+    --univo-duration-brand: 0ms;
+  }
+}

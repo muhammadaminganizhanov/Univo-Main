@@ -1,0 +1,51 @@
+.section {
+  padding-block: clamp(72px, 8vw, 120px);
+}
+.head {
+  display: grid;
+  gap: 16px;
+  margin-bottom: clamp(48px, 6vw, 88px);
+}
+.title {
+  max-width: 16ch;
+}
+.lead {
+  max-width: 40ch;
+}
+.example {
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+}
+/* Desktop: TECH + PRODUCTION sit ON the route line at the "Route" stage — the task passes through them. */
+@media (min-width: 1024px) {
+  .example {
+    margin-top: calc(-26px - 15px);
+  }
+  .chips {
+    position: relative;
+    z-index: 1;
+    padding: 4px 12px;
+    background: var(--color-bg);
+  }
+  .caption {
+    max-width: 30ch;
+  }
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  color: var(--color-fg);
+  font-weight: 600;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.plus {
+  color: var(--color-muted);
+  font-weight: 400;
+}

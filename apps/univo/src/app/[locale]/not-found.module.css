@@ -1,0 +1,16 @@
+.root {
+  display: grid;
+  gap: 20px;
+  justify-items: start;
+  padding-block: clamp(72px, 12vw, 160px);
+}
+.root p.t-lead {
+  max-width: 44ch;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+  margin-top: 12px;
+}

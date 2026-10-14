@@ -1,0 +1,124 @@
+/*
+ * The group stroke. Horizontal on wide screens; below the breakpoint the SAME geometry is rotated
+ * 90° and becomes a vertical route with labels on the right. One label list in the DOM.
+ */
+.root {
+  --_v-width: 64px;
+  position: relative;
+  color: var(--color-fg);
+}
+.svg {
+  display: block;
+  overflow: visible;
+}
+.vertical {
+  display: none;
+}
+.path {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ring {
+  fill: none;
+}
+.open {
+  fill: none;
+  stroke: var(--color-muted);
+  stroke-linecap: round;
+}
+.openLabel {
+  color: var(--color-muted);
+}
+.groups {
+  position: relative;
+  height: 44px;
+  margin-bottom: 8px;
+}
+/* Bracket: a hairline with short end ticks over a range of members, label above it. */
+.group {
+  position: absolute;
+  bottom: 0;
+  left: var(--x);
+  width: var(--gw);
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--color-fg);
+  color: var(--color-fg);
+  font-size: var(--text-small);
+  font-weight: 600;
+}
+.group::before,
+.group::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  width: 2px;
+  height: 10px;
+  background: var(--color-fg);
+}
+.group::before {
+  left: 0;
+}
+.group::after {
+  right: 0;
+}
+.labels {
+  position: relative;
+  min-height: var(--stroke-label-h, 88px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.label {
+  position: absolute;
+  top: 0;
+  left: var(--x);
+  width: var(--span);
+  padding-top: var(--stroke-label-gap, 20px);
+  padding-right: 12px;
+}
+@media (min-width: 768px) {
+  .label[data-align="end"] {
+    left: auto;
+    right: 0;
+    padding-right: 0;
+    text-align: right;
+    justify-items: end;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .root[data-responsive="true"] {
+    display: grid;
+    grid-template-columns: var(--_v-width) minmax(0, 1fr);
+    column-gap: 20px;
+  }
+  .root[data-responsive="true"] .horizontal {
+    display: none;
+  }
+  .root[data-responsive="true"] .vertical {
+    display: block;
+    width: var(--_v-width);
+    height: auto;
+  }
+  .root[data-responsive="true"] .labels {
+    min-height: 0;
+  }
+  .root[data-responsive="true"] .groups {
+    display: none;
+  }
+  .root[data-responsive="true"] {
+    grid-template-rows: auto;
+  }
+  .root[data-responsive="true"] .label {
+    left: 0;
+    top: var(--y);
+    width: 100%;
+    padding: 0;
+    transform: translateY(-50%);
+  }
+}
+.openLabel > * {
+  display: block;
+}

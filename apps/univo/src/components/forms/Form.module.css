@@ -1,0 +1,50 @@
+/* Early access: no card — the form starts at a 4 px rule (the product's entry), like a sheet. */
+.card {
+  display: grid;
+  gap: 28px;
+  padding-top: 28px;
+  border-top: 4px solid var(--color-fg);
+}
+.form {
+  display: grid;
+  gap: 24px;
+}
+.row {
+  display: grid;
+  gap: 24px;
+}
+.footer {
+  display: grid;
+  gap: 16px;
+  justify-items: start;
+}
+.staging {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  line-height: 1.45;
+}
+.staging svg {
+  flex: none;
+  margin-top: 1px;
+}
+.honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.again {
+  justify-self: start;
+}
+@media (min-width: 640px) {
+  .row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.lead {
+  margin-top: 8px;
+}

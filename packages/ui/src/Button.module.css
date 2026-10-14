@@ -1,0 +1,105 @@
+/* Capsule (Brand Book p. 29, 56): full radius, one main button per page. Never Tangerine. */
+.button {
+  --_bg: var(--color-fg);
+  --_fg: var(--color-bg);
+  --_border: var(--color-fg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: var(--control-h);
+  max-width: 100%;
+  padding: 10px 24px;
+  border: 1.5px solid var(--_border);
+  border-radius: var(--radius-full);
+  background: var(--_bg);
+  color: var(--_fg);
+  font-size: var(--text-body);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  text-align: center;
+  text-decoration: none;
+  text-wrap: balance;
+  cursor: pointer;
+  transition:
+    background-color var(--univo-duration-utility) var(--univo-ease),
+    color var(--univo-duration-utility) var(--univo-ease),
+    border-color var(--univo-duration-utility) var(--univo-ease);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.button svg {
+  flex: none;
+  transition: transform var(--univo-duration-utility) var(--univo-ease);
+}
+
+.primary:hover {
+  --_bg: var(--univo-brand-graphite);
+  --_border: var(--univo-brand-graphite);
+}
+:global(.surface-dark) .primary:hover,
+[data-surface="dark"] .primary:hover {
+  --_bg: var(--univo-brand-line);
+  --_border: var(--univo-brand-line);
+}
+
+.secondary {
+  --_bg: transparent;
+  --_fg: var(--color-fg);
+  --_border: var(--color-control);
+}
+.secondary:hover {
+  --_border: var(--color-fg);
+}
+
+.button:hover svg[data-motion="nudge"] {
+  transform: translateX(3px);
+}
+
+.button[aria-disabled="true"],
+.button:disabled {
+  --_bg: var(--univo-brand-line);
+  --_fg: var(--univo-brand-stone);
+  --_border: var(--univo-brand-line);
+  cursor: not-allowed;
+}
+
+.block {
+  width: 100%;
+}
+
+.small {
+  min-height: var(--control-h-sm);
+  padding: 8px 18px;
+  font-size: 0.9375rem;
+}
+
+/* Text link with an arrow: the secondary path next to the main capsule. */
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--control-h-sm);
+  color: var(--color-fg);
+  font-weight: 500;
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0 1px;
+  background-position: 0 calc(50% + 0.8em);
+  background-repeat: no-repeat;
+  transition: background-size var(--univo-duration-content) var(--univo-ease);
+}
+.link:hover {
+  background-size: calc(100% - 28px) 1px;
+}
+.link svg {
+  flex: none;
+  transition: transform var(--univo-duration-utility) var(--univo-ease);
+}
+.link:hover svg[data-motion="nudge"] {
+  transform: translateX(3px);
+}
+.leading {
+  background-position: right calc(50% + 0.8em);
+}
