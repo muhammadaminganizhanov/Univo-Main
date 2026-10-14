@@ -1,0 +1,455 @@
+/* ── Result: the point lands on the ground line ── */
+.result {
+  padding-block: clamp(80px, 10vw, 160px);
+}
+.statement {
+  max-width: 15ch;
+  color: var(--color-fg);
+  font-size: clamp(2.5rem, 1.4rem + 3.8vw, 5rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+.landing {
+  position: relative;
+  margin-top: clamp(48px, 6vw, 88px);
+  padding-top: 28px;
+  border-top: 2px solid var(--univo-brand-ink);
+}
+.drop {
+  position: absolute;
+  left: 0;
+  top: -24px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--univo-brand-tangerine);
+}
+.uses {
+  display: grid;
+  gap: 16px 32px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-fg);
+  font-size: var(--text-lead);
+  line-height: 1.4;
+}
+@media (min-width: 768px) {
+  .uses {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+:global(.motion) .drop {
+  opacity: 0;
+  transform: translateY(-72px);
+  transition:
+    opacity var(--m-fast) var(--m-ease) var(--m-standard),
+    transform var(--m-deliberate) var(--m-construct) var(--m-standard);
+}
+:global(.motion) [data-in] .drop {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── Qualification: elevation of the way in ── */
+@property --univo-q {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+.qual {
+  --off: var(--univo-brand-stone);
+  --on: var(--univo-brand-white);
+  padding-block: clamp(80px, 9vw, 144px);
+}
+.qualHead {
+  display: grid;
+  gap: 16px;
+  margin-bottom: clamp(48px, 6vw, 80px);
+}
+.qualLead {
+  max-width: 40ch;
+  color: var(--color-muted);
+}
+.path {
+  --y: 64px;
+  --mark: 88px;
+  --end-at: calc(100% * (1 + 2 * var(--gates)) / (2.4 + 2 * var(--gates)));
+  position: relative;
+}
+.stops {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.stop {
+  --passed: clamp(0, (var(--univo-q) - var(--at, 0)) * 40, 1);
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+.mark {
+  position: relative;
+  display: block;
+  height: var(--mark);
+}
+.track {
+  position: absolute;
+  border-color: var(--off);
+}
+.ring {
+  position: absolute;
+  left: 0;
+  top: calc(var(--y) - 11px);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2.5px var(--on);
+  background: var(--univo-brand-ink);
+}
+/* the gate: the brand arch, open at the bottom; the route passes through it */
+.gate {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 48px;
+  height: 72px;
+  border: 2px solid color-mix(in srgb, var(--on) calc(var(--passed) * 100%), var(--off));
+  border-bottom: 0;
+  border-radius: 999px 999px 0 0;
+  background: var(--univo-brand-ink);
+}
+.floor {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--y) - 7px);
+  height: 14px;
+  border: 1.5px solid var(--on);
+  background: var(--univo-dark-border, #3b3a37);
+}
+.pass {
+  position: absolute;
+  left: 18px;
+  top: calc(var(--y) - 7px - 22px);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--univo-brand-tangerine);
+}
+.traveler {
+  position: absolute;
+  z-index: 2;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--on);
+  box-shadow: 0 0 0 4px var(--univo-brand-ink);
+  /* at the end the business becomes the floor: the traveller is gone, the result stays */
+  opacity: clamp(0, (1 - var(--univo-q)) * 20, 1);
+}
+.gateNum {
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  font-variant-numeric: tabular-nums;
+}
+.stopWord {
+  color: var(--color-fg);
+  font-size: var(--text-h3);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.stopText {
+  max-width: 28ch;
+  color: var(--color-muted);
+}
+.start .stopWord,
+.end .stopWord {
+  color: var(--color-muted);
+  font-weight: 500;
+}
+.end .stopWord {
+  color: var(--color-fg);
+  font-weight: 600;
+}
+.exit {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  max-width: 64ch;
+  margin-top: clamp(40px, 5vw, 64px);
+  color: var(--color-muted);
+}
+.exitMark {
+  flex: none;
+  width: 40px;
+  margin-top: 0.7em;
+  border-top: 2px dashed var(--off);
+}
+.exitLabel {
+  display: block;
+  color: var(--color-fg);
+  font-weight: 600;
+}
+
+/* desktop: the route runs left → right */
+@media (min-width: 1024px) {
+  .qualHead {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter);
+    align-items: end;
+  }
+  .qualHead > :first-child {
+    grid-column: 1 / span 7;
+  }
+  .qualLead {
+    grid-column: 8 / -1;
+  }
+  .stops {
+    grid-template-columns: 1fr repeat(var(--gates), 2fr) 1.4fr;
+  }
+  .stop {
+    padding-right: 24px;
+  }
+  .end {
+    padding-right: 0;
+  }
+  .track {
+    left: 11px;
+    right: 0;
+    top: calc(var(--y) - 1px);
+    border-top: 2px solid var(--off);
+  }
+  .traveler {
+    top: calc(var(--y) - 8px);
+    left: calc(3px + var(--univo-q) * (var(--end-at) - 3px));
+  }
+}
+/* phones & tablets: the same drawing turned 90°, the route runs down */
+@media (max-width: 1023.98px) {
+  .path {
+    --x: 24px;
+  }
+  .stop {
+    grid-template-columns: 64px 1fr;
+    column-gap: 12px;
+    padding-bottom: 36px;
+  }
+  .stop > :not(.mark) {
+    grid-column: 2;
+  }
+  .mark {
+    grid-row: 1 / span 3;
+    height: 72px;
+  }
+  .ring {
+    left: calc(var(--x) - 11px);
+    top: 0;
+  }
+  .gate {
+    left: calc(var(--x) - 20px);
+    top: 0;
+    bottom: auto;
+    width: 40px;
+    height: 56px;
+  }
+  .floor {
+    left: 0;
+    right: auto;
+    width: 48px;
+    top: 22px;
+  }
+  .pass {
+    left: calc(var(--x) - 11px);
+    top: 0;
+  }
+  .track {
+    left: calc(var(--x) - 1px);
+    top: 11px;
+    bottom: 72px;
+    border-left: 2px solid var(--off);
+  }
+  .traveler {
+    left: calc(var(--x) - 8px);
+    top: calc(3px + var(--univo-q) * (100% - 110px));
+  }
+}
+
+@keyframes travel {
+  from {
+    --univo-q: 0;
+  }
+  to {
+    --univo-q: 1;
+  }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .path {
+      animation: travel linear both;
+      animation-timeline: view();
+      animation-range: cover 20% cover 60%;
+    }
+  }
+}
+
+/* ── Standards: a specification ── */
+.standards {
+  padding-block: clamp(72px, 8vw, 128px);
+}
+.stdHead {
+  display: grid;
+  gap: 16px;
+  margin-bottom: clamp(32px, 4vw, 56px);
+}
+.stdLead {
+  max-width: 48ch;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+.table thead th {
+  padding: 0 24px 10px 0;
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  font-weight: 400;
+}
+.table tbody tr {
+  border-top: 1px solid var(--color-rule);
+}
+.table tbody tr:first-child {
+  border-top: 1.5px solid var(--univo-brand-ink);
+}
+.table tbody tr:last-child {
+  border-bottom: 1px solid var(--color-rule);
+}
+.table td,
+.table tbody th {
+  padding: 22px 24px 22px 0;
+  color: var(--color-text);
+  vertical-align: top;
+}
+.no {
+  width: 3.5em;
+  color: var(--color-muted) !important;
+  font-size: var(--text-small);
+  font-variant-numeric: tabular-nums;
+  padding-top: 27px !important;
+}
+.std {
+  width: 22%;
+  color: var(--color-fg) !important;
+  font-size: var(--text-h3);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.check {
+  width: 36%;
+  color: var(--color-fg) !important;
+}
+.tick {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-right: 10px;
+  vertical-align: -5px;
+  border-radius: 50%;
+  background: var(--univo-brand-ink);
+  color: var(--univo-brand-white);
+}
+@media (max-width: 767.98px) {
+  .table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .table tbody tr {
+    display: grid;
+    grid-template-columns: 2.5em 1fr;
+    padding-block: 20px;
+  }
+  .table td,
+  .table tbody th {
+    display: block;
+    width: auto;
+    padding: 0 0 12px;
+  }
+  .no {
+    padding-top: 5px !important;
+  }
+  .table td[data-label] {
+    grid-column: 2;
+  }
+  .table td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 4px;
+    color: var(--color-muted);
+    font-size: var(--text-small);
+  }
+  .tick {
+    display: none;
+  }
+}
+@media (min-width: 1024px) {
+  .stdHead {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter);
+    align-items: end;
+  }
+  .stdHead > :first-child {
+    grid-column: 1 / span 7;
+  }
+  .stdLead {
+    grid-column: 8 / -1;
+  }
+}
+
+/* ── Character: what UNIVO is, and the neighbouring word it is not ── */
+.character {
+  padding-block: clamp(72px, 8vw, 128px);
+}
+.charTitle {
+  margin-bottom: clamp(32px, 4vw, 56px);
+}
+.traits {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  border: 1px solid var(--univo-brand-ink);
+  background: var(--univo-brand-ink);
+}
+.trait {
+  display: grid;
+  align-content: space-between;
+  gap: 24px;
+  min-height: 132px;
+  padding: 18px 20px;
+  background: var(--color-bg);
+}
+.trait dt {
+  color: var(--color-fg);
+  font-size: var(--text-h3);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.trait dd {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: var(--text-small);
+}
+@media (min-width: 768px) {
+  .traits {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

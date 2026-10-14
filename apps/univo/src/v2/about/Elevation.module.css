@@ -1,0 +1,198 @@
+.section {
+  padding-block: clamp(40px, 5vw, 72px) clamp(72px, 8vw, 128px);
+  overflow: clip;
+}
+.head {
+  display: grid;
+  gap: 24px;
+  margin-bottom: clamp(48px, 6vw, 96px);
+}
+.title {
+  max-width: 16ch;
+  color: var(--color-fg);
+  font-size: clamp(2.5rem, 1.5rem + 3.4vw, 4.75rem);
+  font-weight: 600;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+.lead {
+  max-width: 44ch;
+}
+@media (min-width: 1024px) {
+  .head {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter);
+    align-items: end;
+  }
+  .title {
+    grid-column: 1 / span 7;
+  }
+  .lead {
+    grid-column: 8 / -1;
+  }
+}
+
+/*
+ * The elevation. Left: the drawing (floors, axis, ground). Right: the annotations, one per floor.
+ * The axis stands in the middle of the drawing column, from the source point down to the ground.
+ */
+.elevation.elevation {
+  --draw: 44%;
+  --row: clamp(112px, 11vw, 152px);
+  --ink: var(--univo-brand-ink);
+  position: relative;
+  display: grid;
+  margin: 0;
+  padding: 72px 0 0;
+  list-style: none;
+}
+/* the axis */
+.elevation::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--draw) / 2);
+  top: 20px;
+  bottom: 0;
+  border-left: 3px solid var(--ink);
+  margin-left: -1.5px;
+}
+/* the source point */
+.elevation::after {
+  content: "";
+  position: absolute;
+  left: calc(var(--draw) / 2);
+  top: 6px;
+  width: 22px;
+  height: 22px;
+  margin-left: -11px;
+  border-radius: 50%;
+  background: var(--univo-brand-tangerine);
+}
+.row {
+  display: grid;
+  grid-template-columns: var(--draw) 1fr;
+  column-gap: clamp(20px, 4vw, 64px);
+  min-height: var(--row);
+  padding-bottom: 24px;
+}
+.floor {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-self: start;
+}
+.slab {
+  position: relative;
+  flex: 1;
+  height: 16px;
+  border: 1.5px solid var(--ink);
+  background: var(--univo-brand-line);
+}
+.slab + .slab {
+  border-left: 0;
+}
+/* the shared edge is where the axis passes */
+.slab + .slab::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: -1.5px;
+  bottom: -1.5px;
+  border-left: 1.5px solid var(--ink);
+}
+.ghost {
+  background: transparent;
+  border: 1.5px dashed var(--univo-brand-stone);
+}
+.node {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: 0 0 0 2px var(--univo-brand-white);
+}
+.node[data-state="ring"] {
+  background: var(--univo-brand-white);
+  box-shadow: inset 0 0 0 3px var(--c);
+}
+.note {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  margin-top: -6px;
+  max-width: 44ch;
+}
+.label {
+  color: var(--color-muted);
+  font-size: var(--text-small);
+}
+.statement {
+  color: var(--color-fg);
+  font-size: var(--text-h3);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.text {
+  color: var(--color-fg);
+}
+/* the ground: one line under the whole drawing, hatched below as on a section */
+/* zero-height row: the list ends exactly on the ground line; the note hangs below it */
+.row.groundRow {
+  height: 0;
+  min-height: 0;
+  padding: 0;
+  margin-bottom: 88px;
+}
+.ground {
+  position: relative;
+  align-self: start;
+  height: 18px;
+  border-top: 2px solid var(--ink);
+  margin-inline: -16px;
+  background: repeating-linear-gradient(-45deg, var(--ink) 0 1px, transparent 1px 8px);
+}
+.row[data-level="master"] .note {
+  margin-top: -10px;
+}
+
+@media (max-width: 767.98px) {
+  .elevation {
+    --draw: 38%;
+    --row: auto;
+  }
+  .row {
+    padding-bottom: 36px;
+  }
+  .statement {
+    font-size: var(--text-h3);
+  }
+}
+
+/* Construction: floors settle top-down onto the axis */
+:global(.motion) .elevation::before {
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform var(--m-page) var(--m-construct);
+}
+:global(.motion) [data-in] .elevation::before {
+  transform: none;
+}
+:global(.motion) .floor {
+  opacity: 0;
+  transform: translateY(-12px);
+  transition:
+    opacity var(--m-standard) var(--m-ease),
+    transform var(--m-standard) var(--m-construct);
+  transition-delay: calc(var(--m-stagger) * (var(--i, 4) * 2 + 2));
+}
+:global(.motion) [data-in] .floor {
+  opacity: 1;
+  transform: none;
+}

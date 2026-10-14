@@ -341,6 +341,19 @@ export const en: Dictionary = {
       specItem: "Item",
       togetherLead: "For a client, the group works like one building with one entrance.",
     },
+    about: {
+      elevation: "Elevation of the group: levels, the shared axis and the ground",
+      levels: {
+        master: "Masterbrand",
+        services: "Directions",
+        products: "Products",
+        next: "Next level",
+        ground: "Ground",
+      },
+      standard: "Standard",
+      gate: "Check",
+      exit: "Exit without the name",
+    },
   },
 
   forms: {
