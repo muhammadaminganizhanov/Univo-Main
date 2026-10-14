@@ -12,7 +12,7 @@ export function groupSwitcherItems(locale: Locale, t: Dictionary): GroupSwitcher
   return [
     { id: univo.id, name: univo.name, href: localeHref(locale), current: true },
     ...getMembers().map((e): GroupSwitcherItem => {
-      const link = resolveEntityLink(e, locale, t);
+      const link = resolveEntityLink(e, locale);
       const soon = STATUS_SHORT[e.status];
       if (e.type === "product") {
         return { id: e.id, name: e.name, href: link.href, note: soon ? pick(soon, locale) : undefined };

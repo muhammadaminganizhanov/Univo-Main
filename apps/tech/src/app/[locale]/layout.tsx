@@ -10,7 +10,8 @@ export const generateStaticParams = () => LOCALES.map((locale) => ({ locale }));
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
-  icons: { icon: [{ url: "/favicon.ico", sizes: "32x32" }, { url: "/favicon.svg", type: "image/svg+xml" }] },
+  // Public files are not auto-prefixed with basePath.
+  icons: { icon: [{ url: "/tech/favicon.ico", sizes: "32x32" }, { url: "/tech/favicon.svg", type: "image/svg+xml" }] },
 };
 
 export default async function Layout({ children, params }: { children: ReactNode; params: Promise<{ locale: string }> }) {

@@ -48,3 +48,23 @@ pnpm qa:visual   # Playwright screenshots + overflow / a11y smoke (needs `pnpm s
 | `LEAD_DELIVERY` | `staging` | `staging` validates and discards — UI says so. Any other value = live mode with no adapter → honest failure |
 
 Staging is `noindex, nofollow` three ways: `X-Robots-Tag`, meta robots, `robots.txt`.
+
+## Deploy (Vercel, one project with services)
+
+`vercel.json` defines three services in one project on one domain:
+
+| Service | Root | Public path |
+|---|---|---|
+| `univo` | `apps/univo` | `/` (catch-all, last rewrite) |
+| `tech` | `apps/tech` | `/tech`, `/tech/*` — Next `basePath: "/tech"` |
+| `production` | `apps/production` | `/production`, `/production/*` — Next `basePath: "/production"` |
+
+`packages/*` are workspace libraries compiled into each app — not services.
+There are no bindings: the apps never call each other server-side; they only link to each other in the
+browser, by same-origin path (`APP_BASE_PATH` in `@univo/config`). Leave `*_SITE_URL` empty on Vercel.
+
+Project env vars (shared by all services): `SITE_ENV` (`staging` by default), `SITE_URL` (only with a real
+domain, enables indexing together with `SITE_ENV=production`), `LEAD_DELIVERY` (`staging`).
+
+Local check of the combined setup: `vercel dev` (Vercel CLI). Without it, run `pnpm dev:all` with the
+`*_SITE_URL` values from `.env.example`.

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { format, type LocaleContext } from "@/i18n";
 import { resolveEntityLink } from "@/lib/entities";
 import { ROUTES, localeHref } from "@/lib/routes";
+import { AppLink } from "@/components/shared/AppLink";
 import styles from "./Footer.module.css";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 
@@ -52,18 +53,15 @@ export function Footer({ ctx }: { ctx: LocaleContext }) {
             </p>
             <ul role="list">
               {getMembers().map((e) => {
-                const link = resolveEntityLink(e, locale, t);
+                const link = resolveEntityLink(e, locale);
                 const soon = STATUS_SHORT[e.status];
                 return (
                   <li key={e.id} data-entity={e.id}>
-                    <Link
-                      className={styles.link}
-                      href={link.available ? link.href : `${localeHref(locale, ROUTES.ecosystem)}#${e.slug}`}
-                    >
+                    <AppLink className={styles.link} href={link.href} external={link.external}>
                       <Dot size={8} color="var(--entity-accent)" state={e.status === "live" ? "filled" : "ring"} />
                       <span>{e.name}</span>
                       {soon ? <span className={styles.soonTag}>{pick(soon, locale)}</span> : null}
-                    </Link>
+                    </AppLink>
                   </li>
                 );
               })}

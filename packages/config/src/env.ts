@@ -44,6 +44,20 @@ export function getSelfUrl(app: AppId): { url: string; explicit: boolean } {
 }
 
 /** Indexing needs BOTH an explicit production env and an explicit public SITE_URL. */
+/**
+ * Public path of every app when all apps are served from one domain (Vercel services:
+ * see vercel.json rewrites). Must match each app's `basePath` in next.config.ts.
+ */
+export const APP_BASE_PATH: Record<AppId, string> = { univo: "", tech: "/tech", production: "/production" };
+
+/**
+ * Link target for another app. An explicit `*_SITE_URL` wins (separate domains, or local dev where
+ * each app runs on its own port); otherwise the same-origin public path from APP_BASE_PATH.
+ */
+export function getAppHref(app: AppId): string {
+  return getAppUrl(app) ?? APP_BASE_PATH[app];
+}
+
 export function isIndexable(): boolean {
   return getSiteEnv() === "production" && clean(process.env.SITE_URL) !== null;
 }

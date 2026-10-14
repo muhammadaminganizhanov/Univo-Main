@@ -4,7 +4,15 @@ import styles from "./Button.module.css";
 import { Icon, type IconName } from "./Icon";
 
 type Variant = "primary" | "secondary";
-type Common = { children: ReactNode; icon?: IconName; size?: "md" | "sm"; block?: boolean; className?: string };
+type Common = {
+  children: ReactNode;
+  icon?: IconName;
+  size?: "md" | "sm";
+  block?: boolean;
+  className?: string;
+  /** Plain <a> (document navigation), e.g. a link into another app on the same domain. */
+  native?: boolean;
+};
 
 const cx = (...parts: (string | false | undefined)[]) => parts.filter(Boolean).join(" ");
 const isExternal = (href: string) => /^https?:\/\//.test(href);
@@ -26,10 +34,11 @@ export function ButtonLink({
   icon,
   className,
   children,
+  native,
   ...rest
 }: Common & { href: string; variant?: Variant } & Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href">) {
   const cls = cx(styles.button, styles[variant], size === "sm" && styles.small, block && styles.block, className);
-  if (isExternal(href)) {
+  if (native || isExternal(href)) {
     return (
       <a href={href} className={cls} {...rest}>
         <Inner icon={icon}>{children}</Inner>
@@ -51,8 +60,10 @@ export function Button({
   className,
   children,
   type = "button",
+  native: _native,
   ...rest
 }: Common & { variant?: Variant } & ButtonHTMLAttributes<HTMLButtonElement>) {
+  void _native;
   return (
     <button
       type={type}
@@ -70,8 +81,9 @@ export function ArrowLink({
   children,
   className,
   icon = "arrowRight",
+  native,
   ...rest
-}: { href: string; children: ReactNode; className?: string; icon?: IconName } & Omit<
+}: { href: string; children: ReactNode; className?: string; icon?: IconName; native?: boolean } & Omit<
   AnchorHTMLAttributes<HTMLAnchorElement>,
   "href"
 >) {
@@ -89,7 +101,7 @@ export function ArrowLink({
       </>
     );
   const cls = cx(styles.link, icon === "arrowLeft" && styles.leading, className);
-  return isExternal(href) ? (
+  return native || isExternal(href) ? (
     <a href={href} className={cls} {...rest}>
       {content}
     </a>

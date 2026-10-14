@@ -95,7 +95,7 @@ export default async function ContactPage({ params, searchParams }: Props) {
             <ul role="list">
               {getPrelaunchProducts().map((e) => (
                 <li key={e.id}>
-                  <ArrowLink href={resolveEntityLink(e, locale, t).href}>{e.name}</ArrowLink>
+                  <ArrowLink href={resolveEntityLink(e, locale).href}>{e.name}</ArrowLink>
                 </li>
               ))}
             </ul>

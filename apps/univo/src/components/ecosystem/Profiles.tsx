@@ -35,10 +35,10 @@ function Top({ e, ctx }: { e: Entity; ctx: LocaleContext }) {
 }
 
 function Cta({ e, ctx }: { e: Entity; ctx: LocaleContext }) {
-  const link = resolveEntityLink(e, ctx.locale, ctx.t);
+  const link = resolveEntityLink(e, ctx.locale);
   return (
     <div className={styles.cta}>
-      <ButtonLink href={link.href} variant="secondary" icon={link.external ? "arrowUpRight" : "arrowRight"}>
+      <ButtonLink href={link.href} native={link.external} variant="secondary" icon={link.external ? "arrowUpRight" : "arrowRight"}>
         {link.label}
       </ButtonLink>
       {!link.available ? <p className="t-meta">{ctx.t.common.entity.siteSoon}</p> : null}

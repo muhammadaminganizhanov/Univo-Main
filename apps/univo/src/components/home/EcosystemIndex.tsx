@@ -1,6 +1,6 @@
 import { MARKET_LABEL, STATUS_LABEL, getProducts, getServices, pick, type Entity } from "@univo/content";
 import { ArrowLink, Dot, Icon, Lines } from "@univo/ui";
-import Link from "next/link";
+import { AppLink } from "@/components/shared/AppLink";
 import { entityState } from "@/components/system/GroupStroke";
 import type { LocaleContext } from "@/i18n";
 import { resolveEntityLink } from "@/lib/entities";
@@ -8,13 +8,13 @@ import { ROUTES, localeHref } from "@/lib/routes";
 import styles from "./EcosystemIndex.module.css";
 
 function Row({ e, ctx }: { e: Entity; ctx: LocaleContext }) {
-  const { t, locale } = ctx;
-  const link = resolveEntityLink(e, locale, t);
-  const href = e.type === "product" || link.available ? link.href : `${localeHref(locale, ROUTES.ecosystem)}#${e.slug}`;
+  const { locale } = ctx;
+  const link = resolveEntityLink(e, locale);
+  const href = link.href;
   const where = e.markets.map((m) => pick(MARKET_LABEL[m], locale)).join(" · ");
   return (
     <li data-entity={e.id}>
-      <Link href={href} className={styles.row} data-node-row={e.id}>
+      <AppLink href={href} external={link.external} className={styles.row} data-node-row={e.id}>
         <Dot className={styles.dot} color="var(--row-dot)" state={entityState(e)} size={20} node={e.id} />
         <span className={styles.segment} aria-hidden="true" data-route="segment" />
         <span className={styles.main}>
@@ -37,7 +37,7 @@ function Row({ e, ctx }: { e: Entity; ctx: LocaleContext }) {
           </span>
         </span>
         <Icon name={link.external ? "arrowUpRight" : "arrowRight"} size={24} className={styles.go} />
-      </Link>
+      </AppLink>
     </li>
   );
 }
