@@ -57,7 +57,7 @@ export function Footer({ ctx }: { ctx: LocaleContext }) {
             </ul>
           </nav>
 
-          <nav className={`${styles.col}`} aria-labelledby="footer-ecosystem">
+          <nav className={`${styles.col} ${styles.wide}`} aria-labelledby="footer-ecosystem">
             <p id="footer-ecosystem" className={styles.heading}>
               {t.common.footer.ecosystemTitle}
             </p>

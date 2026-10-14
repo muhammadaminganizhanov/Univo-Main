@@ -1,5 +1,5 @@
 import { LOCALES, isLocale } from "@univo/config";
-import { STATUS_LABEL, getEntityBySlug, getPrelaunchProducts, pick } from "@univo/content";
+import { STATUS_LABEL, getEntityBySlug, getPrelaunchProducts, getProducts, getServices, pick } from "@univo/content";
 import { ArrowLink, StatusLabel } from "@univo/ui";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -9,6 +9,7 @@ import { format, getDictionary } from "@/i18n";
 import { showStagingNote } from "@/lib/delivery";
 import { ROUTES, localeHref } from "@/lib/routes";
 import { pageMetadata } from "@/lib/seo";
+import { TitleBlock } from "@/v2/ecosystem/Sheets";
 import styles from "./product.module.css";
 
 type Params = { params: Promise<{ locale: string; product: string }> };
@@ -40,6 +41,9 @@ export default async function ProductPage({ params }: Params) {
   const { ctx, entity } = await resolve(params);
   const { t, locale } = ctx;
   const segments = entity.segments ? pick(entity.segments, locale) : null;
+  // the same sheet number as on the Ecosystem drawing set
+  const set = [...getServices(), ...getProducts()];
+  const num = (n: number) => String(n).padStart(2, "0");
 
   return (
     <div className={`container ${styles.page}`}>
@@ -49,50 +53,53 @@ export default async function ProductPage({ params }: Params) {
         </ArrowLink>
       </div>
 
-      <div className={styles.layout}>
-        <section className={styles.info} aria-labelledby="page-title">
-          <div className={styles.id}>
-            <EntityLockup entity={entity} className={styles.lockup} />
-            <StatusLabel status={entity.status}>{pick(STATUS_LABEL[entity.status], locale)}</StatusLabel>
-          </div>
-          <h1 id="page-title" className={`t-h1 ${styles.title}`}>
-            {pick(entity.role, locale)}
-            <span className="brand-dot" aria-hidden="true">
-              .
-            </span>
-          </h1>
-          <p className="t-lead">{pick(entity.description, locale)}</p>
-
-          <div className={styles.block}>
-            <h2 className="t-label">{t.earlyAccess.scopeTitle}</h2>
-            <ul role="list" className={styles.list}>
-              {pick(entity.scope, locale).map((s) => (
-                <li key={s}>{s}</li>
-              ))}
-            </ul>
-          </div>
-
-          {segments ? (
-            <div className={styles.block}>
-              <h2 className="t-label">{t.earlyAccess.segmentsTitle}</h2>
-              <p className={styles.segments}>{segments.join(" · ")}</p>
+      <article className={styles.sheet} aria-labelledby="page-title">
+        <div className={styles.layout}>
+          <section className={styles.info}>
+            <div className={styles.id}>
+              <EntityLockup entity={entity} className={styles.lockup} />
+              <StatusLabel status={entity.status}>{pick(STATUS_LABEL[entity.status], locale)}</StatusLabel>
             </div>
-          ) : null}
+            <h1 id="page-title" className={`t-h1 ${styles.title}`}>
+              {pick(entity.role, locale)}
+              <span className="brand-dot" aria-hidden="true">
+                .
+              </span>
+            </h1>
+            <p className="t-lead">{pick(entity.description, locale)}</p>
 
-          <p className="t-small">{t.earlyAccess.note}</p>
-        </section>
+            <div className={styles.block}>
+              <h2 className="t-label">{t.earlyAccess.scopeTitle}</h2>
+              <ul role="list" className={styles.list}>
+                {pick(entity.scope, locale).map((s) => (
+                  <li key={s}>{s}</li>
+                ))}
+              </ul>
+            </div>
 
-        <div className={styles.formCol}>
-          <EarlyAccessForm
-            labels={t.forms}
-            locale={locale}
-            product={entity.id as "retail" | "slot"}
-            title={t.forms.earlyAccessTitle}
-            lead={format(t.forms.earlyAccessLead, { name: entity.name })}
-            staging={showStagingNote()}
-          />
+            {segments ? (
+              <div className={styles.block}>
+                <h2 className="t-label">{t.earlyAccess.segmentsTitle}</h2>
+                <p className={styles.segments}>{segments.join(" · ")}</p>
+              </div>
+            ) : null}
+
+            <p className="t-small">{t.earlyAccess.note}</p>
+          </section>
+
+          <div className={styles.formCol}>
+            <EarlyAccessForm
+              labels={t.forms}
+              locale={locale}
+              product={entity.id as "retail" | "slot"}
+              title={t.forms.earlyAccessTitle}
+              lead={format(t.forms.earlyAccessLead, { name: entity.name })}
+              staging={showStagingNote()}
+            />
+          </div>
         </div>
-      </div>
+        <TitleBlock e={entity} ctx={ctx} sheet={num(set.findIndex((e) => e.id === entity.id) + 1)} total={num(set.length)} />
+      </article>
     </div>
   );
 }

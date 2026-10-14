@@ -46,7 +46,6 @@ function Sheet({ e, ctx, index, total, children }: { e: Entity; ctx: LocaleConte
   const f = t.common.entity.fields;
   const link = resolveEntityLink(e, locale, t);
   const segments = e.segments ? pick(e.segments, locale) : null;
-  const markets = e.markets.map((m) => pick(MARKET_LABEL[m], locale));
   const num = (n: number) => String(n).padStart(2, "0");
   return (
     <article
@@ -79,41 +78,50 @@ function Sheet({ e, ctx, index, total, children }: { e: Entity; ctx: LocaleConte
         <div className={styles.drawing}>{children}</div>
       </div>
 
-      {/* Title block, as on any drawing sheet */}
-      <dl className={styles.block}>
-        <div className={styles.keyCell}>
-          <dt className={styles.label}>{t.v2.ecosystem.keyPlan}</dt>
-          <dd>
-            <KeyPlan active={e.id} />
-          </dd>
-        </div>
-        <div className={styles.nameCell}>
-          <dt className="visually-hidden">{e.name}</dt>
-          <dd className={styles.word} translate="no">
-            <span className={styles.dot} data-state={e.status === "live" ? "filled" : "ring"} aria-hidden="true" />
-            <span className={styles.brand}>UNIVO</span> {e.word}
-          </dd>
-        </div>
-        <div>
-          <dt className={styles.label}>{f.type}</dt>
-          <dd>{pick(TYPE_LABEL[e.type], locale)}</dd>
-        </div>
-        <div>
-          <dt className={styles.label}>{f.status}</dt>
-          <dd>{pick(STATUS_LABEL[e.status], locale)}</dd>
-        </div>
-        <div>
-          <dt className={styles.label}>{f.market}</dt>
-          <dd>{markets.length ? markets.join(", ") : t.v2.ecosystem.noMarket}</dd>
-        </div>
-        <div className={styles.numCell}>
-          <dt className={styles.label}>{t.v2.ecosystem.sheet}</dt>
-          <dd className={styles.num}>
-            {num(index)} <span>/ {num(total)}</span>
-          </dd>
-        </div>
-      </dl>
+      <TitleBlock e={e} ctx={ctx} sheet={num(index)} total={num(total)} />
     </article>
+  );
+}
+
+/** Title block, as on any drawing sheet: key plan, name, type, status, market, sheet. */
+export function TitleBlock({ e, ctx, sheet, total }: { e: Entity; ctx: LocaleContext; sheet: string; total?: string }) {
+  const { t, locale } = ctx;
+  const f = t.common.entity.fields;
+  const markets = e.markets.map((m) => pick(MARKET_LABEL[m], locale));
+  return (
+    <dl className={styles.block} style={{ "--c": `var(${e.accent})` } as CSSProperties}>
+      <div className={styles.keyCell}>
+        <dt className={styles.label}>{t.v2.ecosystem.keyPlan}</dt>
+        <dd>
+          <KeyPlan active={e.id} />
+        </dd>
+      </div>
+      <div className={styles.nameCell}>
+        <dt className="visually-hidden">{e.name}</dt>
+        <dd className={styles.word} translate="no">
+          <span className={styles.dot} data-state={e.status === "live" ? "filled" : "ring"} aria-hidden="true" />
+          <span className={styles.brand}>UNIVO</span> {e.word}
+        </dd>
+      </div>
+      <div>
+        <dt className={styles.label}>{f.type}</dt>
+        <dd>{pick(TYPE_LABEL[e.type], locale)}</dd>
+      </div>
+      <div>
+        <dt className={styles.label}>{f.status}</dt>
+        <dd>{pick(STATUS_LABEL[e.status], locale)}</dd>
+      </div>
+      <div>
+        <dt className={styles.label}>{f.market}</dt>
+        <dd>{markets.length ? markets.join(", ") : t.v2.ecosystem.noMarket}</dd>
+      </div>
+      <div className={styles.numCell}>
+        <dt className={styles.label}>{t.v2.ecosystem.sheet}</dt>
+        <dd className={styles.num}>
+          {sheet} {total ? <span>/ {total}</span> : null}
+        </dd>
+      </div>
+    </dl>
   );
 }
 

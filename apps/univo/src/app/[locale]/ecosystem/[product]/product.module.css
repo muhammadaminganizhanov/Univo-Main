@@ -5,7 +5,13 @@
   margin-bottom: clamp(24px, 4vw, 48px);
   margin-left: -2px;
 }
+/* the launch page is one more drawing sheet: Ink frame, white sheet, title block */
+.sheet {
+  border: 1.5px solid var(--univo-brand-ink);
+  background: var(--univo-brand-white);
+}
 .layout {
+  padding: clamp(20px, 3vw, 40px);
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 48px;
