@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { EcosystemIndex } from "@/components/home/EcosystemIndex";
-import { Hero } from "@/components/home/Hero";
+import { Inside } from "@/components/home/Inside";
+import { Source } from "@/components/home/Source";
 import { SystemWeave } from "@/components/home/SystemWeave";
 import { Workflow } from "@/components/home/Workflow";
 import { EndCta } from "@/components/shared/EndCta";
@@ -19,9 +19,9 @@ export default async function HomePage({ params }: LocaleParams) {
   const { t, locale } = ctx;
   return (
     <>
-      <Hero ctx={ctx} />
+      <Source ctx={ctx} />
+      <Inside ctx={ctx} />
       <SystemWeave ctx={ctx} />
-      <EcosystemIndex ctx={ctx} />
       <Workflow ctx={ctx} />
       <EndCta
         variant="home"

@@ -84,12 +84,18 @@ export const en: Dictionary = {
       lead: "UNIVO is a group of directions and products run by the same owners. We take every piece of work to a working result and stand behind it.",
       structure: "The group",
       sourceRole: "Masterbrand",
+      services: "Directions",
+      products: "Products",
+      next: "The next part of the group",
     },
     system: {
       statement: "One name for different businesses. What connects them is not an industry but a standard of work",
       caption: "Five standards run through every part of the group — and through every next one.",
       next: "The group's next business",
       more: "How the group is built",
+      choose: "Choose a standard",
+      applies: "The check applies to every part of the group",
+      passes: "checked",
     },
     ecosystem: {
       title: "Two directions. Two products.",
