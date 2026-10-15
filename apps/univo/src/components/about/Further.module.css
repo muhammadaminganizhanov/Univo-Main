@@ -1,0 +1,109 @@
+.section {
+  padding-block: clamp(56px, 8vw, 128px);
+  overflow-x: clip;
+}
+.grid {
+  display: grid;
+  gap: 28px;
+}
+.statement {
+  max-width: 26ch;
+  color: var(--color-fg);
+  font-size: clamp(1.5rem, 1rem + 1.6vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+/* today's parts as plain points on one line; the line runs on, dashed, to an open place */
+.line {
+  display: flex;
+  align-items: center;
+  max-width: 640px;
+}
+.points {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex: none;
+}
+.points span {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--univo-brand-ink);
+}
+.points span + span {
+  margin-left: 28px;
+  position: relative;
+}
+.points span + span::before {
+  content: "";
+  position: absolute;
+  right: 100%;
+  top: 5px;
+  width: 28px;
+  height: 2px;
+  background: var(--univo-brand-ink);
+}
+.dash {
+  flex: 1 1 auto;
+  height: 2px;
+  margin-inline: 4px 6px;
+  background: repeating-linear-gradient(90deg, var(--univo-brand-stone) 0 3px, transparent 3px 8px);
+  transform-origin: left center;
+}
+.ring {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border: 2px dashed var(--univo-brand-stone);
+  border-radius: 50%;
+}
+.caption {
+  display: grid;
+  gap: 2px;
+  color: var(--color-muted);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+.next {
+  color: var(--color-fg);
+  font-weight: 600;
+}
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter);
+    row-gap: 32px;
+    align-items: end;
+  }
+  .statement {
+    grid-column: 1 / span 7;
+  }
+  .line {
+    grid-column: 1 / span 6;
+    grid-row: 2;
+  }
+  .caption {
+    grid-column: 8 / -1;
+    grid-row: 2;
+    align-self: center;
+  }
+}
+
+:global(.motion) [data-scene] .dash {
+  transform: scaleX(0);
+  transition: transform 700ms var(--ease-draw) 300ms;
+}
+:global(.motion) [data-scene] .ring,
+:global(.motion) [data-scene] .caption {
+  opacity: 0;
+  transition: opacity 500ms var(--ease-sys) 900ms;
+}
+:global(.motion) [data-scene][data-in] .dash,
+:global(.motion) [data-scene][data-in] .ring,
+:global(.motion) [data-scene][data-in] .caption {
+  opacity: 1;
+  transform: none;
+}

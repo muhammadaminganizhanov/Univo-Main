@@ -1,0 +1,78 @@
+.section {
+  padding-block: clamp(72px, 11vw, 176px) clamp(56px, 8vw, 128px);
+  overflow-x: clip;
+}
+.statement {
+  max-width: 12ch;
+  color: var(--color-fg);
+  font-size: clamp(2.75rem, 1.1rem + 5.6vw, 7.25rem);
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+  text-wrap: balance;
+}
+/* the result: one line runs to the point */
+.rule {
+  display: flex;
+  align-items: center;
+  margin-top: clamp(36px, 5vw, 72px);
+}
+.line {
+  flex: 1 1 auto;
+  height: 2px;
+  margin-right: 12px;
+  background: var(--color-fg);
+  transform-origin: left center;
+}
+.point {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--univo-brand-tangerine);
+}
+.examples {
+  display: grid;
+  gap: 14px;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-muted);
+  font-size: var(--text-lead);
+  line-height: 1.45;
+}
+@media (min-width: 768px) {
+  .examples {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--gutter);
+  }
+  .examples li {
+    max-width: 30ch;
+  }
+}
+
+/* entrance: the statement line by line (the shared reveal), the line runs to the point, the examples */
+:global(.motion) [data-scene] .line {
+  transform: scaleX(0);
+  transition: transform 900ms var(--ease-draw) 500ms;
+}
+:global(.motion) [data-scene] .point {
+  opacity: 0;
+  transform: scale(0.4);
+  transition:
+    opacity 260ms var(--ease-sys) 1340ms,
+    transform 260ms var(--ease-sys) 1340ms;
+}
+:global(.motion) [data-scene] .examples li {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 520ms var(--ease-sys) calc(900ms + var(--i) * 90ms),
+    transform 520ms var(--ease-sys) calc(900ms + var(--i) * 90ms);
+}
+:global(.motion) [data-scene][data-in] .line,
+:global(.motion) [data-scene][data-in] .point,
+:global(.motion) [data-scene][data-in] .examples li {
+  opacity: 1;
+  transform: none;
+}
