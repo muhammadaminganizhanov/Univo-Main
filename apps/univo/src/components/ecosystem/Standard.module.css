@@ -1,0 +1,290 @@
+/*
+ * The common standard: the parts' lines gather into one bundle; five clamps hold it. Phones: the
+ * bundle runs down the left, each clamp crosses it beside its standard. Desktop: the lines come in
+ * from the parts' names, gather, and run across under the five clamps; the next part's line, dashed,
+ * runs on past the edge.
+ */
+.section {
+  padding-block: clamp(80px, 9vw, 136px);
+  scroll-margin-top: var(--header-h);
+  overflow-x: clip;
+}
+.head {
+  display: grid;
+  gap: 20px;
+  justify-items: start;
+  margin-bottom: clamp(40px, 5vw, 72px);
+}
+.title {
+  max-width: 24ch;
+  color: var(--color-fg);
+  font-size: clamp(1.75rem, 1.2rem + 1.7vw, 2.75rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.bundle {
+  position: relative;
+  display: grid;
+}
+.parts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 0 0 28px;
+  padding: 0;
+  list-style: none;
+}
+.part {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-fg);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.part[data-next] {
+  color: var(--color-muted);
+  font-weight: 400;
+}
+.partNode {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--c);
+}
+.partNode[data-state="launching"] {
+  background: transparent;
+  box-shadow: inset 0 0 0 3px var(--c);
+}
+.partNode[data-state="next"] {
+  border: 2px dashed var(--univo-brand-stone);
+}
+.fan {
+  display: none;
+}
+.fanLine {
+  fill: none;
+  stroke: var(--univo-brand-ink);
+  stroke-width: 3;
+}
+.fanNext {
+  fill: none;
+  stroke: var(--univo-brand-stone);
+  stroke-width: 2;
+  stroke-dasharray: 2 5;
+  stroke-linecap: round;
+}
+
+/* ── the bundle and the clamps (phones: vertical) ── */
+.rail {
+  position: relative;
+  min-width: 0;
+}
+.cable {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 36px;
+}
+.cable span {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(2px + var(--i) * 8px);
+  width: 3px;
+  background: linear-gradient(180deg, var(--c) 0 14px, var(--univo-brand-ink) 14px);
+  transform-origin: center top;
+}
+.cable span[data-next] {
+  left: calc(2.5px + var(--i) * 8px);
+  width: 2px;
+  bottom: -24px;
+  background: repeating-linear-gradient(180deg, var(--univo-brand-stone) 0 3px, transparent 3px 8px);
+}
+.clamps {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.clamp {
+  position: relative;
+  display: grid;
+  gap: 4px;
+  padding: 26px 0 22px 64px;
+}
+.bar {
+  position: absolute;
+  left: -8px;
+  top: 34px;
+  width: 52px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--univo-brand-ink);
+  box-shadow: 0 0 0 4px var(--univo-brand-white);
+  transform-origin: left center;
+}
+.name {
+  color: var(--color-fg);
+  font-size: 1.1875rem;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+.check {
+  max-width: 40ch;
+  color: var(--color-text);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+/* ═══ Desktop: the parts' lines come in, gather, and run across under the clamps (≥ 1280) ═══ */
+@media (min-width: 1024px) {
+  .head {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter);
+    align-items: end;
+  }
+  .title {
+    grid-column: 1 / span 8;
+  }
+  .more {
+    grid-column: 10 / -1;
+    justify-self: end;
+  }
+}
+@media (min-width: 1280px) {
+  .bundle {
+    grid-template-columns: max-content 120px minmax(0, 1fr);
+    align-items: start;
+  }
+  .parts {
+    display: grid;
+    margin: 0;
+    gap: 0;
+  }
+  /* the first name sits on the first line of the fan */
+  .part:first-child {
+    margin-top: 25px;
+  }
+  .part {
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+    height: 26px;
+    margin-right: -6px;
+    padding-left: 16px;
+    font-size: 0.875rem;
+  }
+  .fan {
+    display: block;
+    width: 120px;
+    height: 180px;
+    overflow: visible;
+  }
+  .cable {
+    left: 0;
+    right: calc(-1 * var(--page-margin));
+    top: 0;
+    bottom: auto;
+    width: auto;
+    height: 120px;
+  }
+  .cable span {
+    top: calc(74px - 1.5px + var(--i) * 8px);
+    bottom: auto;
+    left: 0;
+    right: 0;
+    width: auto;
+    height: 3px;
+    background: var(--univo-brand-ink);
+    transform-origin: left center;
+  }
+  .cable span[data-next] {
+    top: calc(74px - 1px + var(--i) * 8px);
+    left: 0;
+    right: -50vw;
+    width: auto;
+    height: 2px;
+    background: repeating-linear-gradient(90deg, var(--univo-brand-stone) 0 3px, transparent 3px 8px);
+  }
+  .clamps {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    column-gap: clamp(12px, 1.2vw, 24px);
+    padding-left: clamp(16px, 2.4vw, 48px);
+  }
+  .clamp {
+    grid-template-rows: 52px 78px auto;
+    gap: 0;
+    padding: 0 0 0 16px;
+  }
+  .bar {
+    left: 0;
+    top: 58px;
+    width: 6px;
+    height: 66px;
+    transform-origin: center;
+  }
+  .name {
+    align-self: end;
+    font-size: clamp(1rem, 0.25rem + 0.9vw, 1.1875rem);
+  }
+  .check {
+    grid-row: 3;
+    max-width: 26ch;
+    font-size: clamp(0.875rem, 0.8rem + 0.15vw, 0.9375rem);
+  }
+}
+
+/* small desktops: the vertical bundle, the standards set in two columns of text beside it */
+@media (min-width: 768px) and (max-width: 1279.98px) {
+  .clamp {
+    grid-template-columns: minmax(0, 14rem) minmax(0, 30rem);
+    column-gap: 32px;
+    align-items: baseline;
+  }
+  .check {
+    max-width: none;
+  }
+}
+
+/* ═══ Entrance: the lines gather and run, the clamps close one after another ═══ */
+:global(.motion) [data-scene] .fanLine {
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset var(--t-reveal) var(--ease-draw) calc(100ms + var(--i, 0) * 40ms);
+}
+:global(.motion) [data-scene] .cable span {
+  transform: scale(1, 0);
+  transition: transform var(--t-state) var(--ease-draw) 300ms;
+}
+:global(.motion) [data-scene] .bar {
+  transform: scale(0);
+  transition: transform 320ms var(--ease-sys) calc(700ms + var(--i) * var(--t-step));
+}
+:global(.motion) [data-scene] .name,
+:global(.motion) [data-scene] .check {
+  opacity: 0;
+  transition: opacity var(--t-reveal) var(--ease-sys) calc(800ms + var(--i) * var(--t-step));
+}
+@media (min-width: 1280px) {
+  :global(.motion) [data-scene] .cable span {
+    transform: scale(0, 1);
+  }
+}
+:global(.motion) [data-scene][data-in] .fanLine {
+  stroke-dashoffset: 0;
+}
+:global(.motion) [data-scene][data-in] .cable span,
+:global(.motion) [data-scene][data-in] .bar {
+  transform: none;
+}
+:global(.motion) [data-scene][data-in] .name,
+:global(.motion) [data-scene][data-in] .check {
+  opacity: 1;
+}

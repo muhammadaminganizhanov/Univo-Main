@@ -1,0 +1,614 @@
+/*
+ * Master map. Desktop (≥ 1024): an SVG of lines and nodes with the names set over it at fixed
+ * positions (--x / --y, in % of the figure). Below 1024: the same elements in flow, the structure
+ * drawn with CSS lines — UNIVO → level → part, readable without hover.
+ */
+.hero {
+  padding-block: clamp(28px, 3.6vw, 52px) clamp(56px, 6vw, 96px);
+  scroll-margin-top: var(--header-h);
+  overflow-x: clip;
+}
+.head {
+  display: grid;
+  gap: 20px;
+}
+.title {
+  display: grid;
+  gap: clamp(10px, 1.2vw, 18px);
+  color: var(--color-fg);
+}
+.kicker {
+  font-size: var(--text-h2);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: var(--tracking-h2);
+}
+.statement {
+  display: block;
+  font-size: clamp(2.5rem, 1.3rem + 3.6vw, 4.75rem);
+  font-weight: 600;
+  line-height: 0.96;
+  letter-spacing: -0.045em;
+}
+.lead {
+  max-width: 38ch;
+  color: var(--color-text);
+  font-size: var(--text-lead);
+  line-height: 1.45;
+}
+.stage {
+  display: grid;
+  gap: 32px;
+  margin-top: clamp(20px, 2.4vw, 32px);
+}
+
+/* ── the figure ── */
+.map {
+  position: relative;
+  min-width: 0;
+}
+.svg {
+  display: none;
+}
+.line {
+  fill: none;
+  stroke: var(--univo-brand-ink);
+  stroke-linecap: round;
+}
+.next {
+  fill: none;
+  stroke: color-mix(in srgb, var(--univo-brand-stone) 75%, transparent);
+  stroke-width: 2;
+  stroke-dasharray: 1 7;
+  stroke-linecap: round;
+}
+.nextRing {
+  fill: var(--color-bg);
+  stroke: var(--univo-brand-stone);
+  stroke-width: 2;
+  stroke-dasharray: 3 4;
+}
+/* the part's path from the source: parked (invisible) until its part is active */
+.path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset var(--t-hover) var(--ease-draw);
+}
+.source {
+  fill: var(--univo-brand-tangerine);
+}
+/* UNIVO answers when a part is chosen: a ring around the point */
+.answer {
+  fill: none;
+  stroke: var(--univo-brand-tangerine);
+  stroke-width: 2;
+  opacity: 0;
+  transform: scale(0.6);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    opacity var(--t-micro) var(--ease-sys),
+    transform var(--t-micro) var(--ease-sys);
+}
+.nodeBase {
+  fill: var(--color-bg);
+}
+.node {
+  fill: var(--c);
+  stroke: var(--color-bg);
+  stroke-width: 5;
+  paint-order: stroke;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    transform var(--t-micro) var(--ease-sys),
+    opacity var(--t-hover) var(--ease-sys);
+}
+.node[data-state="launching"] {
+  fill: var(--color-bg);
+  stroke: var(--c);
+  stroke-width: 4.5;
+}
+
+/* ── labels ── */
+.sourceLabel {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  column-gap: 12px;
+}
+.sourceName {
+  color: var(--color-fg);
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.sourceRole,
+.tierNote,
+.nextNote {
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  line-height: 1.35;
+}
+.tiers,
+.parts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tierHead {
+  display: grid;
+  gap: 2px;
+}
+.tierName {
+  color: var(--color-fg);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+.link {
+  display: grid;
+  gap: 4px;
+  color: var(--color-fg);
+  text-decoration: none;
+  transition: opacity var(--t-hover) var(--ease-sys);
+}
+.name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.375rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.go {
+  flex: none;
+  color: var(--color-muted);
+  transition:
+    transform var(--t-micro) var(--ease-sys),
+    color var(--t-micro) var(--ease-sys);
+}
+.link:hover .go,
+.link:focus-visible .go {
+  color: var(--c);
+}
+.role {
+  color: var(--color-text);
+  font-size: 0.9375rem;
+  line-height: 1.35;
+}
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  line-height: 1.35;
+}
+.nextLabel {
+  display: grid;
+  gap: 2px;
+}
+.nextName {
+  color: var(--color-muted);
+  font-size: 1.0625rem;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+/* ── the answer panel (desktop ≥ 1280) ── */
+.readout {
+  display: none;
+}
+
+/* ═══ Desktop: the SVG figure, names at fixed positions ═══ */
+@media (min-width: 1024px) {
+  .stage {
+    gap: 40px;
+  }
+  .lead {
+    max-width: 52ch;
+  }
+  .map {
+    container-type: inline-size;
+  }
+  .svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .sourceLabel,
+  .tierHead,
+  .part,
+  .nextLabel {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+  }
+  .sourceLabel,
+  .nextLabel {
+    transform: translateY(-50%);
+  }
+  .sourcePoint,
+  .nextPoint,
+  .node2 {
+    display: none;
+  }
+  .tierHead {
+    transform: translateY(-100%);
+    max-width: 30%;
+  }
+  .sourceName {
+    font-size: clamp(1.25rem, 3cqw, 1.75rem);
+  }
+  .tierName {
+    font-size: clamp(0.9375rem, 2.05cqw, 1.1875rem);
+  }
+  .tierNote,
+  .sourceRole,
+  .nextNote {
+    font-size: clamp(0.75rem, 1.6cqw, 0.875rem);
+  }
+  /* the link covers its node too: the whole part is the target */
+  .link {
+    width: max-content;
+    max-width: 30cqw;
+    padding-top: calc(36 / 840 * 100cqw);
+  }
+  .name {
+    font-size: clamp(1.125rem, 3.1cqw, 1.75rem);
+  }
+  .role {
+    font-size: clamp(0.8125rem, 1.75cqw, 0.9375rem);
+  }
+  .status {
+    font-size: clamp(0.75rem, 1.6cqw, 0.8125rem);
+  }
+  .nextLabel {
+    max-width: 52cqw;
+  }
+  .nextName {
+    font-size: clamp(0.875rem, 1.9cqw, 1.0625rem);
+  }
+}
+
+/* wide: the map on eight columns, the answer panel beside it */
+@media (min-width: 1280px) {
+  .stage {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter);
+    align-items: start;
+  }
+  .map {
+    grid-column: 1 / span 8;
+    grid-row: 1;
+  }
+  .aside {
+    grid-column: 10 / -1;
+    grid-row: 1;
+    display: grid;
+    align-content: start;
+    gap: 40px;
+  }
+  .lead {
+    font-size: 1.125rem;
+  }
+  .readout {
+    position: relative;
+    display: grid;
+    padding-top: 16px;
+    border-top: 1px solid var(--color-rule);
+  }
+  .read {
+    grid-area: 1 / 1;
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition:
+      opacity var(--t-hover) var(--ease-sys),
+      transform var(--t-hover) var(--ease-sys),
+      visibility 0s linear var(--t-hover);
+  }
+  .read[data-read="univo"] {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+  .readMeta {
+    display: flex;
+    gap: 16px;
+    color: var(--color-muted);
+    font-size: var(--text-small);
+  }
+  .readName {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 6px;
+    color: var(--color-fg);
+    font-size: clamp(1.25rem, 0.4rem + 1.3vw, 1.75rem);
+    white-space: nowrap;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+  }
+  .readDot {
+    flex: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--c);
+  }
+  .readDot[data-state="launching"] {
+    background: transparent;
+    box-shadow: inset 0 0 0 3.5px var(--c);
+  }
+  .readRole {
+    color: var(--color-fg);
+    font-size: 1.1875rem;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+  .readText {
+    max-width: 34ch;
+    color: var(--color-text);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  .readMarket {
+    color: var(--color-muted);
+    font-size: var(--text-small);
+    line-height: 1.4;
+  }
+  .readGo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    color: var(--color-fg);
+    font-size: 0.9375rem;
+    font-weight: 500;
+  }
+  .readGo svg {
+    flex: none;
+  }
+}
+
+/* entrance: the point → the axis draws down → the levels → the nodes → the names (≈1 s, once) */
+@media (min-width: 1024px) {
+  :global(.motion) [data-scene] .source,
+  :global(.motion) [data-scene] .node {
+    opacity: 0;
+    transform: scale(0.4);
+    transition:
+      opacity 320ms var(--ease-sys) calc(520ms + var(--i, 0) * 90ms),
+      transform 320ms var(--ease-sys) calc(520ms + var(--i, 0) * 90ms);
+  }
+  :global(.motion) [data-scene] .source {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition-delay: 0ms;
+  }
+  :global(.motion) [data-scene] .line {
+    stroke-dasharray: 1 2;
+    stroke-dashoffset: 1;
+  }
+  :global(.motion) [data-scene] .line[data-l="axis"] {
+    transition: stroke-dashoffset 520ms var(--ease-draw) 120ms;
+  }
+  :global(.motion) [data-scene] .line[data-l="services"],
+  :global(.motion) [data-scene] .line[data-l="products"] {
+    transition: stroke-dashoffset 600ms var(--ease-draw) calc(300ms + var(--i, 0) * 140ms);
+  }
+  :global(.motion) [data-scene] .next,
+  :global(.motion) [data-scene] .nextRing,
+  :global(.motion) [data-scene] .sourceLabel,
+  :global(.motion) [data-scene] .tierHead,
+  :global(.motion) [data-scene] .part,
+  :global(.motion) [data-scene] .nextLabel,
+  :global(.motion) [data-scene] .readout {
+    opacity: 0;
+    transition: opacity var(--t-reveal) var(--ease-sys) 700ms;
+  }
+  :global(.motion) [data-scene] .sourceLabel {
+    transition-delay: 200ms;
+  }
+  :global(.motion) [data-scene] .tierHead {
+    transition-delay: 480ms;
+  }
+  :global(.motion) [data-scene] .next,
+  :global(.motion) [data-scene] .nextRing,
+  :global(.motion) [data-scene] .nextLabel {
+    transition-delay: 940ms;
+  }
+  :global(.motion) [data-scene][data-in] .source,
+  :global(.motion) [data-scene][data-in] .node {
+    opacity: 1;
+    transform: none;
+  }
+  :global(.motion) [data-scene][data-in] .line {
+    stroke-dashoffset: 0;
+  }
+  :global(.motion) [data-scene][data-in] .next,
+  :global(.motion) [data-scene][data-in] .nextRing,
+  :global(.motion) [data-scene][data-in] .sourceLabel,
+  :global(.motion) [data-scene][data-in] .tierHead,
+  :global(.motion) [data-scene][data-in] .part,
+  :global(.motion) [data-scene][data-in] .nextLabel,
+  :global(.motion) [data-scene][data-in] .readout {
+    opacity: 1;
+  }
+}
+
+/* ═══ Below 1024: the structure as a vertical list with CSS lines ═══ */
+@media (max-width: 1023.98px) {
+  .map {
+    --ax: 11px; /* the axis centre */
+    --sx: 46px; /* a level's spine centre */
+    --wm: 6px;
+    --wl: 4px;
+    --r: 14px;
+    --head-c: 13px; /* centre of a level's first line */
+    --node-c: 16px; /* centre of a part's name line */
+    padding-top: 2px;
+  }
+  .sourceLabel {
+    position: relative;
+    grid-template-columns: 22px auto 1fr;
+    column-gap: 12px;
+    padding-bottom: 22px;
+  }
+  .sourcePoint {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--univo-brand-tangerine);
+    align-self: center;
+  }
+  /* the axis leaves the point */
+  .sourceLabel::after {
+    content: "";
+    position: absolute;
+    left: calc(var(--ax) - var(--wm) / 2);
+    top: 11px;
+    bottom: 0;
+    width: var(--wm);
+    background: var(--univo-brand-ink);
+  }
+  .tier {
+    position: relative;
+  }
+  .tier[data-tier="products"] {
+    --wl: 3px;
+  }
+  /* the axis passes the first level and turns into the last one */
+  .tier::before {
+    content: "";
+    position: absolute;
+    left: calc(var(--ax) - var(--wm) / 2);
+    top: 0;
+    width: var(--wm);
+    height: 100%;
+    background: var(--univo-brand-ink);
+  }
+  .tier:last-child::before {
+    height: calc(var(--head-c) - var(--r) + 1px);
+  }
+  .tierHead {
+    position: relative;
+    padding: 0 0 6px calc(var(--sx) + 22px);
+  }
+  /* the level: from the axis to its spine, a quarter turn down */
+  .tierHead::before {
+    content: "";
+    position: absolute;
+    left: var(--ax);
+    top: calc(var(--head-c) - var(--wl) / 2);
+    width: calc(var(--sx) - var(--ax) + var(--wl) / 2);
+    bottom: 0;
+    border-top: var(--wl) solid var(--univo-brand-ink);
+    border-right: var(--wl) solid var(--univo-brand-ink);
+    border-top-right-radius: var(--r);
+  }
+  /* the last level: the axis itself turns into it */
+  .tier:last-child .tierHead::after {
+    content: "";
+    position: absolute;
+    left: calc(var(--ax) - var(--wm) / 2);
+    top: calc(var(--head-c) - var(--r));
+    width: var(--r);
+    height: calc(var(--r) + var(--wl) / 2);
+    border-left: var(--wm) solid var(--univo-brand-ink);
+    border-bottom: var(--wl) solid var(--univo-brand-ink);
+    border-bottom-left-radius: var(--r);
+  }
+  .part {
+    position: relative;
+    padding: 4px 0 18px calc(var(--sx) + 22px);
+  }
+  /* the level's spine runs through its parts and ends at the last node */
+  .part::before {
+    content: "";
+    position: absolute;
+    left: calc(var(--sx) - var(--wl) / 2);
+    top: 0;
+    width: var(--wl);
+    height: 100%;
+    background: var(--univo-brand-ink);
+  }
+  .part:last-child::before {
+    height: calc(4px + var(--node-c));
+  }
+  .tier:not(:last-child) .part:last-child {
+    padding-bottom: 26px;
+  }
+  .node2 {
+    position: absolute;
+    z-index: 1;
+    left: calc(var(--sx) - 9px);
+    top: calc(4px + var(--node-c) - 9px);
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--c);
+    box-shadow: 0 0 0 4px var(--color-bg);
+  }
+  .node2[data-state="launching"] {
+    background: var(--color-bg);
+    box-shadow:
+      inset 0 0 0 4px var(--c),
+      0 0 0 4px var(--color-bg);
+  }
+  .link {
+    min-height: 40px;
+  }
+  .name {
+    font-size: 1.375rem;
+    line-height: calc(var(--node-c) * 2);
+  }
+  .go {
+    display: none;
+  }
+  /* the next part: the axis runs on, dashed, from the last turn past the last level */
+  .tier:last-child::after {
+    content: "";
+    position: absolute;
+    left: calc(var(--ax) - 1px);
+    top: calc(var(--head-c) - var(--r) + 4px);
+    bottom: 0;
+    width: 2px;
+    background: repeating-linear-gradient(180deg, var(--univo-brand-stone) 0 3px, transparent 3px 9px);
+  }
+  .nextLabel {
+    position: relative;
+    padding: 6px 0 0 calc(var(--sx) + 22px);
+  }
+  .nextLabel::before {
+    content: "";
+    position: absolute;
+    left: calc(var(--ax) - 1px);
+    top: 0;
+    width: calc(var(--sx) - var(--ax) - 9px);
+    height: calc(6px + 12px);
+    border-left: 2px dashed var(--univo-brand-stone);
+    border-bottom: 2px dashed var(--univo-brand-stone);
+    border-bottom-left-radius: 12px;
+  }
+  .nextPoint {
+    position: absolute;
+    left: calc(var(--sx) - 9px);
+    top: calc(6px + 12px - 8px);
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px dashed var(--univo-brand-stone);
+  }
+}

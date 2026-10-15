@@ -1,183 +1,267 @@
+/*
+ * Products: identity on the left, the product's loop on the right. The loop is drawn in SVG; its
+ * names (stops, contents) are HTML set over it at fixed positions (--x / --y, in % of the figure).
+ * Phones: the same loop at full width; what sits inside it on larger screens moves below it.
+ */
 .section {
-  padding-block: var(--section-y);
+  padding-block: clamp(80px, 9vw, 136px);
+  scroll-margin-top: var(--header-h);
+  overflow-x: clip;
 }
 .head {
   display: grid;
   gap: 16px;
-  margin-bottom: clamp(40px, 5vw, 72px);
+  margin-bottom: clamp(48px, 5.5vw, 80px);
 }
 .title {
-  max-width: 16ch;
+  max-width: 22ch;
+  color: var(--color-fg);
+  font-size: clamp(1.75rem, 1.2rem + 1.7vw, 2.75rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
 }
 .lead {
   max-width: 44ch;
+  color: var(--color-muted);
+  font-size: var(--text-lead);
+  line-height: 1.45;
 }
-/* Each product: identity + its own graphic system. Related by layout, distinct by structure. */
-.block {
-  scroll-margin-top: calc(var(--header-h) + 8px);
+
+.product {
   display: grid;
-  gap: 40px;
-  padding-block: clamp(32px, 4vw, 56px);
-  border-top: 4px solid var(--entity-accent);
+  gap: 36px;
+  scroll-margin-top: calc(var(--header-h) + 24px);
 }
-.block + .block {
-  margin-top: clamp(24px, 3vw, 40px);
+.product + .product {
+  margin-top: clamp(72px, 8vw, 120px);
 }
 .identity {
   display: grid;
   align-content: start;
-  gap: 20px;
+  gap: 14px;
 }
 .id {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 12px 20px;
+  gap: 12px 16px;
+  margin-bottom: 10px;
 }
 .lockup {
-  height: clamp(26px, 2.4vw, 34px);
+  display: block;
   width: auto;
+  overflow: visible;
   color: var(--color-fg);
+  height: 34px;
 }
-.problem {
-  max-width: 16ch;
-  margin-top: 4px;
+.role {
+  max-width: 18ch;
+  color: var(--color-fg);
+  font-size: clamp(1.5rem, 1.15rem + 1.1vw, 2.125rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
 }
 .desc {
-  max-width: 44ch;
+  max-width: 46ch;
+  color: var(--color-text);
+  font-size: 1.0625rem;
+  line-height: 1.5;
 }
 .segments {
+  display: grid;
+  gap: 2px;
   color: var(--color-fg);
-  font-weight: 500;
+  font-size: 0.9375rem;
+  line-height: 1.45;
 }
+.label {
+  color: var(--color-muted);
+  font-size: var(--text-small);
+}
+.cta {
+  display: flex;
+  margin-top: 6px;
+}
+
+/* ── the loop ── */
 .system {
   display: grid;
-  align-content: start;
-  gap: 14px;
+  gap: 20px;
+  min-width: 0;
 }
-.ledgerTitle {
-  margin-top: 24px;
+.stage {
+  position: relative;
+  container-type: inline-size;
+}
+.figure {
+  position: relative;
+}
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.track {
+  fill: none;
+  stroke: var(--univo-brand-ink);
+  stroke-width: 6;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 0;
+}
+.entry {
+  fill: var(--c);
+  stroke: var(--color-bg);
+  stroke-width: 5;
+  paint-order: stroke;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.stopNode {
+  fill: var(--color-bg);
+  stroke: var(--univo-brand-ink);
+  stroke-width: 4;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+/* SLOT: the day is a thin line; taken slots are full-weight pieces of it */
+.day {
+  fill: none;
+  stroke: color-mix(in srgb, var(--univo-brand-stone) 55%, transparent);
+  stroke-width: 2;
+  stroke-dasharray: 1 1;
+}
+.taken {
+  fill: none;
+  stroke: var(--univo-brand-ink);
+  stroke-width: 9;
+}
+.reveal {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 30;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 0;
 }
 
-/* RETAIL: movement of goods — straight line, square-cornered stops would break the grammar,
-   so nodes stay dots; the line runs on between them like a conveyor. */
-.flow {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px 0;
+.stops {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
-.flow li {
-  position: relative;
+.stop {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  color: var(--color-fg);
+  font-size: clamp(0.8125rem, 2.4cqw, 1.0625rem);
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  transform: translate(-50%, calc(-100% - clamp(12px, 3cqw, 20px)));
+}
+.stop[data-side="bottom"] {
+  transform: translate(-50%, clamp(12px, 3cqw, 20px));
+}
+.inside {
   display: grid;
   gap: 10px;
-  padding-top: 28px;
 }
-.flow li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 8px;
-  height: 3px;
-  background: var(--color-fg);
+.insideTitle {
+  color: var(--color-muted);
+  font-size: var(--text-small);
 }
-.flow li:nth-child(even)::before {
-  right: 24px;
-}
-.flowNode {
-  position: absolute;
-  left: 0;
-  top: 2px;
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background: var(--entity-accent);
-  box-shadow: 0 0 0 4px var(--color-bg);
-}
-.flowName {
-  color: var(--color-fg);
-  font-size: var(--text-h3);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-.ledger {
-  border-top: 1px solid var(--color-fg);
-}
-.ledger li {
+.insideList {
   display: grid;
-  grid-template-columns: 36px 1fr;
-  align-items: baseline;
-  padding-block: 10px;
-  border-bottom: 1px solid var(--color-rule);
+  grid-template-columns: repeat(2, max-content);
+  gap: 6px 28px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
   color: var(--color-fg);
-}
-
-/* SLOT: time — an axis of equal slots, taken or free. */
-.axis {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 4px;
-  padding-block: 14px;
-  border-top: 1px solid var(--color-fg);
-  border-bottom: 1px solid var(--color-rule);
-}
-.booked,
-.free {
-  display: inline-block;
-  height: 14px;
-  min-width: 14px;
-  border-radius: var(--radius-full);
-}
-.booked {
-  background: var(--entity-accent);
-}
-.free {
-  box-shadow: inset 0 0 0 2px var(--color-control);
+  font-size: 1rem;
+  line-height: 1.35;
 }
 .legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 20px;
+  align-items: center;
+  gap: 8px 22px;
+  color: var(--color-muted);
+  font-size: var(--text-small);
 }
-.legend > span {
+.legendLabel {
+  color: var(--color-fg);
+  font-weight: 500;
+}
+.legendItem {
   display: inline-flex;
   align-items: center;
   gap: 8px;
 }
-.legend .booked,
-.legend .free {
-  width: 24px;
-  min-width: 24px;
-  height: 10px;
+.keyTaken,
+.keyFree {
+  display: inline-block;
+  width: 22px;
+  border-radius: 2px;
 }
-.schedule {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  border-top: 1px solid var(--color-fg);
+.keyTaken {
+  height: 6px;
+  background: var(--univo-brand-ink);
 }
-.schedule li {
-  padding: 12px 12px 12px 0;
-  border-bottom: 1px solid var(--color-rule);
-  color: var(--color-fg);
-  font-weight: 500;
+.keyFree {
+  height: 2px;
+  background: color-mix(in srgb, var(--univo-brand-stone) 55%, transparent);
 }
 
-@media (min-width: 768px) {
-  .flow {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+/* the inside of the loop: inside it from 640, below it on phones */
+@media (min-width: 640px) {
+  .inside {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    max-width: 52cqw;
+    justify-items: center;
+    text-align: center;
+    transform: translate(-50%, -50%);
   }
-  .flow li:nth-child(even)::before {
-    right: 0;
-  }
-  .flow li:last-child::before {
-    right: auto;
-    width: 15px;
-  }
-  .schedule {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .insideList {
+    justify-content: center;
+    text-align: left;
+    font-size: clamp(0.875rem, 2.4cqw, 1.0625rem);
   }
 }
+@media (max-width: 639.98px) {
+  .stage {
+    display: grid;
+    gap: 32px;
+  }
+  .figure:has(.stops) {
+    margin-block: 30px 6px;
+  }
+  /* the loop is drawn at about half size here: heavier strokes keep its weight */
+  .track {
+    stroke-width: 10;
+  }
+  .stopNode {
+    stroke-width: 6;
+  }
+  .day {
+    stroke-width: 3;
+  }
+  .taken {
+    stroke-width: 15;
+  }
+  .entry {
+    stroke-width: 7;
+  }
+}
+
+/* desktop: identity left (5 columns), the loop right */
 @media (min-width: 1024px) {
   .head {
     grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -185,14 +269,15 @@
     align-items: end;
   }
   .title {
-    grid-column: 1 / span 6;
+    grid-column: 1 / span 7;
   }
   .lead {
-    grid-column: 8 / span 5;
+    grid-column: 9 / -1;
   }
-  .block {
+  .product {
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--gutter);
+    align-items: center;
   }
   .identity {
     grid-column: 1 / span 5;
@@ -200,4 +285,52 @@
   .system {
     grid-column: 7 / -1;
   }
+}
+
+/* entrance: from its entry point the loop draws once round; stops and slots resolve as it passes */
+:global(.motion) [data-scene] .track,
+:global(.motion) [data-scene] .day,
+:global(.motion) [data-scene] .reveal {
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset var(--t-state) var(--ease-draw) 200ms;
+}
+:global(.motion) [data-scene] .reveal {
+  transition-duration: 1200ms;
+  transition-timing-function: linear;
+  transition-delay: 300ms;
+}
+:global(.motion) [data-scene] .entry {
+  opacity: 0;
+  transform: scale(0.5);
+  transition:
+    opacity 280ms var(--ease-sys),
+    transform 280ms var(--ease-sys);
+}
+:global(.motion) [data-scene] .stopNode {
+  opacity: 0;
+  transform: scale(0.5);
+  transition:
+    opacity 240ms var(--ease-sys) calc(200ms + var(--at) * 900ms),
+    transform 240ms var(--ease-sys) calc(200ms + var(--at) * 900ms);
+}
+:global(.motion) [data-scene] .stop,
+:global(.motion) [data-scene] .inside,
+:global(.motion) [data-scene] .legend {
+  opacity: 0;
+  transition: opacity var(--t-reveal) var(--ease-sys) 900ms;
+}
+:global(.motion) [data-scene][data-in] .track,
+:global(.motion) [data-scene][data-in] .day,
+:global(.motion) [data-scene][data-in] .reveal {
+  stroke-dashoffset: 0;
+}
+:global(.motion) [data-scene][data-in] .entry,
+:global(.motion) [data-scene][data-in] .stopNode {
+  opacity: 1;
+  transform: none;
+}
+:global(.motion) [data-scene][data-in] .stop,
+:global(.motion) [data-scene][data-in] .inside,
+:global(.motion) [data-scene][data-in] .legend {
+  opacity: 1;
 }
