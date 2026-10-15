@@ -30,24 +30,26 @@ interface Geo {
   radius: Record<Part, number>;
 }
 const DESKTOP: Geo = {
-  B: 400,
-  RV: 34,
-  stem: 360,
-  weight: { master: 14, services: 10, products: 7, next: 2.5 },
-  height: { services: 260, products: 190, next: 120 },
+  B: 362,
+  RV: 32,
+  stem: 326,
+  weight: { master: 14, services: 10, products: 7, next: 2 },
+  height: { services: 234, products: 170, next: 106 },
   radius: { services: 104, products: 76, next: 56 },
 };
+// phones: a wider box with tighter turns — the stroke runs down the screen ~30 % shorter than a
+// straight rotation of the desktop proportions, with room for the names to the right of the crests
 const PHONE: Geo = {
-  B: 250,
-  RV: 18,
-  stem: 226,
-  weight: { master: 11, services: 8, products: 5.5, next: 2 },
-  height: { services: 150, products: 112, next: 72 },
-  radius: { services: 54, products: 40, next: 30 },
+  B: 300,
+  RV: 14,
+  stem: 272,
+  weight: { master: 10, services: 7, products: 5, next: 2 },
+  height: { services: 172, products: 128, next: 80 },
+  radius: { services: 40, products: 30, next: 24 },
 };
 
 type Pt = [number, number];
-type Seg = { id: string; rank: Rank; d: string; crest?: string; node?: Pt; label: Pt; color?: string; live?: boolean };
+type Seg = { id: string; rank: Rank; d: string; start?: Pt; crest?: string; node?: Pt; label: Pt; color?: string; live?: boolean };
 
 const nodeR = (g: Geo, rank: Rank) => (rank === "master" ? g.weight.master * 0.95 : g.weight[rank] * 1.15 + 1.5);
 const X0 = 30;
@@ -81,6 +83,7 @@ function build(services: Entity[], products: Entity[], g: Geo, turn: boolean) {
       rank,
       color,
       live,
+      start: m([left - RV, B]),
       d:
         `M${fmt(m([left - RV, B]))} A${RV} ${RV} 0 0 0 ${fmt(m([left, B - RV]))} L${fmt(m([left, top + r]))} ` +
         `A${r} ${r} 0 0 1 ${fmt(m([left + 2 * r, top + r]))} L${fmt(m([left + 2 * r, B - RV]))} ` +
@@ -116,8 +119,8 @@ export function Source({ ctx }: { ctx: LocaleContext }) {
       return (
         `${on} [data-trace="${e.id}"]{stroke-dashoffset:-.34}` +
         `${on} [data-node="${e.id}"]{transform:scale(1.3)}` +
-        `${on} [data-node]:not([data-node="${e.id}"]){opacity:.35}` +
-        `${on} [data-part]:not([data-part="${e.id}"]){opacity:.42}`
+        `${on} [data-node]:not([data-node="${e.id}"]){opacity:.5}` +
+        `${on} [data-part]:not([data-part="${e.id}"]){opacity:.55}`
       );
     })
     .join("");
@@ -142,6 +145,12 @@ export function Source({ ctx }: { ctx: LocaleContext }) {
           .map((s) => (
             <path key={s.id} className={styles.trace} d={s.crest} pathLength={1} data-trace={s.id} style={{ stroke: s.color, strokeWidth: g.weight[s.rank] }} />
           ))}
+        {/* each join at a valley gets a dot of the thinner weight: no anti-aliasing seam where parts meet */}
+        {segs.map((s) =>
+          s.start && s.rank !== "next" ? (
+            <circle key={s.id} className={styles.cap} cx={r1(s.start[0])} cy={r1(s.start[1])} r={g.weight[s.rank] / 2} />
+          ) : null,
+        )}
         {/* the source stem's round top (the stroke itself has butt ends, so the valley joins stay clean) */}
         <circle className={styles.cap} cx={mode === "d" ? X0 : g.stem + 8} cy={mode === "d" ? g.B - g.stem : X0} r={g.weight.master / 2} />
         {segs.map((s) => {

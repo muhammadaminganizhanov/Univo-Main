@@ -78,8 +78,11 @@
   row-gap: 20px;
   padding-top: 24px;
 }
-:global(body:has([data-scene="source"])) .link {
-  min-height: 34px;
+/* pointer screens only: phones keep the 40 px tap targets */
+@media (min-width: 1024px) {
+  :global(body:has([data-scene="source"])) .link {
+    min-height: 34px;
+  }
 }
 :global(body:has([data-scene="source"])) .base {
   display: flex;

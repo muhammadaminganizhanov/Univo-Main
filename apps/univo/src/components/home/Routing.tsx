@@ -9,8 +9,9 @@ import styles from "./Routing.module.css";
  * brand stroke — round caps, turns by quarter circles. CSS only (radios + :has); the steps below
  * carry the meaning for every reader.
  *
- * Changing the task is one short sequence (≈1 s): the previous branches retract, the new ones draw
- * out of UNIVO, their parts light, the branches converge, the owner takes it, the result comes out.
+ * Changing the task is one short sequence (≈1 s): the previous branches retract; the task's line
+ * runs to UNIVO, UNIVO answers, the new branches draw out of it, their parts light, the branches
+ * converge, the owner takes it, the line runs on, the result comes out.
  * Owner and result are re-lit per task (one layer per task, shown only for the chosen one), so the
  * sequence replays on every change. Without motion the final state is simply shown.
  */
@@ -61,7 +62,7 @@ function layout(n: number, phone: boolean): Layout {
   const ys = Array.from({ length: n }, (_, i) => across[i] ?? 52 + i * 80);
   const mid = (ys[0]! + ys[ys.length - 1]!) / 2;
   const along = phone
-    ? { task: 20, univo: 150, fan: 230, part: 330, merge: 470, owner: 540, result: 660, end: 700 }
+    ? { task: 16, univo: 112, fan: 172, part: 252, merge: 358, owner: 420, result: 516, end: 552 }
     : { task: 24, univo: 330, fan: 450, part: 620, merge: 900, owner: 990, result: 1150, end: 1200 };
   const map = (p: Pt): Pt => (phone ? [p[1], p[0]] : p);
   return {
@@ -89,7 +90,13 @@ export function Routing({ ctx }: { ctx: LocaleContext }) {
     return (
       task.to.map((id) => `${on} [data-to="${id}"]{--live:1}`).join("") +
       `${on} [data-for="${task.id}"]{display:inline}` +
-      `${on} [data-act="${task.id}"]{display:inline}`
+      `${on} [data-act="${task.id}"]{display:inline}` +
+      // SVG keeps animating inside display:none, so the sequence is (re)started by naming it only
+      // for the chosen task; keyframes live in globals.css
+      `@media (prefers-reduced-motion:no-preference){` +
+      `${on} [data-act="${task.id}"] [data-a="task"],${on} [data-act="${task.id}"] [data-a="line"]{animation-name:home-route-draw}` +
+      `${on} [data-act="${task.id}"] [data-a="univo"]{animation-name:home-route-answer}` +
+      `${on} [data-act="${task.id}"] [data-a="owner"],${on} [data-act="${task.id}"] [data-a="result"]{animation-name:home-route-arrive}}`
     );
   }).join("");
 
@@ -97,17 +104,22 @@ export function Routing({ ctx }: { ctx: LocaleContext }) {
     const L = layout(parts.length, phone);
     const m = (p: Pt) => L.map(p);
     const path = (pts: Pt[]) => ortho(pts.map(m));
-    const partLabelOffset = phone ? [0, 34] : [24, 7];
+    const partLabelOffset = phone ? [0, 31] : [24, 7];
     return (
       <svg className={phone ? styles.phone : styles.desktop} viewBox={`0 0 ${L.w} ${L.h}`} aria-hidden="true" focusable="false">
-        {/* fixed: task → UNIVO, owner → result */}
-        <path className={styles.live} d={path([L.task, L.univo])} />
+        {/* resting tracks: task → UNIVO, owner → result; each task draws its own live layer over them */}
+        <path className={styles.idle} d={path([L.task, L.univo])} />
         <path className={styles.idle} d={path([L.owner, L.result])} />
+        {TASKS.map((task) => (
+          <g key={task.id} className={styles.act} data-act={task.id}>
+            <path className={`${styles.actLine} ${styles.actTask}`} data-a="task" d={path([L.task, L.univo])} pathLength={1} />
+          </g>
+        ))}
         {parts.map((e, i) => {
           const y = L.partYs[i]!;
           const into = path([L.univo, [L.fan, L.univo[1]], [L.fan, y], [L.partX, y]]);
           // leaves after the part's name (desktop) / below it (phones)
-          const out = path([[L.partX + (phone ? 0 : 170), y], [L.merge, y], [L.merge, L.owner[1]], L.owner]);
+          const out = path([[L.partX + (phone ? 42 : 170), y], [L.merge, y], [L.merge, L.owner[1]], L.owner]);
           return (
             <g key={e.id} className={styles.branch} data-to={e.id} style={{ "--c": `var(${e.accent})` } as CSSProperties}>
               <path className={styles.idle} d={into} />
@@ -137,6 +149,11 @@ export function Routing({ ctx }: { ctx: LocaleContext }) {
             <>
               <circle cx={tx} cy={ty} r={13} className={styles.taskNode} />
               <circle cx={ux} cy={uy} r={22} className={styles.univo} />
+              {TASKS.map((task) => (
+                <g key={task.id} className={styles.act} data-act={task.id}>
+                  <circle cx={ux} cy={uy} r={30} className={styles.actUnivo} data-a="univo" />
+                </g>
+              ))}
               <text x={ux} y={phone ? uy + 6 : uy - 38} dx={phone ? 36 : 0} className={styles.nodeLabel} textAnchor={phone ? "start" : "middle"}>
                 {h.router}
               </text>
@@ -147,9 +164,9 @@ export function Routing({ ctx }: { ctx: LocaleContext }) {
               <circle cx={rx} cy={ry} r={20} className={styles.resultIdle} />
               {TASKS.map((task) => (
                 <g key={task.id} className={styles.act} data-act={task.id}>
-                  <path className={styles.actLine} d={path([L.owner, L.result])} pathLength={1} />
-                  <circle cx={ox} cy={oy} r={15} className={`${styles.owner} ${styles.actOwner}`} />
-                  <circle cx={rx} cy={ry} r={22} className={`${styles.result} ${styles.actResult}`} />
+                  <path className={styles.actLine} data-a="line" d={path([L.owner, L.result])} pathLength={1} />
+                  <circle cx={ox} cy={oy} r={15} className={`${styles.owner} ${styles.actOwner}`} data-a="owner" />
+                  <circle cx={rx} cy={ry} r={22} className={`${styles.result} ${styles.actResult}`} data-a="result" />
                 </g>
               ))}
               <text x={rx} y={phone ? ry + 6 : ry - 38} dx={phone ? 36 : 0} className={styles.nodeLabel} textAnchor={phone ? "start" : "end"}>

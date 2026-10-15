@@ -23,9 +23,11 @@ export function Closing({ title, body, href, action }: { title: string; body: st
             </span>
           </h2>
           <p className={styles.body}>{body}</p>
-          <ButtonLink href={href} icon="arrowRight">
-            {action}
-          </ButtonLink>
+          <div className={styles.action}>
+            <ButtonLink href={href} icon="arrowRight">
+              {action}
+            </ButtonLink>
+          </div>
         </div>
       </div>
     </section>

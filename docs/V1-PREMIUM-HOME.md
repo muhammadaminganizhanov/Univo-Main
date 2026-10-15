@@ -110,3 +110,24 @@ Motion foundation (CSS only, `html.motion` / `prefers-reduced-motion`): line dra
 spine, closing stem), node signal (scale/opacity, no bounce), route trace (hero crest trace, index
 route), content reveal (`data-reveal` mask on section headings, in `globals.css`), state change
 (standards axis, routing sequence). Without motion every diagram is shown in its final state.
+
+## 9. Final refinement (pass 3)
+
+No new concept; execution only.
+
+- **Timing system** (`globals.css`): micro 220 ms · meaningful hover/focus 380 ms · reveal 600 ms ·
+  state change ≈900 ms · step 90 ms; one state easing (0.2, 0, 0, 1), one draw easing
+  (0.65, 0, 0.35, 1); all zero under reduced motion.
+- **Hero.** Desktop line ~9 % lower and closer to the headline; next part quieter (2 px, 70 % stone);
+  inactive parts on hover stay at 50–55 %; valley joins seamless. Phones: own geometry (wider box,
+  tighter turns), ~30 % shorter; names beside the crests; role copy no smaller than 13 px (12 px at 320).
+- **Index.** Supporting copy larger and brighter; inactive rows 50 %; sequence source → spine pieces
+  → node → name → arrow.
+- **Standards.** One UNIVO point travels between the standards (desktop); active title steps in; rule
+  revealed through a mask; axis: source → pieces → nodes confirm in order (≈0.8 s), the next part stays
+  open. Phones: tighter vertical axis inside the accordion.
+- **Route.** Full sequence (retract → task line → UNIVO answers → branches → parts → converge → owner →
+  line → result, ≈1 s), replayed on every change (SVG keeps animating under display:none, so animation
+  names are given only to the chosen task). Phones ~20 % shorter; idle branches no longer cross labels.
+- **Closing.** line → mark → point → headline → sentence → button (≈1.1 s, once).
+- **Footer.** Home compact rules keep 40 px tap targets on phones.

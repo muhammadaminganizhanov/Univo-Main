@@ -65,3 +65,51 @@ main:focus {
   clip-path: inset(-0.2em -0.2em -0.3em -0.2em);
   transform: none;
 }
+
+/* ── Motion timing (Home): one system for every interaction ──────────────
+   micro hover · meaningful hover/focus · section reveal · complex state change. One easing for
+   state (decelerate, no overshoot), one for lines being drawn. Reduced motion: all zero. */
+:root {
+  --t-micro: 220ms;
+  --t-hover: 380ms;
+  --t-reveal: 600ms;
+  --t-state: 900ms;
+  --t-step: 90ms;
+  --ease-sys: cubic-bezier(0.2, 0, 0, 1);
+  --ease-draw: cubic-bezier(0.65, 0, 0.35, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --t-micro: 0ms;
+    --t-hover: 0ms;
+    --t-reveal: 0ms;
+    --t-state: 0ms;
+    --t-step: 0ms;
+  }
+}
+
+/* Home route (Routing.tsx names these per chosen task, so the sequence replays on every change) */
+@keyframes home-route-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes home-route-answer {
+  from {
+    opacity: 0.9;
+    transform: scale(0.75);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+}
+@keyframes home-route-arrive {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}

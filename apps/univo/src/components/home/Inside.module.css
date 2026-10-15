@@ -23,7 +23,7 @@
 }
 .lead {
   max-width: 40ch;
-  color: var(--color-muted);
+  color: color-mix(in srgb, var(--color-fg) 74%, transparent);
   font-size: var(--text-lead);
   line-height: 1.45;
 }
@@ -66,7 +66,7 @@
   transform: scaleY(var(--on));
   transform-origin: top;
   /* on: piece after piece from the source; off: all at once, quickly */
-  transition: transform calc(120ms + var(--on) * 100ms) linear calc(var(--on) * var(--kk, 0) * 90ms);
+  transition: transform calc(120ms + var(--on) * 100ms) linear calc(var(--on) * var(--kk, 0) * var(--t-step));
 }
 .source::before {
   top: 14px;
@@ -87,6 +87,13 @@
   height: 24px;
   border-radius: 50%;
   background: var(--univo-brand-tangerine);
+}
+/* the source answers first whenever any part is being reached */
+.sourceDot {
+  transition: transform var(--t-micro) var(--ease-sys);
+}
+.index:has(.row:hover, .row:focus-visible) .sourceDot {
+  transform: scale(1.15);
 }
 .sourceName {
   color: var(--color-fg);
@@ -128,7 +135,7 @@
   padding-block: 26px;
   color: var(--color-fg);
   text-decoration: none;
-  transition: opacity var(--univo-duration-content, 320ms) var(--univo-ease, ease);
+  transition: opacity var(--t-hover) var(--ease-sys);
 }
 .row:focus-visible {
   outline: 2px solid var(--color-fg);
@@ -145,8 +152,8 @@
   background: var(--c);
   box-shadow: 0 0 0 6px var(--univo-dark-surface, #121214);
   transition:
-    transform 320ms var(--univo-ease, ease),
-    box-shadow 320ms var(--univo-ease, ease);
+    transform var(--t-hover) var(--ease-sys),
+    box-shadow var(--t-hover) var(--ease-sys);
 }
 .node[data-state="launching"] {
   width: 18px;
@@ -159,7 +166,8 @@
 .row:hover .node,
 .row:focus-visible .node {
   transform: scale(1.25);
-  transition-delay: calc(var(--kk, 0) * 90ms);
+  /* the node answers when the route reaches it */
+  transition-delay: calc(var(--kk, 0) * var(--t-step) + 60ms);
 }
 /* the route arrives: a thin ring of the part's colour closes around its node */
 .row:hover .node[data-state="live"],
@@ -173,7 +181,7 @@
   font-weight: 600;
   letter-spacing: -0.045em;
   line-height: 0.95;
-  transition: transform 420ms var(--univo-ease, ease);
+  transition: transform var(--t-hover) var(--ease-sys);
 }
 /* products: smaller, indented — same spine, a lower rank */
 .tier[data-tier="products"] .name {
@@ -184,6 +192,7 @@
 .row:hover .name,
 .row:focus-visible .name {
   transform: translateX(12px);
+  transition-delay: calc(var(--kk, 0) * var(--t-step) + 120ms);
 }
 .info {
   grid-column: 2 / -1;
@@ -193,13 +202,14 @@
 }
 .role {
   color: var(--color-fg);
+  font-size: 1.0625rem;
   font-weight: 600;
 }
 .desc {
-  color: var(--color-muted);
-  font-size: 0.9375rem;
-  line-height: 1.45;
-  transition: color var(--univo-duration-content, 320ms) var(--univo-ease, ease);
+  color: color-mix(in srgb, var(--color-fg) 68%, transparent);
+  font-size: 1rem;
+  line-height: 1.5;
+  transition: color var(--t-hover) var(--ease-sys);
 }
 .row:hover .desc,
 .row:focus-visible .desc {
@@ -217,14 +227,16 @@
   grid-row: 1;
   color: var(--color-muted);
   transition:
-    transform var(--univo-duration-utility, 160ms) var(--univo-ease, ease),
-    color var(--univo-duration-utility, 160ms) var(--univo-ease, ease);
+    transform var(--t-micro) var(--ease-sys),
+    color var(--t-micro) var(--ease-sys);
 }
 .row:hover .go,
 .row:focus-visible .go {
   color: var(--c);
   transform: translateX(8px);
-  transition-duration: 320ms;
+  /* the arrow is the last to answer */
+  transition-duration: var(--t-hover);
+  transition-delay: calc(var(--kk, 0) * var(--t-step) + 180ms);
 }
 .nextRow {
   display: grid;

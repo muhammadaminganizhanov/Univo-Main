@@ -128,28 +128,29 @@
 .branch {
   --live: 0;
 }
-/* 1 retract (old branches, 200 ms, at once) → 2 draw from UNIVO (140–520 ms) → 3 parts light (~440 ms)
-   → 4 converge (560–940 ms) → 5 owner (~900 ms) → 6 result (~1 s) */
+/* retract (old branches, 200 ms, at once) → task line (0–200) → UNIVO answers (180) → branches
+   draw out of UNIVO (220–480) → parts light (440) → converge (520–760) → owner (740) → line on
+   (780–960) → result (920). One easing for lines, one for nodes; no overshoot. */
 .on {
   stroke: var(--univo-brand-ink);
   stroke-width: 6;
   stroke-dasharray: 1 2;
   stroke-dashoffset: calc(1 - var(--live));
-  transition: stroke-dashoffset calc(200ms + var(--live) * 180ms) cubic-bezier(0.65, 0, 0.35, 1) calc(var(--live) * 140ms);
+  transition: stroke-dashoffset calc(200ms + var(--live) * 60ms) var(--ease-draw) calc(var(--live) * 220ms);
 }
 .onOut {
-  transition-delay: calc(var(--live) * 560ms);
+  transition-delay: calc(var(--live) * 520ms);
 }
 .partNode {
   --live: 0;
   opacity: calc(0.35 + var(--live) * 0.65);
-  transition: opacity 240ms cubic-bezier(0.2, 0, 0, 1) calc(var(--live) * 440ms);
+  transition: opacity 240ms var(--ease-sys) calc(var(--live) * 440ms);
 }
 .partNode circle {
   transform-box: fill-box;
   transform-origin: center;
   transform: scale(calc(0.8 + var(--live) * 0.2));
-  transition: transform 280ms cubic-bezier(0.2, 0, 0, 1) calc(var(--live) * 440ms);
+  transition: transform 280ms var(--ease-sys) calc(var(--live) * 440ms);
 }
 .dotLive {
   fill: var(--c);
@@ -203,36 +204,50 @@
   stroke-linecap: round;
 }
 .actOwner,
-.actResult {
+.actResult,
+.actUnivo {
   transform-box: fill-box;
   transform-origin: center;
 }
-@media (prefers-reduced-motion: no-preference) {
-  .actLine {
-    stroke-dasharray: 1 2;
-    animation: converge 260ms cubic-bezier(0.65, 0, 0.35, 1) 900ms both;
-  }
-  .actOwner {
-    animation: arrive 280ms cubic-bezier(0.2, 0, 0, 1) 860ms both;
-  }
-  .actResult {
-    animation: arrive 320ms cubic-bezier(0.2, 0, 0, 1) 1080ms both;
-  }
+/* UNIVO answering: one ring that opens and dissolves (invisible at rest and without motion) */
+.actUnivo {
+  fill: none;
+  stroke: var(--univo-brand-tangerine);
+  stroke-width: 2;
+  opacity: 0;
 }
-@keyframes converge {
-  from {
-    stroke-dashoffset: 1;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
+/* timing only — the animation names are given per chosen task (see Routing.tsx) */
+.actLine {
+  stroke-dasharray: 1 2;
+  animation-duration: 180ms;
+  animation-timing-function: var(--ease-draw);
+  animation-delay: 780ms;
+  animation-fill-mode: both;
 }
-@keyframes arrive {
-  from {
-    opacity: 0;
-    transform: scale(0.5);
-  }
+.actTask {
+  animation-duration: 200ms;
+  animation-delay: 0ms;
 }
+.actUnivo {
+  animation-duration: 420ms;
+  animation-timing-function: var(--ease-sys);
+  animation-delay: 180ms;
+  animation-fill-mode: both;
+}
+.actOwner {
+  animation-duration: 220ms;
+  animation-timing-function: var(--ease-sys);
+  animation-delay: 740ms;
+  animation-fill-mode: both;
+}
+.actResult {
+  animation-duration: 260ms;
+  animation-timing-function: var(--ease-sys);
+  animation-delay: 920ms;
+  animation-fill-mode: both;
+}
+
+
 .nodeLabel {
   fill: var(--univo-brand-ink);
   font-size: 17px;

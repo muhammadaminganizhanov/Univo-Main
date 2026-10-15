@@ -16,7 +16,11 @@ export function Checks({ ctx }: { ctx: LocaleContext }) {
   const parts = [...getServices(), ...getProducts()];
   const list = t.standards;
   const css = list
-    .map((_, i) => `#checks:has(#std-${i}:checked) [data-panel="${i}"]{display:grid}#checks:has(#std-${i}:checked) [data-opt="${i}"]{--on:1}`)
+    .map(
+      (_, i) =>
+        `#checks:has(#std-${i}:checked){--sel:${i}}` +
+        `#checks:has(#std-${i}:checked) [data-panel="${i}"]{display:grid}#checks:has(#std-${i}:checked) [data-opt="${i}"]{--on:1}`,
+    )
     .join("");
 
   return (
@@ -32,6 +36,8 @@ export function Checks({ ctx }: { ctx: LocaleContext }) {
 
         <fieldset className={styles.board}>
           <legend className="visually-hidden">{s.choose}</legend>
+          {/* desktop: one UNIVO point that travels to the chosen standard */}
+          <span className={styles.marker} aria-hidden="true" />
           {list.map((st, i) => (
             <div key={st.title} className={styles.slot} style={{ "--i": i } as CSSProperties}>
               <input type="radio" name="standard" id={`std-${i}`} className={styles.radio} defaultChecked={i === 0} />

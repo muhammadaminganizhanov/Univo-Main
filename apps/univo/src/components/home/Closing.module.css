@@ -57,6 +57,9 @@
   letter-spacing: -0.035em;
   text-wrap: balance;
 }
+.action {
+  display: inline-flex;
+}
 .body {
   max-width: 34ch;
   margin-bottom: 8px;
@@ -77,14 +80,15 @@
   }
 }
 
-/* entrance: the line comes down, the mark continues it from the top, the point arrives last */
+/* entrance (≈1.1 s, once): the line comes down → the mark continues it from the top → the point
+   arrives last → the headline rises → the sentence → the button */
 :global(.motion) [data-scene] .mark::before {
   transform: scaleY(0);
-  transition: transform 640ms cubic-bezier(0.65, 0, 0.35, 1) 100ms;
+  transition: transform 500ms var(--ease-draw) 0ms;
 }
 :global(.motion) [data-scene] .symbol path {
   clip-path: inset(0 0 100% 0);
-  transition: clip-path 520ms cubic-bezier(0.65, 0, 0.35, 1) 680ms;
+  transition: clip-path 420ms var(--ease-draw) 380ms;
 }
 :global(.motion) [data-scene] .symbol circle {
   opacity: 0;
@@ -92,8 +96,22 @@
   transform-box: fill-box;
   transform-origin: center;
   transition:
-    opacity 320ms cubic-bezier(0.2, 0, 0, 1) 1180ms,
-    transform 320ms cubic-bezier(0.2, 0, 0, 1) 1180ms;
+    opacity 240ms var(--ease-sys) 780ms,
+    transform 240ms var(--ease-sys) 780ms;
+}
+:global(.motion) [data-scene] .text .title {
+  transition-delay: 640ms;
+}
+:global(.motion) [data-scene] .text .body,
+:global(.motion) [data-scene] .text .action {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 480ms var(--ease-sys) 860ms,
+    transform 480ms var(--ease-sys) 860ms;
+}
+:global(.motion) [data-scene] .text .action {
+  transition-delay: 960ms;
 }
 :global(.motion) [data-scene][data-in] .mark::before {
   transform: none;
@@ -101,7 +119,9 @@
 :global(.motion) [data-scene][data-in] .symbol path {
   clip-path: inset(0);
 }
-:global(.motion) [data-scene][data-in] .symbol circle {
+:global(.motion) [data-scene][data-in] .symbol circle,
+:global(.motion) [data-scene][data-in] .text .body,
+:global(.motion) [data-scene][data-in] .text .action {
   opacity: 1;
   transform: none;
 }
