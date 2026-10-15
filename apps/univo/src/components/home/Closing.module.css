@@ -14,8 +14,11 @@
  * the stem's straight part starts 43 units below the top of the box.
  */
 .mark {
-  --h: clamp(112px, 13vw, 184px);
-  --u: calc(var(--h) / 99);
+  /* one symbol unit, snapped to 1/16 px so the stem (16 units) lands on whole pixels and the
+     incoming line meets it without a seam */
+  --u: clamp(1.125px, 0.13vw, 1.875px);
+  --u: round(down, clamp(1.125px, 0.13vw, 1.875px), 0.0625px);
+  --h: calc(99 * var(--u));
   position: relative;
   align-self: stretch;
   min-height: calc(var(--h) + var(--pad-top) + 24px);
@@ -26,7 +29,7 @@
   position: absolute;
   left: 0;
   top: 0;
-  bottom: calc(var(--h) - 46 * var(--u));
+  bottom: calc(var(--h) - 64 * var(--u));
   width: calc(16 * var(--u));
   background: var(--univo-brand-white);
   transform-origin: top;
