@@ -282,7 +282,14 @@
     grid-column: 6 / -1;
     grid-row: 1 / span 6;
     align-self: start;
-    padding-top: 14px;
+    gap: 40px;
+  }
+  /* desktop: a denser section — less air above and below, the composition closer to the top */
+  .section {
+    padding-block: clamp(72px, 7.5vw, 112px);
+  }
+  .head {
+    margin-bottom: clamp(36px, 4vw, 56px);
   }
   /* equal rows, so the point can travel between them */
   .option {
@@ -321,8 +328,10 @@
 
 /* wide screens: the axis runs horizontally */
 @media (min-width: 1280px) {
-  /* equal steps: the origin point, then one column per part */
+  /* equal steps: the origin point, then one column per part; axis and nodes a size up */
   .axis {
+    --n: 25px;
+    --line: 7px;
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
   .part {

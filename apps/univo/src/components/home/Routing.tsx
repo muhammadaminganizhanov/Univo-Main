@@ -161,12 +161,12 @@ export function Routing({ ctx }: { ctx: LocaleContext }) {
               <text x={ox} y={phone ? oy + 6 : oy + 48} dx={phone ? 30 : 0} className={styles.nodeLabel} textAnchor={phone ? "start" : "middle"}>
                 {h.owner}
               </text>
-              <circle cx={rx} cy={ry} r={20} className={styles.resultIdle} />
+              <circle cx={rx} cy={ry} r={18} className={styles.resultIdle} />
               {TASKS.map((task) => (
                 <g key={task.id} className={styles.act} data-act={task.id}>
                   <path className={styles.actLine} data-a="line" d={path([L.owner, L.result])} pathLength={1} />
                   <circle cx={ox} cy={oy} r={15} className={`${styles.owner} ${styles.actOwner}`} data-a="owner" />
-                  <circle cx={rx} cy={ry} r={22} className={`${styles.result} ${styles.actResult}`} data-a="result" />
+                  <circle cx={rx} cy={ry} r={20} className={`${styles.result} ${styles.actResult}`} data-a="result" />
                 </g>
               ))}
               <text x={rx} y={phone ? ry + 6 : ry - 38} dx={phone ? 36 : 0} className={styles.nodeLabel} textAnchor={phone ? "start" : "end"}>

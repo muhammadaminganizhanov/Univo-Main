@@ -39,7 +39,7 @@ export function Inside({ ctx }: { ctx: LocaleContext }) {
       const trail = Array.from({ length: upto + 1 }, (_, i) => `${on} [data-k="${i}"]`).join(",");
       return (
         `${trail}{--trail:var(--accent-${id});--on:1}${on} [data-k="${upto}"]::before{bottom:50%}` +
-        `${on} [data-row]:not([data-row="${id}"]){opacity:.5}`
+        `${on} [data-row]:not([data-row="${id}"]){opacity:.63}`
       );
     })
     .join("");

@@ -52,8 +52,8 @@
 .pill {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
-  padding: 0 18px;
+  min-height: 40px;
+  padding: 0 15px;
   border: 1.5px solid var(--color-fg);
   border-radius: 999px;
   color: var(--color-fg);
