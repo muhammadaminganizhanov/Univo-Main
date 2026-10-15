@@ -1,0 +1,429 @@
+/*
+ * Standards as a structural rule. The selector is a list of real radios; the chosen standard becomes
+ * an axis from the UNIVO point through every part of the group. Each part's piece of the axis (its
+ * ::before, from the previous node to its own) draws in turn; the node confirms when the rule reaches
+ * it. Without motion the composition is simply shown complete.
+ */
+.section {
+  padding-block: clamp(80px, 9vw, 136px);
+  scroll-margin-top: var(--header-h);
+  overflow-x: clip;
+}
+.head {
+  display: grid;
+  gap: 16px;
+  margin-bottom: clamp(40px, 5vw, 72px);
+}
+.title {
+  max-width: 22ch;
+  color: var(--color-fg);
+  font-size: clamp(1.75rem, 1.2rem + 1.7vw, 2.75rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+.lead {
+  max-width: 44ch;
+  color: var(--color-muted);
+  font-size: var(--text-lead);
+  line-height: 1.45;
+}
+
+/* ── selector ── */
+.board {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.slot {
+  display: contents;
+}
+.radio {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+.option {
+  --on: 0;
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.5em 1fr auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 14px 0;
+  border-top: 1px solid var(--color-rule);
+  color: color-mix(in srgb, var(--color-fg) calc(40% + var(--on) * 60%), transparent);
+  cursor: pointer;
+  transition: color var(--t-hover) var(--ease-sys);
+}
+.option:hover {
+  color: var(--color-fg);
+}
+.radio:focus-visible + .option {
+  outline: 2px solid var(--color-fg);
+  outline-offset: 2px;
+}
+.num {
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  font-variant-numeric: tabular-nums;
+}
+.optName {
+  font-size: clamp(1.375rem, 1rem + 1.2vw, 2.125rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  transform: translateX(calc(var(--on) * 6px));
+  transition: transform var(--t-hover) var(--ease-sys);
+}
+/* the chosen standard carries the UNIVO point — the same point the axis starts from */
+.point {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--univo-brand-tangerine);
+  transform: scale(var(--on));
+  transition: transform var(--t-hover) var(--ease-sys);
+}
+.marker {
+  display: none;
+}
+
+/* ── the composition: rule / axis / check, no surface of its own ── */
+.panel {
+  display: none;
+  align-content: start;
+  gap: clamp(32px, 3.5vw, 48px);
+}
+.label {
+  margin-bottom: 10px;
+  color: var(--color-muted);
+  font-size: var(--text-small);
+}
+.ruleText {
+  max-width: 26ch;
+  color: var(--color-fg);
+  font-size: clamp(1.375rem, 1rem + 1.2vw, 2.125rem);
+  font-weight: 500;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  text-wrap: pretty;
+}
+.checkText {
+  max-width: 42ch;
+  color: var(--color-fg);
+  font-size: 1.125rem;
+  line-height: 1.45;
+}
+
+/* the axis: origin point, then one node per part. The line has the weight of the hero's product arches. */
+.axis {
+  --n: 22px;
+  --line: 6px;
+  position: relative;
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.origin,
+.part {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 14px;
+}
+.originPoint {
+  position: relative;
+  z-index: 1;
+  width: var(--n);
+  height: var(--n);
+  border-radius: 50%;
+  background: var(--univo-brand-tangerine);
+}
+/* the standard is named in the selector, where its point is lit; on the axis the point alone
+   starts the line (the name stays for screen readers) */
+.originName {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  color: var(--color-fg);
+  font-size: clamp(1rem, 0.85rem + 0.35vw, 1.1875rem);
+  font-weight: 600;
+  line-height: 1.2;
+}
+/* the piece of the axis that arrives at this part */
+.part::before {
+  content: "";
+  position: absolute;
+  background: var(--univo-brand-ink);
+  transform-origin: left center;
+}
+.nextPart::before {
+  background: repeating-linear-gradient(90deg, var(--color-muted) 0 3px, transparent 3px 9px);
+}
+.node {
+  position: relative;
+  z-index: 1;
+  width: var(--n);
+  height: var(--n);
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: 0 0 0 var(--ring, 5px) var(--univo-brand-white);
+}
+.node[data-state="launching"] {
+  background: var(--univo-brand-white);
+  box-shadow:
+    inset 0 0 0 calc(var(--n) * 0.2) var(--c),
+    0 0 0 var(--ring, 5px) var(--univo-brand-white);
+}
+.node[data-state="next"] {
+  background: var(--univo-brand-white);
+  border: 2.5px dashed var(--color-muted);
+}
+/* beyond the next part the axis keeps going — off the edge of the screen */
+.nextPart::after {
+  content: "";
+  position: absolute;
+  background: repeating-linear-gradient(90deg, var(--color-muted) 0 3px, transparent 3px 9px);
+}
+.partName {
+  color: var(--color-fg);
+  font-size: clamp(1rem, 0.85rem + 0.35vw, 1.1875rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+.nextPart .partName {
+  max-width: 12ch;
+  color: var(--color-muted);
+  font-weight: 400;
+}
+
+/* the rule passes through the group: each piece draws in turn, each node confirms as it is reached */
+@media (prefers-reduced-motion: no-preference) {
+  /* source → each piece of the axis in turn → each node as the rule reaches it (≈0.8 s);
+     the next part stays open: its piece draws, its node does not confirm */
+  .panel .originPoint {
+    animation: confirm 280ms var(--ease-sys) both;
+  }
+  .panel .part::before {
+    animation: pass 110ms linear both;
+    animation-delay: calc(120ms + (var(--k) - 1) * 110ms);
+  }
+  .panel .part:not(.nextPart) .node {
+    animation: confirm 280ms var(--ease-sys) both;
+    animation-delay: calc(100ms + var(--k) * 110ms);
+  }
+  .panel .ruleText {
+    animation: reveal 520ms var(--ease-sys) both;
+  }
+  .panel .checkText {
+    animation: reveal 480ms var(--ease-sys) 640ms both;
+  }
+}
+@keyframes pass {
+  from {
+    transform: scale(0, 1);
+  }
+}
+@keyframes confirm {
+  from {
+    opacity: 0.25;
+    transform: scale(0.55);
+  }
+}
+@keyframes reveal {
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(8px);
+  }
+  to {
+    clip-path: inset(0 0 -20% 0);
+  }
+}
+
+/* desktop: selector on the left, the composition on the right; the axis runs horizontally */
+@media (min-width: 1024px) {
+  .head {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter);
+    align-items: end;
+  }
+  .title {
+    grid-column: 1 / span 7;
+  }
+  .lead {
+    grid-column: 9 / -1;
+  }
+  .board {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-auto-rows: auto;
+    column-gap: var(--gutter);
+  }
+  .option {
+    grid-column: 1 / span 4;
+    grid-row: calc(var(--i) + 1);
+  }
+  .slot:last-child .option {
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .panel {
+    grid-column: 6 / -1;
+    grid-row: 1 / span 6;
+    align-self: start;
+    gap: 40px;
+  }
+  /* desktop: a denser section — less air above and below, the composition closer to the top */
+  .section {
+    padding-block: clamp(72px, 7.5vw, 112px);
+  }
+  .head {
+    margin-bottom: clamp(36px, 4vw, 56px);
+  }
+  /* equal rows, so the point can travel between them */
+  .option {
+    height: 64px;
+    min-height: 0;
+    padding-block: 0;
+  }
+  .point {
+    display: none;
+  }
+  .marker {
+    position: relative;
+    z-index: 1;
+    display: block;
+    grid-column: 1 / span 4;
+    grid-row: 1;
+    justify-self: end;
+    align-self: start;
+    width: 16px;
+    height: 64px;
+    pointer-events: none;
+    transform: translateY(calc(var(--sel, 0) * 64px));
+    transition: transform var(--t-hover) var(--ease-sys);
+  }
+  .marker::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 24px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--univo-brand-tangerine);
+  }
+}
+
+/* wide screens: the axis runs horizontally */
+@media (min-width: 1280px) {
+  /* equal steps: the origin point, then one column per part; axis and nodes a size up */
+  .axis {
+    --n: 25px;
+    --line: 7px;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  .part {
+    padding-right: 4px;
+  }
+  /* from the previous node's centre to this one's: one column back */
+  .part::before {
+    top: calc((var(--n) - var(--line)) / 2);
+    left: calc(var(--n) / 2 - 100%);
+    width: 100%;
+    height: var(--line);
+  }
+  .nextPart::before {
+    top: calc(var(--n) / 2 - 1px);
+    height: 2px;
+  }
+  .partName {
+    font-size: clamp(0.8125rem, 0.3rem + 0.65vw, 1rem);
+  }
+  .nextPart::after {
+    top: calc((var(--n) - var(--line)) / 2 + 2px);
+    left: calc(var(--n) + 8px);
+    width: 50vw;
+    height: 2px;
+  }
+}
+
+/* phones and tablets: the composition opens under its own standard; the axis turns vertical */
+@media (max-width: 1023.98px) {
+  .panel {
+    gap: 20px;
+    padding: 4px 0 28px;
+  }
+  .axis {
+    --n: 16px;
+    --line: 4px;
+    --ring: 3px;
+  }
+  .slot:last-child .option {
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .slot:last-child .panel {
+    padding-bottom: 0;
+  }
+}
+
+/* narrower screens: the axis turns vertical — beside the rule on small desktops, under it on phones */
+@media (max-width: 1279.98px) {
+  .axis {
+    --step: 44px;
+    grid-auto-rows: var(--step);
+  }
+  .origin,
+  .part {
+    grid-template-columns: var(--n) 1fr;
+    align-items: start;
+    column-gap: 16px;
+  }
+  .partName {
+    margin-top: -2px;
+  }
+  .nextPart .partName {
+    max-width: none;
+  }
+  .part::before {
+    left: calc((var(--n) - var(--line)) / 2);
+    top: calc(var(--n) / 2 - var(--step));
+    width: var(--line);
+    height: var(--step);
+    transform-origin: center top;
+  }
+  .nextPart::before {
+    left: calc(var(--n) / 2 - 1px);
+    width: 2px;
+    background: repeating-linear-gradient(180deg, var(--color-muted) 0 3px, transparent 3px 9px);
+  }
+  .nextPart::after {
+    left: calc((var(--n) - 2px) / 2);
+    top: calc(var(--n) + 6px);
+    width: 2px;
+    height: 28px;
+    background: repeating-linear-gradient(180deg, var(--color-muted) 0 3px, transparent 3px 9px);
+  }
+  @keyframes pass {
+    from {
+      transform: scale(1, 0);
+    }
+  }
+}
+/* small desktops: the vertical axis beside the rule keeps the full node size, so a longer step */
+@media (min-width: 1024px) and (max-width: 1279.98px) {
+  .axis {
+    --step: 54px;
+  }
+}

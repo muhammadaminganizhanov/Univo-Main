@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { EcoMap } from "@/components/ecosystem/EcoMap";
+import { Directions } from "@/components/ecosystem/Directions";
+import { Ending } from "@/components/ecosystem/Ending";
+import { MasterMap } from "@/components/ecosystem/MasterMap";
 import { Products } from "@/components/ecosystem/Products";
-import { ProductionProfile, TechProfile } from "@/components/ecosystem/Profiles";
-import { Together } from "@/components/ecosystem/Together";
-import { EndCta } from "@/components/shared/EndCta";
+import { Standard } from "@/components/ecosystem/Standard";
 import { resolveLocale, type LocaleParams } from "@/lib/params";
-import { ROUTES, localeHref } from "@/lib/routes";
+import { ROUTES } from "@/lib/routes";
 import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ params }: LocaleParams): Promise<Metadata> {
@@ -13,18 +13,16 @@ export async function generateMetadata({ params }: LocaleParams): Promise<Metada
   return pageMetadata({ locale, path: ROUTES.ecosystem, title: t.meta.ecosystem.title, description: t.meta.ecosystem.description });
 }
 
-/** Map → directions (two different profiles) → products → how they work together → end. */
+/** Master map → directions (open lines) → products (closed loops) → the common standard → ending. */
 export default async function EcosystemPage({ params }: LocaleParams) {
   const ctx = await resolveLocale(params);
-  const { t, locale } = ctx;
   return (
     <>
-      <EcoMap ctx={ctx} />
-      <TechProfile ctx={ctx} />
-      <ProductionProfile ctx={ctx} />
+      <MasterMap ctx={ctx} />
+      <Directions ctx={ctx} />
       <Products ctx={ctx} />
-      <Together ctx={ctx} />
-      <EndCta title={t.end.title} body={t.end.body} href={localeHref(locale, ROUTES.contact)} action={t.common.cta.discuss} />
+      <Standard ctx={ctx} />
+      <Ending ctx={ctx} />
     </>
   );
 }

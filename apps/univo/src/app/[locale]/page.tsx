@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { EcosystemIndex } from "@/components/home/EcosystemIndex";
-import { Hero } from "@/components/home/Hero";
-import { SystemWeave } from "@/components/home/SystemWeave";
-import { Workflow } from "@/components/home/Workflow";
-import { EndCta } from "@/components/shared/EndCta";
+import { Inside } from "@/components/home/Inside";
+import { Source } from "@/components/home/Source";
+import { Checks } from "@/components/home/Checks";
+import { Routing } from "@/components/home/Routing";
+import { Closing } from "@/components/home/Closing";
 import { resolveLocale, type LocaleParams } from "@/lib/params";
 import { ROUTES, localeHref } from "@/lib/routes";
 import { pageMetadata } from "@/lib/seo";
@@ -13,23 +13,17 @@ export async function generateMetadata({ params }: LocaleParams): Promise<Metada
   return pageMetadata({ locale, path: "/", title: t.meta.home.title, description: t.meta.home.description, absoluteTitle: true });
 }
 
-/** Source → standard → members → route → end. One narrative, four surfaces. */
+/** Source (stroke) → inside (index) → checks (standards) → routing (one entry) → closing signature. */
 export default async function HomePage({ params }: LocaleParams) {
   const ctx = await resolveLocale(params);
   const { t, locale } = ctx;
   return (
     <>
-      <Hero ctx={ctx} />
-      <SystemWeave ctx={ctx} />
-      <EcosystemIndex ctx={ctx} />
-      <Workflow ctx={ctx} />
-      <EndCta
-        variant="home"
-        title={t.end.title}
-        body={t.end.body}
-        href={localeHref(locale, ROUTES.contact)}
-        action={t.common.cta.discuss}
-      />
+      <Source ctx={ctx} />
+      <Inside ctx={ctx} />
+      <Checks ctx={ctx} />
+      <Routing ctx={ctx} />
+      <Closing title={t.end.title} body={t.end.body} href={localeHref(locale, ROUTES.contact)} action={t.common.cta.discuss} />
     </>
   );
 }

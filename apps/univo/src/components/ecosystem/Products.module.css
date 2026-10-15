@@ -1,183 +1,303 @@
+/*
+ * Products: identity on the left, the product's own figure on the right. Figures are SVG; their names
+ * are HTML set over them at fixed positions (--x / --y, in % of the figure). Phones: the figure at
+ * full width, what sits inside it on larger screens moves below it.
+ */
 .section {
-  padding-block: var(--section-y);
+  padding-block: clamp(56px, 7vw, 104px);
+  scroll-margin-top: var(--header-h);
+  overflow-x: clip;
 }
 .head {
   display: grid;
-  gap: 16px;
-  margin-bottom: clamp(40px, 5vw, 72px);
+  gap: 12px;
+  margin-bottom: clamp(28px, 3.4vw, 48px);
 }
 .title {
-  max-width: 16ch;
+  max-width: 22ch;
+  color: var(--color-fg);
+  font-size: clamp(1.75rem, 1.2rem + 1.7vw, 2.75rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
 }
 .lead {
   max-width: 44ch;
+  color: var(--color-muted);
+  font-size: var(--text-lead);
+  line-height: 1.45;
 }
-/* Each product: identity + its own graphic system. Related by layout, distinct by structure. */
-.block {
-  scroll-margin-top: calc(var(--header-h) + 8px);
+
+.product {
   display: grid;
-  gap: 40px;
-  padding-block: clamp(32px, 4vw, 56px);
-  border-top: 4px solid var(--entity-accent);
+  gap: 28px;
+  scroll-margin-top: calc(var(--header-h) + 24px);
 }
-.block + .block {
-  margin-top: clamp(24px, 3vw, 40px);
+.product + .product {
+  margin-top: clamp(40px, 6vw, 88px);
 }
 .identity {
   display: grid;
   align-content: start;
-  gap: 20px;
+  gap: 10px;
 }
 .id {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 12px 20px;
+  gap: 10px 16px;
+  margin-bottom: 6px;
 }
 .lockup {
-  height: clamp(26px, 2.4vw, 34px);
+  display: block;
   width: auto;
+  overflow: visible;
   color: var(--color-fg);
+  height: 28px;
 }
-.problem {
-  max-width: 16ch;
-  margin-top: 4px;
+.role {
+  max-width: 18ch;
+  color: var(--color-fg);
+  font-size: clamp(1.5rem, 1.15rem + 1.1vw, 2.125rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
 }
 .desc {
-  max-width: 44ch;
+  max-width: 46ch;
+  color: var(--color-text);
+  font-size: 1rem;
+  line-height: 1.5;
 }
 .segments {
+  display: grid;
+  gap: 2px;
   color: var(--color-fg);
-  font-weight: 500;
+  font-size: 0.9375rem;
+  line-height: 1.45;
 }
+.label {
+  color: var(--color-muted);
+  font-size: var(--text-small);
+}
+.cta {
+  display: flex;
+  margin-top: 2px;
+}
+
+/* ── figures ── */
 .system {
-  display: grid;
-  align-content: start;
-  gap: 14px;
+  min-width: 0;
 }
-.ledgerTitle {
-  margin-top: 24px;
+.stage {
+  position: relative;
+  display: grid;
+  gap: 20px;
+  container-type: inline-size;
+}
+.figure {
+  position: relative;
+}
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.entry {
+  fill: var(--c);
+  stroke: var(--color-bg);
+  stroke-width: 5;
+  paint-order: stroke;
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
-/* RETAIL: movement of goods — straight line, square-cornered stops would break the grammar,
-   so nodes stay dots; the line runs on between them like a conveyor. */
+/* RETAIL: the flow is heavy, the way back is light */
 .flow {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px 0;
+  fill: none;
+  stroke: var(--univo-brand-ink);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 1 1;
 }
-.flow li {
-  position: relative;
-  display: grid;
-  gap: 10px;
-  padding-top: 28px;
+/* the way back: clearly the same cycle, still secondary to the flow */
+.back {
+  fill: none;
+  stroke: var(--univo-brand-ink);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 1 1;
 }
-.flow li::before {
-  content: "";
+.closed {
+  fill: none;
+  stroke: var(--c);
+  stroke-width: 1.5;
+  opacity: 0.45;
+}
+.chevron {
+  fill: none;
+  stroke: var(--univo-brand-ink);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+/* on the heavy flow the chevrons are cut into the line */
+.flow ~ .chevron:not(:last-of-type) {
+  stroke: var(--color-bg);
+}
+.stopNode {
+  fill: var(--color-bg);
+  stroke: var(--univo-brand-ink);
+  stroke-width: 4;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.stops {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.stop {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 8px;
-  height: 3px;
-  background: var(--color-fg);
-}
-.flow li:nth-child(even)::before {
-  right: 24px;
-}
-.flowNode {
-  position: absolute;
-  left: 0;
-  top: 2px;
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background: var(--entity-accent);
-  box-shadow: 0 0 0 4px var(--color-bg);
-}
-.flowName {
+  left: var(--x);
+  top: var(--y);
   color: var(--color-fg);
-  font-size: var(--text-h3);
+  font-size: clamp(0.75rem, 2.4cqw, 1.0625rem);
   font-weight: 600;
-  letter-spacing: -0.01em;
+  line-height: 1.2;
+  white-space: nowrap;
+  transform: translate(-50%, calc(-100% - clamp(12px, 3cqw, 20px)));
 }
-.ledger {
-  border-top: 1px solid var(--color-fg);
-}
-.ledger li {
-  display: grid;
-  grid-template-columns: 36px 1fr;
-  align-items: baseline;
-  padding-block: 10px;
-  border-bottom: 1px solid var(--color-rule);
-  color: var(--color-fg);
+/* the last stop sits near the edge: its name ends over its node instead of centring on it */
+.stop:last-child {
+  transform: translate(calc(-100% + 12px), calc(-100% - clamp(12px, 3cqw, 20px)));
 }
 
-/* SLOT: time — an axis of equal slots, taken or free. */
-.axis {
+/* SLOT: one schedule — the stem; lanes of the day; windows taken or free */
+.stem {
+  fill: none;
+  stroke: var(--univo-brand-ink);
+  stroke-width: 4;
+  stroke-dasharray: 1 1;
+}
+.lane {
+  fill: none;
+  stroke: color-mix(in srgb, var(--univo-brand-stone) 60%, transparent);
+  stroke-width: 2;
+  stroke-dasharray: 1 1;
+}
+.taken {
+  fill: var(--univo-brand-ink);
+  transform-box: fill-box;
+  transform-origin: left center;
+}
+.free {
+  fill: var(--color-bg);
+  stroke: color-mix(in srgb, var(--univo-brand-stone) 75%, transparent);
+  stroke-width: 1.5;
+}
+
+.inside {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 4px;
-  padding-block: 14px;
-  border-top: 1px solid var(--color-fg);
-  border-bottom: 1px solid var(--color-rule);
+  gap: 8px;
 }
-.booked,
-.free {
-  display: inline-block;
-  height: 14px;
-  min-width: 14px;
-  border-radius: var(--radius-full);
+.insideTitle {
+  color: var(--color-muted);
+  font-size: var(--text-small);
 }
-.booked {
-  background: var(--entity-accent);
-}
-.free {
-  box-shadow: inset 0 0 0 2px var(--color-control);
+.insideList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-fg);
+  font-size: 0.9375rem;
+  line-height: 1.4;
 }
 .legend {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 6px 20px;
+  color: var(--color-muted);
+  font-size: var(--text-small);
 }
-.legend > span {
+.legendLabel {
+  color: var(--color-fg);
+  font-weight: 500;
+}
+.legendItem {
   display: inline-flex;
   align-items: center;
   gap: 8px;
 }
-.legend .booked,
-.legend .free {
+.keyTaken,
+.keyFree {
+  display: inline-block;
   width: 24px;
-  min-width: 24px;
   height: 10px;
+  border-radius: 5px;
 }
-.schedule {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  border-top: 1px solid var(--color-fg);
+.keyTaken {
+  background: var(--univo-brand-ink);
 }
-.schedule li {
-  padding: 12px 12px 12px 0;
-  border-bottom: 1px solid var(--color-rule);
-  color: var(--color-fg);
-  font-weight: 500;
+.keyFree {
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--univo-brand-stone) 75%, transparent);
 }
 
-@media (min-width: 768px) {
-  .flow {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+/* RETAIL's business control sits inside the cycle from 640 */
+@media (min-width: 640px) {
+  .stage:has([data-figure="retail"]) .inside {
+    position: absolute;
+    left: 50%;
+    top: 47%;
+    width: 56%;
+    justify-items: center;
+    text-align: center;
+    transform: translateX(-50%);
   }
-  .flow li:nth-child(even)::before {
-    right: 0;
-  }
-  .flow li:last-child::before {
-    right: auto;
-    width: 15px;
-  }
-  .schedule {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .stage:has([data-figure="retail"]) .insideList {
+    justify-content: center;
+    font-size: clamp(0.8125rem, 2.2cqw, 1rem);
   }
 }
+@media (max-width: 639.98px) {
+  .figure[data-figure="retail"] {
+    margin-top: 26px;
+  }
+  /* drawn at about half size here: heavier strokes keep the weight */
+  .flow {
+    stroke-width: 9;
+  }
+  .back {
+    stroke-width: 4.5;
+  }
+  .stopNode {
+    stroke-width: 6;
+  }
+  .chevron {
+    stroke-width: 3;
+  }
+  .stem {
+    stroke-width: 6;
+  }
+  .lane {
+    stroke-width: 3;
+  }
+  .free {
+    stroke-width: 2.5;
+  }
+  .entry {
+    stroke-width: 7;
+  }
+}
+
+/* desktop: identity left (5 columns), the figure right */
 @media (min-width: 1024px) {
   .head {
     grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -185,19 +305,130 @@
     align-items: end;
   }
   .title {
-    grid-column: 1 / span 6;
+    grid-column: 1 / span 7;
   }
   .lead {
-    grid-column: 8 / span 5;
+    grid-column: 9 / -1;
   }
-  .block {
+  .product {
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--gutter);
+    align-items: center;
   }
   .identity {
     grid-column: 1 / span 5;
+    gap: 14px;
+  }
+  .lockup {
+    height: 34px;
+  }
+  .desc {
+    font-size: 1.0625rem;
   }
   .system {
     grid-column: 7 / -1;
+  }
+}
+
+/* entrance — once, then rest.
+   RETAIL (≈1.4 s): the entry point → the flow runs warehouse → stock → branches → sales (stops answer
+   as it passes) → the way back under it → the cycle closes at the entry.
+   SLOT (≈1.2 s): the entry point → the schedule's stem → the lanes run left to right, 80 ms apart →
+   the windows appear in time order with small irregular lags; taken ones fill from their start. */
+:global(.motion) [data-scene] .flow,
+:global(.motion) [data-scene] .back,
+:global(.motion) [data-scene] .stem,
+:global(.motion) [data-scene] .lane {
+  stroke-dashoffset: 1;
+}
+:global(.motion) [data-scene] .flow {
+  transition: stroke-dashoffset 700ms cubic-bezier(0.3, 0, 0.2, 1) 200ms;
+}
+:global(.motion) [data-scene] .back {
+  transition: stroke-dashoffset 500ms cubic-bezier(0.3, 0, 0.2, 1) 900ms;
+}
+:global(.motion) [data-scene] .closed {
+  opacity: 0;
+  transition: opacity 300ms ease-out 1400ms;
+}
+:global(.motion) [data-scene] .stem {
+  transition: stroke-dashoffset 240ms ease-out 150ms;
+}
+:global(.motion) [data-scene] .lane {
+  transition: stroke-dashoffset 640ms linear calc(260ms + var(--l) * 80ms);
+}
+:global(.motion) [data-scene] .stopNode {
+  opacity: 0;
+  transform: scale(0.5);
+  transition:
+    opacity 160ms ease-out calc(200ms + var(--at) * 700ms),
+    transform 160ms ease-out calc(200ms + var(--at) * 700ms);
+}
+:global(.motion) [data-scene] .chevron {
+  opacity: 0;
+  transition: opacity 200ms ease-out calc(200ms + var(--at) * 700ms);
+}
+:global(.motion) [data-scene] .entry {
+  opacity: 0;
+  transform: scale(0.5);
+  transition:
+    opacity 200ms ease-out,
+    transform 200ms ease-out;
+}
+:global(.motion) [data-scene] .taken,
+:global(.motion) [data-scene] .free {
+  opacity: 0;
+  transition:
+    opacity 180ms ease-out calc(300ms + var(--i) * 56ms + var(--l) * 80ms + var(--lag)),
+    transform 220ms ease-out calc(300ms + var(--i) * 56ms + var(--l) * 80ms + var(--lag));
+}
+:global(.motion) [data-scene] .taken {
+  transform: scaleX(0.3);
+}
+:global(.motion) [data-scene] .stop,
+:global(.motion) [data-scene] .inside,
+:global(.motion) [data-scene] .legend {
+  opacity: 0;
+  transition: opacity 500ms var(--ease-sys) 600ms;
+}
+:global(.motion) [data-scene][data-in] .flow,
+:global(.motion) [data-scene][data-in] .back,
+:global(.motion) [data-scene][data-in] .stem,
+:global(.motion) [data-scene][data-in] .lane {
+  stroke-dashoffset: 0;
+}
+:global(.motion) [data-scene][data-in] .stopNode,
+:global(.motion) [data-scene][data-in] .entry,
+:global(.motion) [data-scene][data-in] .taken,
+:global(.motion) [data-scene][data-in] .free {
+  opacity: 1;
+  transform: none;
+}
+:global(.motion) [data-scene][data-in] .closed {
+  opacity: 0.45;
+}
+:global(.motion) [data-scene][data-in] .chevron,
+:global(.motion) [data-scene][data-in] .stop,
+:global(.motion) [data-scene][data-in] .inside,
+:global(.motion) [data-scene][data-in] .legend {
+  opacity: 1;
+}
+
+/* phones: copy a step smaller, the figure closer to its copy */
+@media (max-width: 767.98px) {
+  .desc {
+    font-size: 0.9375rem;
+    line-height: 1.45;
+  }
+  .id {
+    margin-bottom: 2px;
+  }
+  .insideList {
+    gap: 2px 16px;
+  }
+}
+@media (max-width: 767.98px) {
+  .section {
+    padding-block: 40px;
   }
 }

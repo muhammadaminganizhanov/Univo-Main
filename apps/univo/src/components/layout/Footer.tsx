@@ -109,30 +109,32 @@ export function Footer({ ctx }: { ctx: LocaleContext }) {
           </div>
         </div>
 
-        {/* Internal pages: the logo closes the page quietly. Home: the full-width wordmark is the final node. */}
-        <div className={styles.ending}>
-          <Logo title="UNIVO" className={styles.wordmark} />
-        </div>
+        {/* The logo closes the page quietly; on Home it shares one line with the copyright. */}
+        <div className={styles.base}>
+          <div className={styles.ending}>
+            <Logo title="UNIVO" className={styles.wordmark} />
+          </div>
 
-        <div className={`t-meta ${styles.bottom}`}>
-          <p>
-            {format(t.common.footer.copyright, { year })}
-            {LEGAL.legalName ? ` · ${LEGAL.legalName}` : null}
-          </p>
-          {LEGAL.privacyPolicyUrl || LEGAL.termsUrl ? (
-            <ul role="list" className={styles.legal}>
-              {LEGAL.privacyPolicyUrl ? (
-                <li>
-                  <a href={LEGAL.privacyPolicyUrl}>{t.common.footer.privacy}</a>
-                </li>
-              ) : null}
-              {LEGAL.termsUrl ? (
-                <li>
-                  <a href={LEGAL.termsUrl}>{t.common.footer.terms}</a>
-                </li>
-              ) : null}
-            </ul>
-          ) : null}
+          <div className={`t-meta ${styles.bottom}`}>
+            <p>
+              {format(t.common.footer.copyright, { year })}
+              {LEGAL.legalName ? ` · ${LEGAL.legalName}` : null}
+            </p>
+            {LEGAL.privacyPolicyUrl || LEGAL.termsUrl ? (
+              <ul role="list" className={styles.legal}>
+                {LEGAL.privacyPolicyUrl ? (
+                  <li>
+                    <a href={LEGAL.privacyPolicyUrl}>{t.common.footer.privacy}</a>
+                  </li>
+                ) : null}
+                {LEGAL.termsUrl ? (
+                  <li>
+                    <a href={LEGAL.termsUrl}>{t.common.footer.terms}</a>
+                  </li>
+                ) : null}
+              </ul>
+            ) : null}
+          </div>
         </div>
       </div>
     </footer>

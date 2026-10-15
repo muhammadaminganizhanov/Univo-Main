@@ -1,0 +1,127 @@
+.end {
+  --pad-top: clamp(80px, 9vw, 136px);
+  padding-block: var(--pad-top) clamp(56px, 6vw, 88px);
+  scroll-margin-top: var(--header-h);
+}
+.grid {
+  display: grid;
+  gap: 40px;
+  align-items: end;
+}
+/*
+ * The mark column reaches up to the top edge of the section. Its ::before is the incoming line:
+ * the symbol's first stem (16 of 112 units wide), continued upwards. Symbol units: viewBox 112 × 99,
+ * the stem's straight part starts 43 units below the top of the box.
+ */
+.mark {
+  /* one symbol unit, snapped to 1/16 px so the stem (16 units) lands on whole pixels and the
+     incoming line meets it without a seam */
+  --u: clamp(1.125px, 0.13vw, 1.875px);
+  --u: round(down, clamp(1.125px, 0.13vw, 1.875px), 0.0625px);
+  --h: calc(99 * var(--u));
+  position: relative;
+  align-self: stretch;
+  min-height: calc(var(--h) + var(--pad-top) + 24px);
+  margin-top: calc(-1 * var(--pad-top));
+}
+.mark::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: calc(var(--h) - 64 * var(--u));
+  width: calc(16 * var(--u));
+  background: var(--univo-brand-white);
+  transform-origin: top;
+}
+.symbol {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: block;
+  width: auto;
+  height: var(--h);
+  color: var(--univo-brand-white);
+}
+.text {
+  display: grid;
+  justify-items: start;
+  gap: 20px;
+}
+.title {
+  max-width: 16ch;
+  color: var(--color-fg);
+  font-size: clamp(2rem, 1.3rem + 2.2vw, 3.5rem);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+.action {
+  display: inline-flex;
+}
+.body {
+  max-width: 34ch;
+  margin-bottom: 8px;
+  color: var(--color-muted);
+  font-size: var(--text-lead);
+  line-height: 1.45;
+}
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter);
+  }
+  .mark {
+    grid-column: 1 / span 5;
+  }
+  .text {
+    grid-column: 7 / -1;
+  }
+}
+
+/* entrance (≈1.1 s, once): the line comes down → the mark continues it from the top → the point
+   arrives last → the headline rises → the sentence → the button */
+:global(.motion) [data-scene] .mark::before {
+  transform: scaleY(0);
+  transition: transform 500ms var(--ease-draw) 0ms;
+}
+:global(.motion) [data-scene] .symbol path {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 420ms var(--ease-draw) 380ms;
+}
+:global(.motion) [data-scene] .symbol circle {
+  opacity: 0;
+  transform: scale(0.4);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    opacity 240ms var(--ease-sys) 780ms,
+    transform 240ms var(--ease-sys) 780ms;
+}
+:global(.motion) [data-scene] .text .title {
+  transition-delay: 640ms;
+}
+:global(.motion) [data-scene] .text .body,
+:global(.motion) [data-scene] .text .action {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 480ms var(--ease-sys) 860ms,
+    transform 480ms var(--ease-sys) 860ms;
+}
+:global(.motion) [data-scene] .text .action {
+  transition-delay: 960ms;
+}
+:global(.motion) [data-scene][data-in] .mark::before {
+  transform: none;
+}
+:global(.motion) [data-scene][data-in] .symbol path {
+  clip-path: inset(0);
+}
+:global(.motion) [data-scene][data-in] .symbol circle,
+:global(.motion) [data-scene][data-in] .text .body,
+:global(.motion) [data-scene][data-in] .text .action {
+  opacity: 1;
+  transform: none;
+}
