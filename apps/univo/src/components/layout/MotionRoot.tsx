@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 /**
  * Motion foundation. The head script adds `html.motion` (only without reduced motion); this marks
@@ -39,3 +39,20 @@ export function MotionRoot() {
 
 /** Runs before paint: enable motion only for people who did not ask for less. Fail-safe after 2.5 s. */
 export const MOTION_HEAD_SCRIPT = `(function(){try{var d=document.documentElement;if(window.matchMedia&&!matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('motion');setTimeout(function(){if(!d.classList.contains('motion-ready'))d.classList.remove('motion')},2500)}}catch(e){}})();`;
+
+/** Set once this document has hydrated: the head script has already run for it. */
+let documentBooted = false;
+
+/**
+ * The motion head script, server-rendered into <head> so it runs before first paint. It is needed once
+ * per document: when the [locale] root layout mounts again on the client (a client-side locale switch),
+ * nothing is rendered — React never runs a <script> it creates on the client, and warns about it.
+ * Server render and hydration render the same element, so there is no mismatch.
+ */
+export function MotionHeadScript() {
+  const [render] = useState(() => !documentBooted);
+  useEffect(() => {
+    documentBooted = true;
+  }, []);
+  return render ? <script dangerouslySetInnerHTML={{ __html: MOTION_HEAD_SCRIPT }} /> : null;
+}

@@ -4,7 +4,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
-import { MOTION_HEAD_SCRIPT, MotionRoot } from "@/components/layout/MotionRoot";
+import { MotionHeadScript, MotionRoot } from "@/components/layout/MotionRoot";
 import { groupSwitcherItems } from "@/lib/group";
 import { resolveLocale, type LocaleParams } from "@/lib/params";
 import { siteOrigin } from "@/lib/seo";
@@ -47,7 +47,7 @@ export default async function LocaleLayout({ children, params }: LocaleParams & 
   return (
     <html lang={htmlLang} className={onest.variable} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: MOTION_HEAD_SCRIPT }} />
+        <MotionHeadScript />
       </head>
       <body>
         <MotionRoot />
