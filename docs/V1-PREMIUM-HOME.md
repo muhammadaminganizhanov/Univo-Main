@@ -91,3 +91,22 @@ as a solar system / signal icon, it is dropped in favour of a refined stroke. (R
 copy in `i18n/ru.ts`, `i18n/en.ts` (`home.hero`, `home.system`, `home.how`); Home-only footer rule in
 `components/layout/Footer.module.css`. Removed: V1 `Hero`, `EcosystemIndex`, `SystemWeave`, `Workflow`,
 `system/Switchback` (Home-only, now unused).
+
+## 8. Art-direction refinement (pass 2)
+
+The approved Home stays the foundation: same sections, copy, routes and meaning. This pass makes the
+UNIVO line one continuous visual language through the page:
+
+| Section | What the line is | Change |
+|---|---|---|
+| Hero | the structure of the group | Lighter stroke (master 14 / directions 10 / products 7). Nodes sit **on** the crests; names are annotations beside them, not text boxed inside arches. Hover/focus: the stroke stays black, the node lights, a short trace of the part's colour climbs to the crest, the other parts step back. |
+| Index | the vertical backbone | Route from UNIVO draws down the spine piece by piece in the part's colour; then node ring, name and arrow answer. Row rules removed (less table). `scroll-margin-top` on Home sections. |
+| Standards | a rule passing through the group | No beige panel and no checklist. Rule → an axis from the UNIVO point through TECH, PRODUCTION, RETAIL, SLOT and the next part → check. Nodes confirm in order as the rule reaches them. Horizontal ≥ 1280; vertical below (and inside the phone accordion). |
+| One entry | the route | Change of task is one ≈1 s sequence: retract → draw from UNIVO → parts light → converge → owner → result. Owner and result have an idle (dashed) state. Step columns made secondary (small, muted). |
+| Closing | resolves into the mark | The line enters from the top edge and becomes the first stem of the UN symbol; the Tangerine point arrives last. |
+| Footer (Home) | — | Compact: map band, then small logo + copyright on one ruled line. Other pages unchanged (wrapper is layout-neutral there). |
+
+Motion foundation (CSS only, `html.motion` / `prefers-reduced-motion`): line draw (hero stroke, index
+spine, closing stem), node signal (scale/opacity, no bounce), route trace (hero crest trace, index
+route), content reveal (`data-reveal` mask on section headings, in `globals.css`), state change
+(standards axis, routing sequence). Without motion every diagram is shown in its final state.

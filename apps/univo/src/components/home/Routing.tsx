@@ -8,6 +8,11 @@ import styles from "./Routing.module.css";
  * parts it needs (the others stay idle), one owner holds it, the result comes out. The route is the
  * brand stroke — round caps, turns by quarter circles. CSS only (radios + :has); the steps below
  * carry the meaning for every reader.
+ *
+ * Changing the task is one short sequence (≈1 s): the previous branches retract, the new ones draw
+ * out of UNIVO, their parts light, the branches converge, the owner takes it, the result comes out.
+ * Owner and result are re-lit per task (one layer per task, shown only for the chosen one), so the
+ * sequence replays on every change. Without motion the final state is simply shown.
  */
 const TASKS = [
   { id: "launch", to: ["tech", "production"] },
@@ -83,7 +88,8 @@ export function Routing({ ctx }: { ctx: LocaleContext }) {
     const on = `#routing:has(#task-${task.id}:checked)`;
     return (
       task.to.map((id) => `${on} [data-to="${id}"]{--live:1}`).join("") +
-      `${on} [data-for="${task.id}"]{display:inline}`
+      `${on} [data-for="${task.id}"]{display:inline}` +
+      `${on} [data-act="${task.id}"]{display:inline}`
     );
   }).join("");
 
@@ -96,7 +102,7 @@ export function Routing({ ctx }: { ctx: LocaleContext }) {
       <svg className={phone ? styles.phone : styles.desktop} viewBox={`0 0 ${L.w} ${L.h}`} aria-hidden="true" focusable="false">
         {/* fixed: task → UNIVO, owner → result */}
         <path className={styles.live} d={path([L.task, L.univo])} />
-        <path className={styles.live} d={path([L.owner, L.result])} />
+        <path className={styles.idle} d={path([L.owner, L.result])} />
         {parts.map((e, i) => {
           const y = L.partYs[i]!;
           const into = path([L.univo, [L.fan, L.univo[1]], [L.fan, y], [L.partX, y]]);
@@ -134,11 +140,18 @@ export function Routing({ ctx }: { ctx: LocaleContext }) {
               <text x={ux} y={phone ? uy + 6 : uy - 38} dx={phone ? 36 : 0} className={styles.nodeLabel} textAnchor={phone ? "start" : "middle"}>
                 {h.router}
               </text>
-              <circle cx={ox} cy={oy} r={15} className={styles.owner} />
+              <circle cx={ox} cy={oy} r={14} className={styles.ownerIdle} />
               <text x={ox} y={phone ? oy + 6 : oy + 48} dx={phone ? 30 : 0} className={styles.nodeLabel} textAnchor={phone ? "start" : "middle"}>
                 {h.owner}
               </text>
-              <circle cx={rx} cy={ry} r={22} className={styles.result} />
+              <circle cx={rx} cy={ry} r={20} className={styles.resultIdle} />
+              {TASKS.map((task) => (
+                <g key={task.id} className={styles.act} data-act={task.id}>
+                  <path className={styles.actLine} d={path([L.owner, L.result])} pathLength={1} />
+                  <circle cx={ox} cy={oy} r={15} className={`${styles.owner} ${styles.actOwner}`} />
+                  <circle cx={rx} cy={ry} r={22} className={`${styles.result} ${styles.actResult}`} />
+                </g>
+              ))}
               <text x={rx} y={phone ? ry + 6 : ry - 38} dx={phone ? 36 : 0} className={styles.nodeLabel} textAnchor={phone ? "start" : "end"}>
                 {h.result}
               </text>
@@ -154,7 +167,7 @@ export function Routing({ ctx }: { ctx: LocaleContext }) {
       <style>{css}</style>
       <div className="container">
         <div className={styles.head}>
-          <h2 id="home-how" className={styles.title}>
+          <h2 id="home-how" className={styles.title} data-reveal>
             {h.title}
           </h2>
           <p className={styles.lead}>{h.lead}</p>

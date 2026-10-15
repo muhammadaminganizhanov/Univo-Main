@@ -1,14 +1,14 @@
 import { getProducts, getServices } from "@univo/content";
-import { Icon } from "@univo/ui";
 import type { CSSProperties } from "react";
 import type { LocaleContext } from "@/i18n";
 import styles from "./Checks.module.css";
 
 /**
- * Signature 2 — the standards as operating checks. Choose one standard; the panel shows its rule, how
- * it is checked, and the check applied to every part of the group at once — including the next one.
- * CSS only (radios + :has). Desktop: selector left, one panel right. Phones: an accordion — the panel
- * opens under the chosen standard.
+ * Signature 2 — the standards as a structural rule. Choose one standard: it becomes an axis that
+ * starts at the UNIVO point and passes through every part of the group, the next one included. Each
+ * part is a node on that axis and confirms the rule by its state — no checklist, no panel. Above the
+ * axis the rule, below it how the rule is checked. CSS only (radios + :has). Desktop: selector left,
+ * a free composition right. Phones: an accordion — the same composition, the axis turned vertical.
  */
 export function Checks({ ctx }: { ctx: LocaleContext }) {
   const { t } = ctx;
@@ -24,7 +24,7 @@ export function Checks({ ctx }: { ctx: LocaleContext }) {
       <style>{css}</style>
       <div className="container">
         <div className={styles.head}>
-          <h2 id="home-standards" className={styles.title}>
+          <h2 id="home-standards" className={styles.title} data-reveal>
             {s.statement}
           </h2>
           <p className={styles.lead}>{s.caption}</p>
@@ -45,39 +45,37 @@ export function Checks({ ctx }: { ctx: LocaleContext }) {
                   <p className={styles.label}>{t.standardsLabels.rule}</p>
                   <p className={styles.ruleText}>{st.text}</p>
                 </div>
-                <div className={styles.check}>
-                  <p className={styles.label}>{t.standardsLabels.check}</p>
-                  <p className={styles.checkText}>
-                    <span className={styles.tick} aria-hidden="true">
-                      <Icon name="check" size={14} />
-                    </span>
-                    {st.check}
-                  </p>
-                </div>
+
                 <div className={styles.applies}>
-                  <p className={styles.label}>{s.applies}</p>
-                  <ul role="list" className={styles.parts}>
+                  <p className="visually-hidden">{s.applies}</p>
+                  <ol role="list" className={styles.axis}>
+                    <li className={styles.origin}>
+                      <span className={styles.originPoint} aria-hidden="true" />
+                      <span className={styles.originName}>{st.title}</span>
+                    </li>
                     {parts.map((e, k) => (
-                      <li key={e.id} className={styles.part} style={{ "--c": `var(${e.accent})`, "--k": k } as CSSProperties}>
+                      <li key={e.id} className={styles.part} style={{ "--c": `var(${e.accent})`, "--k": k + 1 } as CSSProperties}>
                         <span className={styles.node} data-state={e.status === "live" ? "live" : "launching"} aria-hidden="true" />
                         <span className={styles.partName} translate="no">
-                          {e.name}
-                        </span>
-                        <span className={styles.mark}>
-                          <Icon name="check" size={12} />
-                          <span className="visually-hidden">{s.passes}</span>
+                          <span className="visually-hidden">UNIVO </span>
+                          {e.word}
+                          <span className="visually-hidden"> — {s.passes}</span>
                         </span>
                       </li>
                     ))}
-                    <li className={`${styles.part} ${styles.nextPart}`} style={{ "--k": parts.length } as CSSProperties}>
+                    <li className={`${styles.part} ${styles.nextPart}`} style={{ "--k": parts.length + 1 } as CSSProperties}>
                       <span className={styles.node} data-state="next" aria-hidden="true" />
-                      <span className={styles.partName}>{s.next}</span>
-                      <span className={styles.mark}>
-                        <Icon name="check" size={12} />
-                        <span className="visually-hidden">{s.passes}</span>
+                      <span className={styles.partName}>
+                        {s.next}
+                        <span className="visually-hidden"> — {s.passes}</span>
                       </span>
                     </li>
-                  </ul>
+                  </ol>
+                </div>
+
+                <div className={styles.check}>
+                  <p className={styles.label}>{t.standardsLabels.check}</p>
+                  <p className={styles.checkText}>{st.check}</p>
                 </div>
               </div>
             </div>

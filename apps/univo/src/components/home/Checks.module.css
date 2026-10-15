@@ -1,14 +1,18 @@
 /*
- * Standards as operating checks. The selector is a list of real radios; the chosen standard shows
- * its rule, its check and the check applied across the whole group. Each part ticks in order.
+ * Standards as a structural rule. The selector is a list of real radios; the chosen standard becomes
+ * an axis from the UNIVO point through every part of the group. Each part's piece of the axis (its
+ * ::before, from the previous node to its own) draws in turn; the node confirms when the rule reaches
+ * it. Without motion the composition is simply shown complete.
  */
 .section {
   padding-block: clamp(80px, 9vw, 136px);
+  scroll-margin-top: var(--header-h);
+  overflow-x: clip;
 }
 .head {
   display: grid;
   gap: 16px;
-  margin-bottom: clamp(40px, 5vw, 72px);
+  margin-bottom: clamp(48px, 6vw, 88px);
 }
 .title {
   max-width: 22ch;
@@ -26,6 +30,7 @@
   line-height: 1.45;
 }
 
+/* ── selector ── */
 .board {
   display: grid;
   margin: 0;
@@ -53,7 +58,7 @@
   min-height: 64px;
   padding: 14px 0;
   border-top: 1px solid var(--color-rule);
-  color: color-mix(in srgb, var(--color-fg) calc(45% + var(--on) * 55%), transparent);
+  color: color-mix(in srgb, var(--color-fg) calc(40% + var(--on) * 60%), transparent);
   cursor: pointer;
   transition: color var(--univo-duration-content, 320ms) var(--univo-ease, ease);
 }
@@ -75,7 +80,7 @@
   letter-spacing: -0.025em;
   line-height: 1.05;
 }
-/* the chosen standard carries the UNIVO point */
+/* the chosen standard carries the UNIVO point — the same point the axis starts from */
 .point {
   width: 16px;
   height: 16px;
@@ -85,106 +90,156 @@
   transition: transform var(--univo-duration-content, 320ms) var(--univo-ease, ease);
 }
 
+/* ── the composition: rule / axis / check, no surface of its own ── */
 .panel {
   display: none;
-  gap: 28px;
   align-content: start;
-  padding: clamp(24px, 3vw, 40px);
-  background: var(--univo-brand-paper);
+  gap: clamp(36px, 4.5vw, 64px);
 }
 .label {
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   color: var(--color-muted);
   font-size: var(--text-small);
 }
 .ruleText {
-  max-width: 34ch;
+  max-width: 26ch;
   color: var(--color-fg);
-  font-size: clamp(1.25rem, 1rem + 0.8vw, 1.625rem);
+  font-size: clamp(1.375rem, 1rem + 1.2vw, 2.125rem);
   font-weight: 500;
-  line-height: 1.3;
-  letter-spacing: -0.01em;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  text-wrap: pretty;
 }
 .checkText {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  max-width: 46ch;
+  max-width: 42ch;
   color: var(--color-fg);
+  font-size: 1.125rem;
+  line-height: 1.45;
 }
-.tick {
-  flex: none;
+
+/* the axis: origin point, then one node per part. The line has the weight of the hero's product arches. */
+.axis {
+  --n: 22px;
+  --line: 6px;
+  position: relative;
   display: grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--univo-brand-ink);
-  color: var(--univo-brand-white);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
-.parts {
-  display: grid;
-}
+.origin,
 .part {
+  position: relative;
   display: grid;
-  grid-template-columns: 18px 1fr auto;
-  align-items: center;
+  align-content: start;
   gap: 14px;
-  padding-block: 10px;
-  border-top: 1px solid color-mix(in srgb, var(--univo-brand-ink) 10%, transparent);
+}
+.originPoint {
+  position: relative;
+  z-index: 1;
+  width: var(--n);
+  height: var(--n);
+  border-radius: 50%;
+  background: var(--univo-brand-tangerine);
+}
+.originName {
+  color: var(--color-fg);
+  font-size: clamp(1rem, 0.85rem + 0.35vw, 1.1875rem);
+  font-weight: 600;
+  line-height: 1.2;
+}
+/* the piece of the axis that arrives at this part */
+.part::before {
+  content: "";
+  position: absolute;
+  background: var(--univo-brand-ink);
+  transform-origin: left center;
+}
+.nextPart::before {
+  background: repeating-linear-gradient(90deg, var(--color-muted) 0 3px, transparent 3px 9px);
 }
 .node {
-  justify-self: center;
-  width: 12px;
-  height: 12px;
+  position: relative;
+  z-index: 1;
+  width: var(--n);
+  height: var(--n);
   border-radius: 50%;
   background: var(--c);
+  box-shadow: 0 0 0 5px var(--univo-brand-white);
 }
 .node[data-state="launching"] {
-  background: transparent;
-  box-shadow: inset 0 0 0 2.5px var(--c);
+  background: var(--univo-brand-white);
+  box-shadow:
+    inset 0 0 0 4.5px var(--c),
+    0 0 0 5px var(--univo-brand-white);
 }
 .node[data-state="next"] {
-  background: transparent;
-  border: 2px dashed var(--color-muted);
+  background: var(--univo-brand-white);
+  border: 2.5px dashed var(--color-muted);
+}
+/* beyond the next part the axis keeps going — off the edge of the screen */
+.nextPart::after {
+  content: "";
+  position: absolute;
+  background: repeating-linear-gradient(90deg, var(--color-muted) 0 3px, transparent 3px 9px);
 }
 .partName {
   color: var(--color-fg);
-  font-weight: 500;
+  font-size: clamp(1rem, 0.85rem + 0.35vw, 1.1875rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
 }
 .nextPart .partName {
+  max-width: 12ch;
   color: var(--color-muted);
-}
-.mark {
-  display: grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: var(--univo-brand-ink);
-  color: var(--univo-brand-white);
-}
-.nextPart .mark {
-  background: transparent;
-  box-shadow: inset 0 0 0 1.5px var(--color-muted);
-  color: var(--color-muted);
+  font-weight: 400;
 }
 
-/* the checks tick across the group, in order, each time a standard is chosen */
+/* the rule passes through the group: each piece draws in turn, each node confirms as it is reached */
 @media (prefers-reduced-motion: no-preference) {
-  .panel .mark {
-    animation: tick 360ms cubic-bezier(0.2, 0, 0, 1) both;
-    animation-delay: calc(120ms + var(--k) * 70ms);
+  .panel .part::before {
+    animation: pass 150ms linear both;
+    animation-delay: calc(80ms + (var(--k) - 1) * 150ms);
+  }
+  .panel .node {
+    animation: confirm 320ms cubic-bezier(0.2, 0, 0, 1) both;
+    animation-delay: calc(80ms + var(--k) * 150ms - 30ms);
+  }
+  .panel .originPoint {
+    animation: confirm 320ms cubic-bezier(0.2, 0, 0, 1) both;
+  }
+  .panel .ruleText,
+  .panel .checkText {
+    animation: reveal 420ms cubic-bezier(0.2, 0, 0, 1) both;
+  }
+  .panel .checkText {
+    animation-delay: 700ms;
   }
 }
-@keyframes tick {
+@keyframes pass {
+  from {
+    transform: scale(0, 1);
+  }
+}
+@keyframes confirm {
+  from {
+    opacity: 0.25;
+    transform: scale(0.55);
+  }
+}
+@keyframes reveal {
   from {
     opacity: 0;
-    transform: scale(0.4);
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(8px);
+  }
+  to {
+    clip-path: inset(0 0 -20% 0);
   }
 }
 
-/* desktop: selector on the left, one panel on the right */
+/* desktop: selector on the left, the composition on the right; the axis runs horizontally */
 @media (min-width: 1024px) {
   .head {
     grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -203,35 +258,115 @@
     column-gap: var(--gutter);
   }
   .option {
-    grid-column: 1 / span 5;
+    grid-column: 1 / span 4;
     grid-row: calc(var(--i) + 1);
   }
   .slot:last-child .option {
     border-bottom: 1px solid var(--color-rule);
   }
   .panel {
-    grid-column: 7 / -1;
+    grid-column: 6 / -1;
     grid-row: 1 / span 6;
     align-self: start;
-  }
-  .panel[data-panel] {
-    grid-template-columns: 1fr 1fr;
-    column-gap: 32px;
-  }
-  .rule,
-  .applies {
-    grid-column: 1 / -1;
-  }
-  .check {
-    grid-column: 1 / -1;
+    padding-top: 14px;
   }
 }
-/* phones and tablets: the panel opens under its own standard */
+
+/* wide screens: the axis runs horizontally */
+@media (min-width: 1280px) {
+  /* equal steps: the origin point, then one column per part */
+  .axis {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  .part {
+    padding-right: 4px;
+  }
+  /* from the previous node's centre to this one's: one column back */
+  .part::before {
+    top: calc((var(--n) - var(--line)) / 2);
+    left: calc(var(--n) / 2 - 100%);
+    width: 100%;
+    height: var(--line);
+  }
+  .nextPart::before {
+    top: calc(var(--n) / 2 - 1px);
+    height: 2px;
+  }
+  .partName {
+    font-size: clamp(0.8125rem, 0.3rem + 0.65vw, 1rem);
+  }
+  /* the standard is named on the left, where its point is lit; here the point alone starts the axis */
+  .originName {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .nextPart::after {
+    top: calc((var(--n) - var(--line)) / 2 + 2px);
+    left: calc(var(--n) + 8px);
+    width: 50vw;
+    height: 2px;
+  }
+}
+
+/* phones and tablets: the composition opens under its own standard; the axis turns vertical */
 @media (max-width: 1023.98px) {
   .panel {
-    margin-bottom: 8px;
+    gap: 28px;
+    padding: 8px 0 32px;
   }
   .slot:last-child .option {
     border-bottom: 1px solid var(--color-rule);
+  }
+  .slot:last-child .panel {
+    padding-bottom: 0;
+  }
+}
+
+/* narrower screens: the axis turns vertical — beside the rule on small desktops, under it on phones */
+@media (max-width: 1279.98px) {
+  .axis {
+    --step: 56px;
+    grid-auto-rows: var(--step);
+  }
+  .origin,
+  .part {
+    grid-template-columns: var(--n) 1fr;
+    align-items: start;
+    column-gap: 16px;
+  }
+  .partName,
+  .originName {
+    margin-top: -3px;
+  }
+  .nextPart .partName {
+    max-width: none;
+  }
+  .part::before {
+    left: calc((var(--n) - var(--line)) / 2);
+    top: calc(var(--n) / 2 - var(--step));
+    width: var(--line);
+    height: var(--step);
+    transform-origin: center top;
+  }
+  .nextPart::before {
+    left: calc(var(--n) / 2 - 1px);
+    width: 2px;
+    background: repeating-linear-gradient(180deg, var(--color-muted) 0 3px, transparent 3px 9px);
+  }
+  .nextPart::after {
+    left: calc((var(--n) - 2px) / 2);
+    top: calc(var(--n) + 6px);
+    width: 2px;
+    height: 28px;
+    background: repeating-linear-gradient(180deg, var(--color-muted) 0 3px, transparent 3px 9px);
+  }
+  @keyframes pass {
+    from {
+      transform: scale(1, 0);
+    }
   }
 }

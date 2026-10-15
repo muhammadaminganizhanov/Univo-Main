@@ -9,9 +9,10 @@ import styles from "./Inside.module.css";
 
 /**
  * Inside the group — the deeper layer (Ink). One spine runs from the UNIVO source through every part
- * and ends at the open ring of the next one. Focus or hover on a part makes it active: its route from
- * the source along the spine takes its colour, its node grows, the other parts step back but stay
- * readable. Directions are set large; products smaller and indented — they hang from the same spine.
+ * and ends at the open ring of the next one. Focus or hover on a part makes it active: its route is
+ * drawn down the spine from the source, piece after piece, in its colour; then its node, name and
+ * arrow answer. The other parts step back but stay readable. Directions are set large; products
+ * smaller and indented — they hang from the same spine.
  */
 export function Inside({ ctx }: { ctx: LocaleContext }) {
   const { t, locale } = ctx;
@@ -37,7 +38,7 @@ export function Inside({ ctx }: { ctx: LocaleContext }) {
       const on = `#inside:has([data-row="${id}"]:hover,[data-row="${id}"]:focus-visible)`;
       const trail = Array.from({ length: upto + 1 }, (_, i) => `${on} [data-k="${i}"]`).join(",");
       return (
-        `${trail}{--trail:var(--accent-${id})}${on} [data-k="${upto}"]::before{bottom:50%}` +
+        `${trail}{--trail:var(--accent-${id});--on:1}${on} [data-k="${upto}"]::before{bottom:50%}` +
         `${on} [data-row]:not([data-row="${id}"]){opacity:.38}`
       );
     })
@@ -48,21 +49,21 @@ export function Inside({ ctx }: { ctx: LocaleContext }) {
       <style>{css}</style>
       <div className="container">
         <div className={styles.head}>
-          <h2 id="home-ecosystem" className={styles.title}>
+          <h2 id="home-ecosystem" className={styles.title} data-reveal>
             {e.title}
           </h2>
           <p className={styles.lead}>{e.lead}</p>
         </div>
 
         <div className={styles.index}>
-          <p className={styles.source} data-k="0">
+          <p className={styles.source} data-k="0" style={{ "--kk": 0 } as CSSProperties}>
             <span className={styles.sourceDot} aria-hidden="true" />
             <span className={styles.sourceName}>UNIVO</span>
             <span className={styles.sourceRole}>{t.home.hero.sourceRole}</span>
           </p>
           {plan.map((tier) => (
             <section key={tier.id} className={styles.tier} data-tier={tier.id} aria-labelledby={`idx-${tier.id}`}>
-              <div className={styles.tierHead} data-k={tier.head}>
+              <div className={styles.tierHead} data-k={tier.head} style={{ "--kk": tier.head } as CSSProperties}>
                 <h3 id={`idx-${tier.id}`} className={styles.tierTitle}>
                   {tier.title}
                 </h3>
@@ -95,7 +96,7 @@ function Row({ e, ctx, k }: { e: Entity; ctx: LocaleContext; k: number }) {
   const live = e.status === "live";
   const where = e.markets.map((m) => pick(MARKET_LABEL[m], locale)).join(" · ");
   return (
-    <li className={styles.item} data-k={k} style={{ "--c": `var(${e.accent})` } as CSSProperties}>
+    <li className={styles.item} data-k={k} style={{ "--c": `var(${e.accent})`, "--kk": k } as CSSProperties}>
       <Link href={href} className={styles.row} data-row={e.id}>
         <span className={styles.node} data-state={live ? "live" : "launching"} aria-hidden="true" />
         <span className={styles.name} translate="no">

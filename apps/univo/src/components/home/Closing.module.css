@@ -1,15 +1,43 @@
 .end {
-  padding-block: clamp(80px, 9vw, 136px) clamp(56px, 6vw, 88px);
+  --pad-top: clamp(80px, 9vw, 136px);
+  padding-block: var(--pad-top) clamp(56px, 6vw, 88px);
+  scroll-margin-top: var(--header-h);
 }
 .grid {
   display: grid;
   gap: 40px;
   align-items: end;
 }
+/*
+ * The mark column reaches up to the top edge of the section. Its ::before is the incoming line:
+ * the symbol's first stem (16 of 112 units wide), continued upwards. Symbol units: viewBox 112 × 99,
+ * the stem's straight part starts 43 units below the top of the box.
+ */
+.mark {
+  --h: clamp(112px, 13vw, 184px);
+  --u: calc(var(--h) / 99);
+  position: relative;
+  align-self: stretch;
+  min-height: calc(var(--h) + var(--pad-top) + 24px);
+  margin-top: calc(-1 * var(--pad-top));
+}
+.mark::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: calc(var(--h) - 46 * var(--u));
+  width: calc(16 * var(--u));
+  background: var(--univo-brand-white);
+  transform-origin: top;
+}
 .symbol {
+  position: absolute;
+  left: 0;
+  bottom: 0;
   display: block;
   width: auto;
-  height: clamp(120px, 16vw, 232px);
+  height: var(--h);
   color: var(--univo-brand-white);
 }
 .text {
@@ -38,10 +66,39 @@
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--gutter);
   }
-  .symbol {
+  .mark {
     grid-column: 1 / span 5;
   }
   .text {
     grid-column: 7 / -1;
   }
+}
+
+/* entrance: the line comes down, the mark continues it from the top, the point arrives last */
+:global(.motion) [data-scene] .mark::before {
+  transform: scaleY(0);
+  transition: transform 640ms cubic-bezier(0.65, 0, 0.35, 1) 100ms;
+}
+:global(.motion) [data-scene] .symbol path {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 520ms cubic-bezier(0.65, 0, 0.35, 1) 680ms;
+}
+:global(.motion) [data-scene] .symbol circle {
+  opacity: 0;
+  transform: scale(0.4);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    opacity 320ms cubic-bezier(0.2, 0, 0, 1) 1180ms,
+    transform 320ms cubic-bezier(0.2, 0, 0, 1) 1180ms;
+}
+:global(.motion) [data-scene][data-in] .mark::before {
+  transform: none;
+}
+:global(.motion) [data-scene][data-in] .symbol path {
+  clip-path: inset(0);
+}
+:global(.motion) [data-scene][data-in] .symbol circle {
+  opacity: 1;
+  transform: none;
 }
