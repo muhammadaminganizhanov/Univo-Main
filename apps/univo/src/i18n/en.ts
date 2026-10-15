@@ -117,6 +117,17 @@ export const en: Dictionary = {
         { title: "Result", text: "The work is done when you can use it — and it is clear who supports it afterwards." },
       ],
       example: "For example, a launch website and a video: one project, one conversation.",
+      choose: "Choose a task — UNIVO builds the route",
+      tasks: {
+        launch: "A website and a video for a new branch",
+        retail: "Stock and sales across the shops",
+        booking: "Online booking for a salon",
+      },
+      task: "Task",
+      router: "UNIVO",
+      owner: "Owner",
+      result: "Result",
+      idle: "not needed",
     },
   },
 

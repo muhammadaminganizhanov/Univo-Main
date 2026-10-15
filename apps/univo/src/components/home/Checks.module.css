@@ -1,0 +1,237 @@
+/*
+ * Standards as operating checks. The selector is a list of real radios; the chosen standard shows
+ * its rule, its check and the check applied across the whole group. Each part ticks in order.
+ */
+.section {
+  padding-block: clamp(80px, 9vw, 136px);
+}
+.head {
+  display: grid;
+  gap: 16px;
+  margin-bottom: clamp(40px, 5vw, 72px);
+}
+.title {
+  max-width: 22ch;
+  color: var(--color-fg);
+  font-size: clamp(1.75rem, 1.2rem + 1.7vw, 2.75rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+.lead {
+  max-width: 44ch;
+  color: var(--color-muted);
+  font-size: var(--text-lead);
+  line-height: 1.45;
+}
+
+.board {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.slot {
+  display: contents;
+}
+.radio {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+.option {
+  --on: 0;
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.5em 1fr auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 14px 0;
+  border-top: 1px solid var(--color-rule);
+  color: color-mix(in srgb, var(--color-fg) calc(45% + var(--on) * 55%), transparent);
+  cursor: pointer;
+  transition: color var(--univo-duration-content, 320ms) var(--univo-ease, ease);
+}
+.option:hover {
+  color: var(--color-fg);
+}
+.radio:focus-visible + .option {
+  outline: 2px solid var(--color-fg);
+  outline-offset: 2px;
+}
+.num {
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  font-variant-numeric: tabular-nums;
+}
+.optName {
+  font-size: clamp(1.375rem, 1rem + 1.2vw, 2.125rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+}
+/* the chosen standard carries the UNIVO point */
+.point {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--univo-brand-tangerine);
+  transform: scale(var(--on));
+  transition: transform var(--univo-duration-content, 320ms) var(--univo-ease, ease);
+}
+
+.panel {
+  display: none;
+  gap: 28px;
+  align-content: start;
+  padding: clamp(24px, 3vw, 40px);
+  background: var(--univo-brand-paper);
+}
+.label {
+  margin-bottom: 8px;
+  color: var(--color-muted);
+  font-size: var(--text-small);
+}
+.ruleText {
+  max-width: 34ch;
+  color: var(--color-fg);
+  font-size: clamp(1.25rem, 1rem + 0.8vw, 1.625rem);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+.checkText {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  max-width: 46ch;
+  color: var(--color-fg);
+}
+.tick {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--univo-brand-ink);
+  color: var(--univo-brand-white);
+}
+.parts {
+  display: grid;
+}
+.part {
+  display: grid;
+  grid-template-columns: 18px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding-block: 10px;
+  border-top: 1px solid color-mix(in srgb, var(--univo-brand-ink) 10%, transparent);
+}
+.node {
+  justify-self: center;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--c);
+}
+.node[data-state="launching"] {
+  background: transparent;
+  box-shadow: inset 0 0 0 2.5px var(--c);
+}
+.node[data-state="next"] {
+  background: transparent;
+  border: 2px dashed var(--color-muted);
+}
+.partName {
+  color: var(--color-fg);
+  font-weight: 500;
+}
+.nextPart .partName {
+  color: var(--color-muted);
+}
+.mark {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--univo-brand-ink);
+  color: var(--univo-brand-white);
+}
+.nextPart .mark {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--color-muted);
+  color: var(--color-muted);
+}
+
+/* the checks tick across the group, in order, each time a standard is chosen */
+@media (prefers-reduced-motion: no-preference) {
+  .panel .mark {
+    animation: tick 360ms cubic-bezier(0.2, 0, 0, 1) both;
+    animation-delay: calc(120ms + var(--k) * 70ms);
+  }
+}
+@keyframes tick {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+
+/* desktop: selector on the left, one panel on the right */
+@media (min-width: 1024px) {
+  .head {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter);
+    align-items: end;
+  }
+  .title {
+    grid-column: 1 / span 7;
+  }
+  .lead {
+    grid-column: 9 / -1;
+  }
+  .board {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-auto-rows: auto;
+    column-gap: var(--gutter);
+  }
+  .option {
+    grid-column: 1 / span 5;
+    grid-row: calc(var(--i) + 1);
+  }
+  .slot:last-child .option {
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .panel {
+    grid-column: 7 / -1;
+    grid-row: 1 / span 6;
+    align-self: start;
+  }
+  .panel[data-panel] {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 32px;
+  }
+  .rule,
+  .applies {
+    grid-column: 1 / -1;
+  }
+  .check {
+    grid-column: 1 / -1;
+  }
+}
+/* phones and tablets: the panel opens under its own standard */
+@media (max-width: 1023.98px) {
+  .panel {
+    margin-bottom: 8px;
+  }
+  .slot:last-child .option {
+    border-bottom: 1px solid var(--color-rule);
+  }
+}

@@ -64,7 +64,7 @@ function build(services: Entity[], products: Entity[], g: Geo, turn: boolean) {
     rank: "master",
     d: `M${fmt(m([x0, B - g.stem]))} L${fmt(m([x0, B - RV]))} A${RV} ${RV} 0 0 0 ${fmt(m([x0 + RV, B]))}`,
     node: m([x0, B - g.stem - g.weight.master * 1.45]),
-    label: m([x0, B - g.stem]),
+    label: m([x0, B - g.stem - g.weight.master * 1.45]),
   });
   let xL = x0 + 2 * RV;
   const add = (id: string, rank: Part, color?: string, live?: boolean) => {
@@ -119,8 +119,15 @@ export function Source({ ctx }: { ctx: LocaleContext }) {
     const g = mode === "d" ? DESKTOP : PHONE;
     return (
       <svg className={mode === "d" ? styles.svgDesktop : styles.svgPhone} viewBox={`0 0 ${view.w} ${view.h}`} aria-hidden="true" focusable="false">
-        {segs.map((s) => (
-          <path key={s.id} className={s.rank === "next" ? styles.next : styles.stroke} data-rank={s.rank} d={s.d} style={{ strokeWidth: g.weight[s.rank] }} />
+        {segs.map((s, i) => (
+          <path
+            key={s.id}
+            className={s.rank === "next" ? styles.next : styles.stroke}
+            data-rank={s.rank}
+            d={s.d}
+            pathLength={s.rank === "next" ? undefined : 1}
+            style={{ strokeWidth: g.weight[s.rank], "--i": i } as CSSProperties}
+          />
         ))}
         {segs
           .filter((s) => s.color)
@@ -132,7 +139,7 @@ export function Source({ ctx }: { ctx: LocaleContext }) {
           const [cx, cy] = s.node;
           const r = s.rank === "master" ? g.weight.master * 0.95 : g.weight[s.rank] * 1.05;
           return s.rank === "master" ? (
-            <circle key={s.id} className={styles.source} cx={r1(cx)} cy={r1(cy)} r={r} />
+            <circle key={s.id} className={styles.source} data-motion="source" cx={r1(cx)} cy={r1(cy)} r={r} />
           ) : (
             <circle
               key={s.id}
@@ -142,7 +149,7 @@ export function Source({ ctx }: { ctx: LocaleContext }) {
               cx={r1(cx)}
               cy={r1(cy)}
               r={s.live ? r : r - 1.5}
-              style={{ "--c": s.color, strokeWidth: s.live ? 0 : 3.5 } as CSSProperties}
+              style={{ "--c": s.color, strokeWidth: s.live ? 0 : 3.5, "--i": segs.indexOf(s) } as CSSProperties}
             />
           );
         })}

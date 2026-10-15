@@ -66,4 +66,28 @@ as a solar system / signal icon, it is dropped in favour of a refined stroke. (R
 
 ## 6. Decisions log
 
-(filled in while building)
+- **Orbit experiment — rejected.** Built as concentric *n*-arches on one baseline around the source
+  (directions inner, products outer, next dashed). In the browser it read as a rainbow / speedometer /
+  signal icon — the failure the brief names. Replaced by a refined stroke (below).
+- **Hero = the V1 stroke, corrected.** The source stem with the UNIVO point is now the tallest element;
+  directions are high, heavy arches; products lower and lighter; the next part a dashed arch running off
+  the screen. Height and stroke weight carry the rank; each part's name sits inside its own arch.
+  Focus/hover paints that part's arch in its colour; the rest steps back. Phones: the same stroke turned
+  90°, with its own proportions (not a scaled desktop).
+- **Index (Ink) = the inside of the system.** Spine from a UNIVO source; the active part lights its
+  route from the source; directions large, products smaller and indented; others stay readable at 38 %.
+- **Standards = Signature #2.** Radio selector of five standards; the panel shows rule, check and the
+  check ticking across every part including the next one. Phones: accordion under the chosen standard.
+- **One point of entry = Signature #3.** Choose a task (website + video / stock and sales / online
+  booking); the route redraws from UNIVO to the parts that do it; idle parts stay dashed; one owner;
+  result. Phones: vertical route.
+- **Ending.** The UNIVO symbol (u + n + point) as the closing signature beside the action; the footer's
+  giant wordmark on Home was removed (the footer stays compact).
+- No new dependencies, no client JavaScript added: all interaction is CSS (`:has`, radios).
+
+## 7. Files
+
+`components/home/{Source,Inside,Checks,Routing,Closing}.tsx` (+ CSS modules); `app/[locale]/page.tsx`;
+copy in `i18n/ru.ts`, `i18n/en.ts` (`home.hero`, `home.system`, `home.how`); Home-only footer rule in
+`components/layout/Footer.module.css`. Removed: V1 `Hero`, `EcosystemIndex`, `SystemWeave`, `Workflow`,
+`system/Switchback` (Home-only, now unused).
