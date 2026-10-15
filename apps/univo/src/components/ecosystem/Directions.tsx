@@ -8,17 +8,24 @@ import styles from "./Directions.module.css";
 
 /*
  * Directions work on a client's task, so each one is an open line: the task comes in (a thin line to
- * a ring), the direction does the work (the line takes its weight, its colour only for a short run
- * after the node), the result comes out. TECH: task → TECH (what it makes) → result. PRODUCTION:
- * task → PRODUCTION → script → shoot → edit → result (formats). Below, the two lines turn and meet —
- * the u of the wordmark: when a task needs both, it is one project.
+ * a ring), the direction does the work (full weight, its colour only for a short run after its node),
+ * the result comes out. The two lines speak differently: TECH branches — what passes through it, in
+ * three clusters off one line; PRODUCTION runs in sequence — script, shoot, edit.
+ * The culmination: below, the two lines turn and meet at the UNIVO point — the u of the wordmark.
+ * When a task needs both, the client still has one project, one conversation, one owner.
  */
+
+/** TECH's scope, read as three clusters: interfaces · business systems · automation. */
+const TECH_CLUSTERS = [3, 2, 3];
+
 export function Directions({ ctx }: { ctx: LocaleContext }) {
   const { t, locale } = ctx;
   const d = t.ecosystem.directions;
   const tech = getEntity("tech");
   const production = getEntity("production");
   const g = d.together;
+  const scope = pick(tech.scope, locale);
+  const clusters = TECH_CLUSTERS.map((n, i) => scope.slice(TECH_CLUSTERS.slice(0, i).reduce((a, b) => a + b, 0)).slice(0, n));
 
   return (
     <section id="directions" className={styles.section} data-surface="white" data-scene="eco-directions" aria-labelledby="eco-directions">
@@ -31,24 +38,27 @@ export function Directions({ ctx }: { ctx: LocaleContext }) {
         </div>
 
         <div className={styles.pair}>
-          <Lane e={tech} ctx={ctx}>
+          <Lane e={tech} ctx={ctx} label={d.scope}>
             <Step kind="entity" k={1}>
               <span className={styles.stepName} translate="no">
                 {tech.word}
               </span>
-              <span className={styles.outLabel}>{d.scope}</span>
-              <span className={styles.outList}>
-                {pick(tech.scope, locale).map((s) => (
-                  <span key={s}>{s}</span>
-                ))}
-              </span>
             </Step>
-            <Step kind="result" k={2}>
+            {clusters.map((c, i) => (
+              <Step key={i} kind="branch" k={i + 2}>
+                <span className={styles.cluster}>
+                  {c.map((s) => (
+                    <span key={s}>{s}</span>
+                  ))}
+                </span>
+              </Step>
+            ))}
+            <Step kind="result" k={clusters.length + 2}>
               <span className={styles.stepName}>{d.result}</span>
             </Step>
           </Lane>
 
-          <Lane e={production} ctx={ctx}>
+          <Lane e={production} ctx={ctx} label={d.process}>
             <Step kind="entity" k={1}>
               <span className={styles.stepName} translate="no">
                 {production.word}
@@ -61,16 +71,14 @@ export function Directions({ ctx }: { ctx: LocaleContext }) {
             ))}
             <Step kind="result" k={d.processSteps.length + 2}>
               <span className={styles.stepName}>{d.result}</span>
-              <span className={styles.outLabel}>{d.formats}</span>
-              <span className={styles.outList}>
-                {d.formatItems.map((s) => (
-                  <span key={s}>{s}</span>
-                ))}
+              <span className={styles.formats}>
+                <span className="visually-hidden">{d.formats}: </span>
+                {d.formatItems.join(", ")}
               </span>
             </Step>
           </Lane>
 
-          {/* together: the two lines meet in one project */}
+          {/* the culmination: both lines meet at the UNIVO point */}
           <div className={styles.together}>
             <span className={styles.join} aria-hidden="true" />
             <span className={styles.mini} aria-hidden="true">
@@ -79,11 +87,17 @@ export function Directions({ ctx }: { ctx: LocaleContext }) {
             </span>
             <div className={styles.togetherText}>
               <h3 className={styles.togetherTitle}>{g.title}</h3>
+              <p className={styles.outcome}>
+                {g.outcome.map((o) => (
+                  <span key={o}>{o}</span>
+                ))}
+              </p>
               <p className={styles.togetherBody}>{g.text}</p>
               <p className={styles.example}>
-                <span className={styles.exampleTask}>«{g.example}»</span>
-                <span>
-                  {g.project}. {g.projectText}
+                «{g.example}»
+                <span className={styles.exampleParts} translate="no">
+                  <span style={{ "--c": `var(${tech.accent})` } as CSSProperties}>TECH</span>
+                  <span style={{ "--c": `var(${production.accent})` } as CSSProperties}>PRODUCTION</span>
                 </span>
               </p>
             </div>
@@ -94,7 +108,7 @@ export function Directions({ ctx }: { ctx: LocaleContext }) {
   );
 }
 
-function Lane({ e, ctx, children }: { e: Entity; ctx: LocaleContext; children: ReactNode }) {
+function Lane({ e, ctx, label, children }: { e: Entity; ctx: LocaleContext; label: string; children: ReactNode }) {
   const { t, locale } = ctx;
   const d = t.ecosystem.directions;
   const link = resolveEntityLink(e, locale, t);
@@ -115,7 +129,7 @@ function Lane({ e, ctx, children }: { e: Entity; ctx: LocaleContext; children: R
           {!link.available ? <p className={styles.soon}>{t.common.entity.siteSoon}</p> : null}
         </div>
       </div>
-      <ol role="list" className={styles.work} aria-label={d.process}>
+      <ol role="list" className={styles.work} aria-label={label}>
         <Step kind="task" k={0}>
           <span className={styles.taskName}>{d.task}</span>
         </Step>
@@ -125,7 +139,7 @@ function Lane({ e, ctx, children }: { e: Entity; ctx: LocaleContext; children: R
   );
 }
 
-function Step({ kind, k, children }: { kind: "task" | "entity" | "stage" | "result"; k: number; children: ReactNode }) {
+function Step({ kind, k, children }: { kind: "task" | "entity" | "stage" | "branch" | "result"; k: number; children: ReactNode }) {
   return (
     <li className={styles.step} data-kind={kind} style={{ "--k": k } as CSSProperties}>
       <span className={styles.node} aria-hidden="true" />

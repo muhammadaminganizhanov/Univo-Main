@@ -128,3 +128,24 @@
   opacity: 1;
   transform: none;
 }
+
+/* phones: a tighter ending */
+@media (max-width: 767.98px) {
+  .end {
+    padding-block: 48px 40px;
+  }
+  .grid {
+    gap: 22px;
+  }
+}
+@media (max-width: 767.98px) {
+  .grid {
+    gap: 18px;
+  }
+  .entry {
+    padding-bottom: 24px;
+  }
+  .action {
+    margin-top: 10px;
+  }
+}

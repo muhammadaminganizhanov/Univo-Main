@@ -7,43 +7,17 @@ import { resolveEntityLink } from "@/lib/entities";
 import styles from "./Products.module.css";
 
 /*
- * Products are systems a business uses every day, so each one is a closed loop — the u and n of the
- * wordmark joined into one cycle (turns only by semicircles). Its entry point is the product's
- * colour; everything on the loop is black. RETAIL: goods move round it (warehouse → stock → branches →
- * sales → warehouse); inside, business control. SLOT: the loop is a day cut into slots — taken or
- * free (an illustration of the idea, not data); inside, what the schedule is made of.
- * On entrance the loop draws once round from its entry point, then rests.
+ * Products are systems a business uses every day. Same grammar as the rest of the page — line, node,
+ * colour only at the product's own entry point — but each product draws its own logic:
+ * RETAIL is circulation: goods move along one heavy line (warehouse → stock → branches → sales) and
+ * a light arc carries the business back round to the start; business control sits inside the cycle.
+ * SLOT is time: one schedule, several lanes of the day; each lane a cadence of windows, taken or
+ * free (an illustration of the idea, not data).
+ * On entrance each figure plays its logic once — the flow runs and comes back; the windows fill in
+ * time order — then rests.
  */
 
-// one loop for both products: a stadium, radius R, entry at the left apex, running clockwise
-const VW = 640;
-const VH = 300;
-const R = 110;
-const L = { x1: 150, x2: 490, top: 40, bottom: 260, mid: 150 };
-const LOOP = `M${L.x1 - R} ${L.mid} A${R} ${R} 0 0 1 ${L.x1} ${L.top} L${L.x2} ${L.top} A${R} ${R} 0 0 1 ${L.x2} ${L.bottom} L${L.x1} ${L.bottom} A${R} ${R} 0 0 1 ${L.x1 - R} ${L.mid} Z`;
-const ARC = (Math.PI * R) / 2;
-const STRAIGHT = L.x2 - L.x1;
-const TOTAL = 4 * ARC + 2 * STRAIGHT;
-/** Distance along the loop (0…1) of a point on its top or bottom straight. */
-const along = (x: number, side: "top" | "bottom") => (side === "top" ? ARC + (x - L.x1) : 3 * ARC + STRAIGHT + (L.x2 - x)) / TOTAL;
-const pct = (x: number, y: number) => ({ "--x": `${(x / VW) * 100}%`, "--y": `${(y / VH) * 100}%` }) as CSSProperties;
-
-/** Abstract day: which slots are taken, which are free. Illustration of the idea, not data. */
-const DAY = [1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1] as const;
-/** The taken slots as one dash pattern on the loop (pathLength 120: 10 per slot), clear of the entry point. */
-const slotDashes = () => {
-  const out: number[] = [];
-  let gap = 2.4;
-  DAY.forEach((taken, i) => {
-    const start = i === 0 ? 2.4 : 0;
-    if (taken) {
-      out.push(gap, 10 - 1.6 - start);
-      gap = 1.6;
-    } else gap += 10 - start;
-  });
-  // dasharray starts with a dash: lead with an empty one
-  return [0, ...out, gap].join(" ");
-};
+const pct = (x: number, y: number, w: number, h: number) => ({ "--x": `${(x / w) * 100}%`, "--y": `${(y / h) * 100}%` }) as CSSProperties;
 
 export function Products({ ctx }: { ctx: LocaleContext }) {
   const p = ctx.t.ecosystem.products;
@@ -91,129 +65,152 @@ function Product({ e, ctx, figure }: { e: Entity; ctx: LocaleContext; figure: Re
           </ArrowLink>
         </div>
       </div>
-      {figure}
+      <div className={styles.system}>{figure}</div>
     </article>
   );
 }
 
-function Loop({ children, labels, inside, after }: { children?: ReactNode; labels?: ReactNode; inside: ReactNode; after?: ReactNode }) {
-  return (
-    <div className={styles.system}>
-      <div className={styles.stage}>
-        <div className={styles.figure}>
-          <svg className={styles.svg} viewBox={`0 0 ${VW} ${VH}`} aria-hidden="true" focusable="false">
-            {children}
-            <circle className={styles.entry} cx={L.x1 - R} cy={L.mid} r={13} />
-          </svg>
-          {labels}
-        </div>
-        <div className={styles.inside}>{inside}</div>
-      </div>
-      {after}
-    </div>
-  );
-}
+/* ── RETAIL: circulation ── */
+const RW = 580;
+const RH = 214;
+const FLOW_Y = 58;
+const STOPS = [96, 244, 392, 540];
+const FLOW = `M28 ${FLOW_Y} L${STOPS[3]!} ${FLOW_Y}`;
+// the return: from the last stop, round under the flow, back to its start
+const BACK = `M${STOPS[3]!} ${FLOW_Y} A${(STOPS[3]! - 28) / 2} 124 0 0 1 28 ${FLOW_Y}`;
 
-/** RETAIL — goods move round the loop; inside it, the business is kept under control. */
 function Retail({ ctx }: { ctx: LocaleContext }) {
   const e = getEntity("retail");
   const p = ctx.t.ecosystem.products;
   const flow = p.retailFlowSteps;
   const ledger = pick(e.scope, ctx.locale).filter((s) => !flow.includes(s));
-  const stops = [
-    { x: 230, side: "top" },
-    { x: 410, side: "top" },
-    { x: 410, side: "bottom" },
-    { x: 230, side: "bottom" },
-  ] as const;
-  const inside = (
-    <>
-      <p className={styles.insideTitle}>{p.retailLedger}</p>
-      <ul role="list" className={styles.insideList}>
-        {ledger.map((s) => (
-          <li key={s}>{s}</li>
-        ))}
-      </ul>
-    </>
+  // a small technical arrow; --at: when the flow passes it (0…1 along the top line, 1.5 = halfway back)
+  const chevron = (x: number, y: number, dir: 1 | -1, at: number) => (
+    <path key={`${x}-${y}`} className={styles.chevron} d={`M${x - 5 * dir} ${y - 7} L${x + 4 * dir} ${y} L${x - 5 * dir} ${y + 7}`} style={{ "--at": at } as CSSProperties} />
   );
   return (
     <Product
       e={e}
       ctx={ctx}
       figure={
-        <Loop
-          inside={inside}
-          labels={
+        <div className={styles.stage}>
+          <div className={styles.figure} data-figure="retail">
+            <svg className={styles.svg} viewBox={`0 0 ${RW} ${RH}`} aria-hidden="true" focusable="false">
+              <path className={styles.back} d={BACK} pathLength={1} />
+              <path className={styles.flow} d={FLOW} pathLength={1} />
+              {STOPS.slice(0, -1).map((x, i) => chevron((x + STOPS[i + 1]!) / 2, FLOW_Y, 1, ((x + STOPS[i + 1]!) / 2 - 28) / (STOPS[3]! - 28)))}
+              {chevron((STOPS[3]! + 28) / 2, FLOW_Y + 124, -1, 1.5)}
+              {STOPS.map((x) => (
+                <circle key={x} className={styles.stopNode} cx={x} cy={FLOW_Y} r={9} style={{ "--at": (x - 28) / (STOPS[3]! - 28) } as CSSProperties} />
+              ))}
+              {/* the cycle closes where it began */}
+              <circle className={styles.closed} cx={28} cy={FLOW_Y} r={19} />
+              <circle className={styles.entry} cx={28} cy={FLOW_Y} r={12} />
+            </svg>
             <ol role="list" className={styles.stops} aria-label={p.retailFlow}>
-              {flow.map((s, i) => {
-                const stop = stops[i]!;
-                return (
-                  <li key={s} className={styles.stop} data-side={stop.side} style={pct(stop.x, stop.side === "top" ? L.top : L.bottom)}>
-                    {s}
-                  </li>
-                );
-              })}
+              {flow.map((s, i) => (
+                <li key={s} className={styles.stop} style={pct(STOPS[i]!, FLOW_Y, RW, RH)}>
+                  {s}
+                </li>
+              ))}
             </ol>
-          }
-        >
-          <path className={styles.track} d={LOOP} pathLength={1} />
-          {stops.map((stop, i) => (
-            <circle
-              key={i}
-              className={styles.stopNode}
-              cx={stop.x}
-              cy={stop.side === "top" ? L.top : L.bottom}
-              r={8}
-              style={{ "--at": along(stop.x, stop.side) } as CSSProperties}
-            />
-          ))}
-        </Loop>
+          </div>
+          <div className={styles.inside}>
+            <p className={styles.insideTitle}>{p.retailLedger}</p>
+            <ul role="list" className={styles.insideList}>
+              {ledger.map((s) => (
+                <li key={s}>{s}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
       }
     />
   );
 }
 
-/** SLOT — the loop is a day: slots taken and free. Inside it, what the schedule is made of. */
+/* ── SLOT: time ── */
+const SW = 640;
+const SH = 196;
+const STEM_X = 22;
+const LANES = [40, 98, 156];
+const SLOTS = 10;
+const X0 = 56;
+const SLOT_W = (SW - 8 - X0) / SLOTS;
+/** Small irregular offsets (ms) so the day fills like a real schedule, not a checkerboard. */
+const LAG = [
+  [0, 30, 10, 45, 15, 0, 35, 20, 40, 10],
+  [20, 0, 40, 15, 30, 5, 45, 10, 0, 35],
+  [10, 40, 0, 25, 5, 45, 15, 35, 20, 0],
+] as const;
+/** Abstract day, one row per lane: which windows are taken, which are free. Illustration, not data. */
+const DAY = [
+  [1, 1, 0, 1, 0, 0, 1, 1, 0, 1],
+  [0, 1, 1, 0, 1, 1, 0, 0, 1, 0],
+  [1, 0, 0, 1, 1, 0, 1, 0, 1, 1],
+] as const;
+
 function Slot({ ctx }: { ctx: LocaleContext }) {
   const e = getEntity("slot");
   const p = ctx.t.ecosystem.products;
-  const inside = (
-    <>
-      <p className={styles.insideTitle}>{p.slotModules}</p>
-      <ul role="list" className={styles.insideList}>
-        {pick(e.scope, ctx.locale).map((s) => (
-          <li key={s}>{s}</li>
-        ))}
-      </ul>
-    </>
-  );
   return (
     <Product
       e={e}
       ctx={ctx}
       figure={
-        <Loop
-          inside={inside}
-          after={
-            <p className={styles.legend}>
-              <span className={styles.legendLabel}>{p.slotAxis}</span>
-              <span className={styles.legendItem}>
-                <span className={styles.keyTaken} aria-hidden="true" /> {p.slotBooked}
-              </span>
-              <span className={styles.legendItem}>
-                <span className={styles.keyFree} aria-hidden="true" /> {p.slotFree}
-              </span>
-            </p>
-          }
-        >
-          <defs>
-            <mask id="eco-slot-reveal" maskUnits="userSpaceOnUse" x="-20" y="-20" width={VW + 40} height={VH + 40}>
-              <path className={styles.reveal} d={LOOP} pathLength={1} />
-            </mask>
-          </defs>
-          <path className={styles.day} d={LOOP} pathLength={1} />
-          <path className={styles.taken} d={LOOP} pathLength={120} strokeDasharray={slotDashes()} mask="url(#eco-slot-reveal)" />
-        </Loop>
+        <div className={styles.stage}>
+          <div className={styles.figure} data-figure="slot">
+            <svg className={styles.svg} viewBox={`0 0 ${SW} ${SH}`} aria-hidden="true" focusable="false">
+              {/* one schedule: the stem; each lane leaves it with a quarter turn */}
+              <path className={styles.stem} d={`M${STEM_X} ${LANES[0]! + 16} L${STEM_X} ${LANES[2]! - 16}`} pathLength={1} />
+              {LANES.map((y, l) => (
+                <path
+                  key={y}
+                  className={styles.lane}
+                  d={
+                    y === LANES[1]
+                      ? `M${STEM_X} ${y} L${SW - 8} ${y}`
+                      : `M${STEM_X} ${y + (y < LANES[1]! ? 16 : -16)} A16 16 0 0 ${y < LANES[1]! ? 1 : 0} ${STEM_X + 16} ${y} L${SW - 8} ${y}`
+                  }
+                  pathLength={1}
+                  style={{ "--l": l } as CSSProperties}
+                />
+              ))}
+              {DAY.map((row, l) =>
+                row.map((taken, i) => (
+                  <rect
+                    key={`${l}-${i}`}
+                    className={taken ? styles.taken : styles.free}
+                    x={X0 + i * SLOT_W + 4}
+                    y={LANES[l]! - 8}
+                    width={SLOT_W - 8}
+                    height={16}
+                    rx={8}
+                    style={{ "--i": i, "--l": l, "--lag": `${LAG[l]![i]}ms` } as CSSProperties}
+                  />
+                )),
+              )}
+              <circle className={styles.entry} cx={STEM_X} cy={LANES[1]} r={12} />
+            </svg>
+          </div>
+          <p className={styles.legend}>
+            <span className={styles.legendLabel}>{p.slotAxis}</span>
+            <span className={styles.legendItem}>
+              <span className={styles.keyTaken} aria-hidden="true" /> {p.slotBooked}
+            </span>
+            <span className={styles.legendItem}>
+              <span className={styles.keyFree} aria-hidden="true" /> {p.slotFree}
+            </span>
+          </p>
+          <div className={styles.inside} data-plain="">
+            <p className={styles.insideTitle}>{p.slotModules}</p>
+            <ul role="list" className={styles.insideList}>
+              {pick(e.scope, ctx.locale).map((s) => (
+                <li key={s}>{s}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
       }
     />
   );

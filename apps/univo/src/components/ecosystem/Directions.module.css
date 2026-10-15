@@ -1,17 +1,18 @@
 /*
  * Directions: two open lines and the u that joins them. Each step draws its piece of the line (its
  * ::before, from its node down to the next one); the weight changes at the direction's node — thin
- * while the task comes in, full while the work is done. Without motion everything is simply shown.
+ * while the task comes in, full while the work is done. TECH's clusters branch off the line; PRODUCTION's
+ * stages sit on it. Without motion everything is simply shown.
  */
 .section {
-  padding-block: clamp(80px, 9vw, 136px);
+  padding-block: clamp(56px, 7vw, 104px);
   scroll-margin-top: var(--header-h);
   overflow-x: clip;
 }
 .head {
   display: grid;
-  gap: 16px;
-  margin-bottom: clamp(48px, 5.5vw, 80px);
+  gap: 12px;
+  margin-bottom: clamp(28px, 3.4vw, 48px);
 }
 .title {
   max-width: 22ch;
@@ -31,28 +32,28 @@
 
 .pair {
   display: grid;
-  row-gap: 64px;
+  row-gap: 48px;
 }
 .lane {
   --x: 11px; /* the line's centre */
   --nc: 14px; /* a node's centre from the top of its step */
   display: grid;
   align-content: start;
-  gap: 36px;
+  gap: 24px;
   scroll-margin-top: calc(var(--header-h) + 24px);
 }
 .identity {
   display: grid;
   align-content: start;
-  gap: 14px;
+  gap: 10px;
 }
 .lockup {
   display: block;
   width: auto;
   overflow: visible;
   color: var(--color-fg);
-  height: 34px;
-  margin-bottom: 10px;
+  height: 28px;
+  margin-bottom: 8px;
 }
 .role {
   max-width: 18ch;
@@ -66,7 +67,7 @@
 .desc {
   max-width: 46ch;
   color: var(--color-text);
-  font-size: 1.0625rem;
+  font-size: 1rem;
   line-height: 1.5;
 }
 .market {
@@ -77,8 +78,7 @@
 .cta {
   display: grid;
   justify-items: start;
-  gap: 6px;
-  margin-top: 6px;
+  gap: 4px;
 }
 .soon {
   color: var(--color-muted);
@@ -97,8 +97,8 @@
   position: relative;
   display: grid;
   align-content: start;
-  gap: 6px;
-  padding: 0 0 26px 44px;
+  gap: 4px;
+  padding: 0 0 18px 44px;
 }
 .step::before {
   content: "";
@@ -113,19 +113,22 @@
 /* the task comes in: a thin line */
 .step[data-kind="task"] {
   --w: 2px;
-  padding-bottom: 30px;
+  padding-bottom: 20px;
 }
 /* the work: full weight, the direction's colour only for a short run after its node */
 .step[data-kind="entity"]::before {
-  background: linear-gradient(180deg, var(--c) 0 52px, var(--univo-brand-ink) 52px);
+  background: linear-gradient(180deg, var(--c) 0 44px, var(--univo-brand-ink) 44px);
+}
+.step[data-kind="entity"] {
+  padding-bottom: 22px;
 }
 .step[data-kind="stage"] {
-  padding-bottom: 16px;
+  padding-bottom: 12px;
 }
 .step:has(+ [data-kind="result"]) {
   flex-grow: 1;
+  padding-bottom: 22px;
 }
-/* the result: the line ends here (phones) or runs on into the join (desktop) */
 .step[data-kind="result"] {
   padding-bottom: 0;
 }
@@ -161,6 +164,31 @@
   background: var(--univo-brand-ink);
   box-shadow: 0 0 0 5px var(--univo-brand-white);
 }
+/* TECH: a cluster branches off the line — a short stub ending in a small point, not a node on it */
+.step[data-kind="branch"] {
+  padding-bottom: 10px;
+  padding-left: 52px;
+}
+.step[data-kind="branch"] .node {
+  left: calc(var(--x) + 3px);
+  top: calc(var(--nc) - 1.5px);
+  width: 28px;
+  height: 3px;
+  border-radius: 0;
+  background: var(--univo-brand-ink);
+  box-shadow: none;
+  transform-origin: left center;
+}
+.step[data-kind="branch"] .node::after {
+  content: "";
+  position: absolute;
+  right: -4px;
+  top: -3px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--univo-brand-ink);
+}
 .taskName {
   color: var(--color-muted);
   font-size: 0.9375rem;
@@ -177,42 +205,41 @@
   letter-spacing: -0.02em;
 }
 .stageName {
-  color: var(--color-text);
+  color: var(--color-fg);
   font-size: 1.0625rem;
   line-height: calc(var(--nc) * 2);
 }
-.outLabel {
-  margin-top: 4px;
-  color: var(--color-muted);
-  font-size: var(--text-small);
-}
-.outList {
+.cluster {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 22px;
-  max-width: 34rem;
+  gap: 0 18px;
+  padding-top: 2px;
   color: var(--color-fg);
   font-size: 1.0625rem;
-  line-height: 1.35;
+  line-height: 1.5;
+}
+.formats {
+  color: var(--color-muted);
+  font-size: 0.9375rem;
+  line-height: 1.4;
 }
 
-/* ── together ── */
+/* ── the culmination ── */
 .together {
   position: relative;
   display: grid;
-  grid-template-columns: 76px 1fr;
-  column-gap: 16px;
-  align-items: start;
+  gap: 22px;
+  padding-top: 8px;
 }
 .join {
   display: none;
 }
-/* phones: the two directions' lines meet in one — a small join, then the project's node */
+/* phones: the two directions' lines meet in one — a small join into the UNIVO point */
 .mini {
   position: relative;
   width: 34px;
   height: 30px;
-  margin: 6px 0 0 8px;
+  margin: 10px 0 0 8px;
   border: 3px solid var(--univo-brand-ink);
   border-left: 0;
   border-radius: 0 15px 15px 0;
@@ -246,41 +273,66 @@
   position: absolute;
   left: calc(100% + 12px);
   top: 50%;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  background: var(--univo-brand-ink);
+  background: var(--univo-brand-tangerine);
   transform: translateY(-50%);
 }
 .togetherText {
   display: grid;
-  gap: 10px;
+  gap: 12px;
 }
 .togetherTitle {
-  color: var(--color-fg);
-  font-size: clamp(1.375rem, 1.1rem + 0.8vw, 1.75rem);
+  color: var(--color-muted);
+  font-size: var(--text-small);
   font-weight: 600;
-  line-height: 1.12;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.01em;
+}
+/* the point of the section, set as a statement */
+.outcome {
+  display: grid;
+  color: var(--color-fg);
+  font-size: clamp(1.75rem, 1.1rem + 2.2vw, 3.25rem);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
 }
 .togetherBody {
   max-width: 40ch;
+  margin-top: 6px;
   color: var(--color-text);
-  font-size: 1.0625rem;
+  font-size: 1rem;
   line-height: 1.5;
 }
 .example {
-  display: grid;
-  gap: 4px;
-  max-width: 46ch;
-  margin-top: 6px;
-  color: var(--color-muted);
-  font-size: 0.9375rem;
-  line-height: 1.45;
-}
-.exampleTask {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
   color: var(--color-fg);
+  font-size: 0.9375rem;
   font-weight: 500;
+  line-height: 1.4;
+}
+.exampleParts {
+  display: inline-flex;
+  gap: 12px;
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  font-weight: 600;
+}
+.exampleParts span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.exampleParts span::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--c);
 }
 
 /* ═══ Desktop: the two lines side by side, the u joins them ═══ */
@@ -305,27 +357,35 @@
     grid-column: span 6;
     grid-row: span 2;
     grid-template-rows: subgrid;
-    gap: 48px;
+    gap: 32px;
+  }
+  .lockup {
+    height: 34px;
+    margin-bottom: 10px;
   }
   .identity {
+    gap: 14px;
     padding-right: 8%;
+  }
+  .desc {
+    font-size: 1.0625rem;
   }
   /* the result's line runs on into the join */
   .step[data-kind="result"]::before {
-    --w: 3px;
+    --w: 4px;
     display: block;
     height: calc(100% - var(--nc));
     top: var(--nc);
   }
   /* both results end level, whatever comes after them */
   .step[data-kind="result"] {
-    min-height: 100px;
+    min-height: 64px;
     padding-bottom: 8px;
   }
   .together {
     grid-column: 1 / -1;
     display: block;
-    padding-top: 96px;
+    padding-top: 74px;
   }
   .mini {
     display: none;
@@ -334,61 +394,66 @@
   .join {
     position: absolute;
     top: 0;
-    left: calc(11px - 1.5px);
+    left: calc(11px - 2px);
     display: block;
-    width: calc((100% + var(--gutter)) / 2 + 3px);
-    height: 72px;
-    border: 3px solid var(--univo-brand-ink);
+    width: calc((100% + var(--gutter)) / 2 + 4px);
+    height: 52px;
+    border: 4px solid var(--univo-brand-ink);
     border-top: 0;
-    border-radius: 0 0 36px 36px;
+    border-radius: 0 0 32px 32px;
   }
-  /* one project: the node at the base of the u */
+  /* where they meet: the UNIVO point — one project, held by the group */
   .join::after {
     content: "";
     position: absolute;
     left: 50%;
-    bottom: -12.5px;
-    width: 22px;
-    height: 22px;
+    bottom: -15px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
-    background: var(--univo-brand-ink);
+    background: var(--univo-brand-tangerine);
     box-shadow: 0 0 0 6px var(--univo-brand-white);
     transform: translateX(-50%);
   }
   .togetherText {
-    margin-left: calc((100% + var(--gutter)) / 4 + 11px - 11px);
-    max-width: 40rem;
+    margin-left: calc((100% + var(--gutter)) / 4 + 11px - 13px);
+    max-width: 44rem;
+    gap: 14px;
   }
 }
 
-/* ═══ Entrance: each line draws from the task down, nodes resolve as it passes; then the u ═══ */
+/* ═══ Entrance: each line draws from the task down; the clusters and stages follow; then the u ═══ */
 :global(.motion) [data-scene] .step::before {
   transform: scaleY(0);
-  transition: transform 260ms var(--ease-draw) calc(160ms + var(--k) * 150ms);
+  transition: transform 220ms var(--ease-draw) calc(140ms + var(--k) * 110ms);
 }
 :global(.motion) [data-scene] .node {
   opacity: 0;
   transform: scale(0.5);
   transition:
-    opacity 280ms var(--ease-sys) calc(100ms + var(--k) * 150ms),
-    transform 280ms var(--ease-sys) calc(100ms + var(--k) * 150ms);
+    opacity 240ms var(--ease-sys) calc(100ms + var(--k) * 110ms),
+    transform 240ms var(--ease-sys) calc(100ms + var(--k) * 110ms);
+}
+:global(.motion) [data-scene] .step[data-kind="branch"] .node {
+  transform: scaleX(0);
 }
 :global(.motion) [data-scene] .join,
 :global(.motion) [data-scene] .mini {
   clip-path: inset(0 0 100% 0);
-  transition: clip-path var(--t-reveal) var(--ease-draw) 1000ms;
+  transition: clip-path var(--t-reveal) var(--ease-draw) 820ms;
 }
 :global(.motion) [data-scene] .togetherText {
   opacity: 0;
   transform: translateY(8px);
   transition:
-    opacity var(--t-reveal) var(--ease-sys) 1300ms,
-    transform var(--t-reveal) var(--ease-sys) 1300ms;
+    opacity var(--t-reveal) var(--ease-sys) 1100ms,
+    transform var(--t-reveal) var(--ease-sys) 1100ms;
 }
 :global(.motion) [data-scene][data-in] .step::before {
   transform: none;
 }
-:global(.motion) [data-scene][data-in] .node {
+:global(.motion) [data-scene][data-in] .node,
+:global(.motion) [data-scene][data-in] .step[data-kind="branch"] .node {
   opacity: 1;
   transform: none;
 }
@@ -399,4 +464,93 @@
 :global(.motion) [data-scene][data-in] .togetherText {
   opacity: 1;
   transform: none;
+}
+
+/* phones: one tighter rhythm — the same content, less air between its parts */
+@media (max-width: 767.98px) {
+  .section {
+    padding-block: 48px;
+  }
+  .head {
+    margin-bottom: 22px;
+  }
+  .pair {
+    row-gap: 32px;
+  }
+  .lane {
+    gap: 14px;
+  }
+  .identity {
+    gap: 8px;
+  }
+  .lockup {
+    margin-bottom: 4px;
+  }
+  .step[data-kind="task"] {
+    padding-bottom: 14px;
+  }
+  .step[data-kind="entity"] {
+    padding-bottom: 14px;
+  }
+  .step[data-kind="stage"],
+  .step[data-kind="branch"] {
+    padding-bottom: 6px;
+  }
+  .step:has(+ [data-kind="result"]) {
+    padding-bottom: 16px;
+  }
+  .together {
+    gap: 16px;
+  }
+}
+
+/* phones: the same content, set closer — copy a step smaller, clusters denser, the join beside its label */
+@media (max-width: 767.98px) {
+  .desc {
+    font-size: 0.9375rem;
+    line-height: 1.45;
+  }
+  .identity {
+    gap: 6px;
+  }
+  .cluster {
+    gap: 0 14px;
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+  .together {
+    grid-template-columns: 76px 1fr;
+    column-gap: 12px;
+    row-gap: 10px;
+    align-items: center;
+  }
+  .togetherText {
+    display: contents;
+  }
+  .togetherTitle {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .mini {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0 0 0 8px;
+  }
+  .outcome,
+  .togetherBody,
+  .example {
+    grid-column: 1 / -1;
+  }
+  .togetherBody {
+    margin-top: 0;
+  }
+}
+@media (max-width: 767.98px) {
+  .section {
+    padding-block: 40px;
+  }
+  /* a step's line is a little shorter here; the nodes keep their size */
+  .lane {
+    --nc: 12px;
+  }
 }

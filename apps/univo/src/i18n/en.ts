@@ -198,6 +198,7 @@ export const en: Dictionary = {
         example: "A website and a video for a new branch",
         project: "One project",
         projectText: "For the client it is one project and one conversation, not several contractors.",
+        outcome: ["One project.", "One conversation.", "One owner."],
       },
     },
     products: {

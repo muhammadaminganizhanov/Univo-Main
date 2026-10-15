@@ -1,4 +1,4 @@
-import { MARKET_LABEL, STATUS_LABEL, TYPE_LABEL, getEntity, getProducts, getServices, pick, type Entity } from "@univo/content";
+import { MARKET_LABEL, STATUS_LABEL, TYPE_LABEL, getProducts, getServices, pick, type Entity } from "@univo/content";
 import { Icon, Lines } from "@univo/ui";
 import Link from "next/link";
 import type { CSSProperties } from "react";
@@ -32,7 +32,6 @@ const branch = (y: number, to: number, from = y - RT) => `M${AX} ${from} L${AX} 
 export function MasterMap({ ctx }: { ctx: LocaleContext }) {
   const { t, locale } = ctx;
   const m = t.ecosystem.map;
-  const univo = getEntity("univo");
   const tiers = [
     { id: "services", title: m.services, note: m.servicesNote, list: getServices() },
     { id: "products", title: m.products, note: m.productsNote, list: getProducts() },
@@ -50,13 +49,14 @@ export function MasterMap({ ctx }: { ctx: LocaleContext }) {
       .map((e) => {
         const on = `#ecomap:has([data-part="${e.id}"]:hover,[data-part="${e.id}"]:focus-visible)`;
         return (
-          `${on} [data-path="${e.id}"]{stroke-dashoffset:0;transition-delay:80ms}` +
-          `${on} [data-pnode="${e.id}"]{transform:scale(1.3);transition-delay:520ms}` +
+          `${on} [data-path="${e.id}"]{stroke-dashoffset:0;transition-delay:60ms}` +
+          `${on} [data-pnode="${e.id}"]{transform:scale(1.3);transition-delay:300ms}` +
           `${on} [data-pnode]:not([data-pnode="${e.id}"]),${on} [data-part]:not([data-part="${e.id}"]){opacity:.5}` +
           `${on} [data-answer]{opacity:1;transform:none}` +
-          `${on} [data-read="univo"]{opacity:0;visibility:hidden;transform:translateY(-6px);transition-delay:0ms}` +
-          `${on} [data-read="${e.id}"]{opacity:1;visibility:visible;transform:none;transition-delay:280ms}` +
-          `${on} [data-part="${e.id}"] [data-go]{transform:translate(3px,-1px);transition-delay:600ms}`
+          `${on} [data-lead]{opacity:0;transform:translateY(-6px);transition-delay:0ms}` +
+          `${on} [data-read="${e.id}"]{opacity:1;visibility:visible;transform:none;transition-delay:200ms}` +
+          `${on} [data-read="${e.id}"] [class*="readTrace"]{transform:none;transition-delay:240ms}` +
+          `${on} [data-part="${e.id}"] [data-go]{transform:translate(3px,-1px);transition-delay:360ms}`
         );
       })
       .join("") +
@@ -75,37 +75,25 @@ export function MasterMap({ ctx }: { ctx: LocaleContext }) {
       </div>
 
       <div className={`container ${styles.stage}`}>
+        {/* one voice beside the map: the lead by default; on focus/hover, the place of the active part */}
         <div className={styles.aside}>
-          <p className={styles.lead}>{t.ecosystem.intro.lead}</p>
-          {/* the answer: what the active part is and where its link leads (the links themselves carry the text) */}
+          <p className={styles.lead} data-lead="">
+            {t.ecosystem.intro.lead}
+          </p>
           <div className={styles.readout} aria-hidden="true">
-            <div className={styles.read} data-read="univo">
-              <p className={styles.readMeta}>{m.source}</p>
-              <p className={styles.readName}>
-                <span className={styles.readDot} style={{ "--c": `var(${univo.accent})` } as CSSProperties} />
-                UNIVO
-              </p>
-              <p className={styles.readRole}>{pick(univo.shortDescription, locale)}</p>
-              <p className={styles.readText}>{pick(univo.description, locale)}</p>
-            </div>
             {members.map((e) => {
               const link = resolveEntityLink(e, locale, t);
+              const meta = [pick(TYPE_LABEL[e.type], locale), pick(STATUS_LABEL[e.status], locale), ...e.markets.map((mk) => pick(MARKET_LABEL[mk], locale))];
               return (
-                <div key={e.id} className={styles.read} data-read={e.id}>
-                  <p className={styles.readMeta}>
-                    <span>{pick(TYPE_LABEL[e.type], locale)}</span>
-                    <span>{pick(STATUS_LABEL[e.status], locale)}</span>
-                  </p>
-                  <p className={styles.readName}>
-                    <span className={styles.readDot} data-state={e.status === "live" ? "live" : "launching"} style={{ "--c": `var(${e.accent})` } as CSSProperties} />
-                    {e.name}
-                  </p>
+                <div key={e.id} className={styles.read} data-read={e.id} style={{ "--c": `var(${e.accent})` } as CSSProperties}>
+                  <span className={styles.readTrace} data-state={e.status === "live" ? "live" : "launching"} />
+                  <p className={styles.readName}>{e.name}</p>
                   <p className={styles.readRole}>{pick(e.role, locale)}</p>
                   <p className={styles.readText}>{pick(e.shortDescription, locale)}</p>
-                  {e.markets.length ? <p className={styles.readMarket}>{e.markets.map((mk) => pick(MARKET_LABEL[mk], locale)).join(". ")}</p> : null}
+                  <p className={styles.readMeta}>{meta.join(". ")}</p>
                   <p className={styles.readGo}>
-                    <Icon name={link.external ? "arrowUpRight" : "arrowRight"} size={18} />
                     {link.available ? link.label : t.common.entity.siteSoon}
+                    <Icon name={link.external ? "arrowUpRight" : "arrowRight"} size={18} />
                   </p>
                 </div>
               );
