@@ -87,6 +87,7 @@
   margin-top: 2px;
 }
 
+
 /* ── figures ── */
 .system {
   min-width: 0;
@@ -94,7 +95,7 @@
 .stage {
   position: relative;
   display: grid;
-  gap: 20px;
+  gap: 18px;
   container-type: inline-size;
 }
 .figure {
@@ -106,98 +107,286 @@
   height: auto;
   overflow: visible;
 }
-.entry {
-  fill: var(--c);
-  stroke: var(--color-bg);
-  stroke-width: 5;
-  paint-order: stroke;
-  transform-box: fill-box;
-  transform-origin: center;
-}
 
-/* RETAIL: the flow is heavy, the way back is light */
-.flow {
-  fill: none;
-  stroke: var(--univo-brand-ink);
-  stroke-width: 6;
-  stroke-linecap: round;
-  stroke-dasharray: 1 1;
+/* ── RETAIL: three tiers — operations, the one system, control ──
+   --g: the drop from an operation's node to the system line; --d: from the line to a control. */
+.retail {
+  --g: 40px;
+  --d: 28px;
+  --node: 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
 }
-/* the way back: clearly the same cycle, still secondary to the flow */
-.back {
-  fill: none;
-  stroke: var(--univo-brand-ink);
-  stroke-width: 3;
-  stroke-linecap: round;
-  stroke-dasharray: 1 1;
+/* tablets and small desktops: the tiers' names above their rows; the control tier's name goes under
+   its row, so nothing crosses the drops */
+@media (min-width: 640px) and (max-width: 1279.98px) {
+  .retail {
+    --g: 44px;
+    --d: 30px;
+  }
+  .retail .ops {
+    margin: 10px 0 0 28px;
+  }
+  .retail .controls {
+    margin: var(--d) 0 0 28px;
+  }
+  .tier[data-row="control"] {
+    order: 1;
+    margin-top: 14px;
+  }
 }
-.closed {
-  fill: none;
-  stroke: var(--c);
-  stroke-width: 1.5;
-  opacity: 0.45;
+/* wide: the tiers' names in a column of their own, the figure beside them */
+@media (min-width: 1280px) {
+  .retail {
+    grid-template-columns: minmax(0, 6.75rem) minmax(0, 1fr);
+    column-gap: 16px;
+  }
+  .tier[data-row="flow"] {
+    grid-row: 1;
+    align-self: end;
+    padding-bottom: calc(var(--g) + var(--node) / 2 - 0.65em);
+  }
+  .retail {
+    --g: 48px;
+    --d: 32px;
+  }
+  /* the system's entry stands before the first operation */
+  .ops {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .retail .ops {
+    margin: 0 0 0 36px;
+  }
+  .retail .controls {
+    margin: var(--d) 0 0 36px;
+  }
+  .bus {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .tier[data-row="control"] {
+    grid-column: 1;
+    grid-row: 3;
+    margin-top: var(--d);
+    padding-top: 0;
+  }
+  .controls {
+    grid-column: 2;
+    grid-row: 3;
+    margin-top: var(--d);
+  }
 }
-.chevron {
-  fill: none;
-  stroke: var(--univo-brand-ink);
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.tier {
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  font-weight: 600;
+  line-height: 1.3;
 }
-/* on the heavy flow the chevrons are cut into the line */
-.flow ~ .chevron:not(:last-of-type) {
-  stroke: var(--color-bg);
+/* the system's entry stands before the first operation (higher specificity than the list reset) */
+@media (max-width: 639.98px) {
+  .retail .ops {
+    margin: 10px 0 0 28px;
+  }
+  .retail .controls {
+    margin: 10px 0 0;
+  }
 }
-.stopNode {
-  fill: var(--color-bg);
-  stroke: var(--univo-brand-ink);
-  stroke-width: 4;
-  transform-box: fill-box;
-  transform-origin: center;
-}
-.stops {
-  margin: 0;
+/* operations: where things happen — goods move along one heavy line */
+.ops {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 10px 0 0;
   padding: 0;
   list-style: none;
 }
-.stop {
-  position: absolute;
-  left: var(--x);
-  top: var(--y);
+.op {
+  position: relative;
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+  padding-bottom: var(--g);
+}
+.opName {
   color: var(--color-fg);
-  font-size: clamp(0.75rem, 2.4cqw, 1.0625rem);
+  font-size: 1rem;
   font-weight: 600;
   line-height: 1.2;
   white-space: nowrap;
-  transform: translate(-50%, calc(-100% - clamp(12px, 3cqw, 20px)));
 }
-/* the last stop sits near the edge: its name ends over its node instead of centring on it */
-.stop:last-child {
-  transform: translate(calc(-100% + 12px), calc(-100% - clamp(12px, 3cqw, 20px)));
+.opNode {
+  position: relative;
+  z-index: 1;
+  width: var(--node);
+  height: var(--node);
+  border-radius: 50%;
+  background: var(--color-bg);
+  box-shadow: inset 0 0 0 4px var(--univo-brand-ink);
+}
+/* the flow to the next operation, with its direction cut into the line */
+.op:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--node) / 2);
+  bottom: calc(var(--g) + var(--node) / 2 - 3px);
+  width: 100%;
+  height: 6px;
+  background: var(--univo-brand-ink);
+  transform-origin: left center;
+}
+.op:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: calc(50% + var(--node) / 2 - 5px);
+  bottom: calc(var(--g) + var(--node) / 2 - 4px);
+  width: 7px;
+  height: 7px;
+  border-top: 2.5px solid var(--color-bg);
+  border-right: 2.5px solid var(--color-bg);
+  transform: rotate(45deg);
+}
+/* every operation is recorded: a drop from its node to the system line */
+.opNode::after {
+  content: "";
+  position: absolute;
+  left: calc(50% - 1px);
+  top: 100%;
+  width: 2px;
+  height: var(--g);
+  background: var(--univo-brand-ink);
+  transform-origin: center top;
+}
+/* the system: one line under every operation, its entry in the product's colour */
+.bus {
+  position: relative;
+  display: block;
+  height: 4px;
+  margin-top: -2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--c) 0 28px, var(--univo-brand-ink) 28px);
+  transform-origin: left center;
+}
+.bus::before {
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: -6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: 0 0 0 4px var(--color-bg);
+}
+.tier[data-row="control"] {
+  margin-top: 18px;
+}
+/* control: what the owner sees, each hanging from the system */
+.controls {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  column-gap: 12px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.control {
+  position: relative;
+  display: grid;
+  justify-items: start;
+  align-content: start;
+  gap: 8px;
+  color: var(--color-fg);
+  font-size: 0.875rem;
+  line-height: 1.3;
+}
+.controlNode {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--univo-brand-ink);
+}
+.controlNode::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  bottom: 100%;
+  width: 2px;
+  height: var(--d);
+  background: var(--univo-brand-ink);
+  transform-origin: center top;
 }
 
-/* SLOT: one schedule — the stem; lanes of the day; windows taken or free */
-.stem {
+/* ── SLOT: time, the staff's lanes, services booked, windows free, one booking ── */
+.axis {
   fill: none;
   stroke: var(--univo-brand-ink);
-  stroke-width: 4;
+  stroke-width: 2;
   stroke-dasharray: 1 1;
+}
+.tick {
+  stroke: var(--univo-brand-ink);
+  stroke-width: 1.5;
 }
 .lane {
   fill: none;
-  stroke: color-mix(in srgb, var(--univo-brand-stone) 60%, transparent);
+  stroke: color-mix(in srgb, var(--univo-brand-stone) 45%, transparent);
   stroke-width: 2;
   stroke-dasharray: 1 1;
+}
+.laneNode {
+  fill: var(--color-bg);
+  stroke: var(--univo-brand-ink);
+  stroke-width: 3;
 }
 .taken {
   fill: var(--univo-brand-ink);
   transform-box: fill-box;
   transform-origin: left center;
 }
-.free {
+.free,
+.window {
   fill: var(--color-bg);
-  stroke: color-mix(in srgb, var(--univo-brand-stone) 75%, transparent);
+  stroke: color-mix(in srgb, var(--univo-brand-stone) 80%, transparent);
   stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+/* the window a client takes: it fills in the product's colour — a new appointment */
+.booking {
+  fill: var(--c);
+  stroke: var(--c);
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: left center;
+}
+.bookPath {
+  fill: none;
+  stroke: var(--c);
+  stroke-width: 2;
+  stroke-dasharray: 1 1;
+}
+.client {
+  fill: var(--c);
+  stroke: var(--color-bg);
+  stroke-width: 4;
+  paint-order: stroke;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.note {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  color: var(--color-muted);
+  font-size: clamp(0.75rem, 2cqw, 0.875rem);
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  transform: translate(-100%, -50%);
+}
+.note[data-note="client"] {
+  color: var(--color-fg);
+  transform: translate(0, -50%);
 }
 
 .inside {
@@ -247,53 +436,48 @@
   background: var(--univo-brand-ink);
 }
 .keyFree {
-  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--univo-brand-stone) 75%, transparent);
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--univo-brand-stone) 80%, transparent);
 }
 
-/* RETAIL's business control sits inside the cycle from 640 */
-@media (min-width: 640px) {
-  .stage:has([data-figure="retail"]) .inside {
-    position: absolute;
-    left: 50%;
-    top: 47%;
-    width: 56%;
-    justify-items: center;
-    text-align: center;
-    transform: translateX(-50%);
-  }
-  .stage:has([data-figure="retail"]) .insideList {
-    justify-content: center;
-    font-size: clamp(0.8125rem, 2.2cqw, 1rem);
+/* phones: RETAIL's controls become a short column under the system; SLOT's side notes fold away */
+@media (max-width: 1279.98px) {
+  .opName {
+    font-size: 0.875rem;
   }
 }
 @media (max-width: 639.98px) {
-  .figure[data-figure="retail"] {
-    margin-top: 26px;
+  .retail {
+    --g: 28px;
   }
-  /* drawn at about half size here: heavier strokes keep the weight */
-  .flow {
-    stroke-width: 9;
+  .opName {
+    font-size: 0.75rem;
   }
-  .back {
-    stroke-width: 4.5;
+  .controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 10px;
+    padding-left: 0;
   }
-  .stopNode {
-    stroke-width: 6;
+  .control {
+    grid-template-columns: 10px 1fr;
+    align-items: center;
+    gap: 10px;
   }
-  .chevron {
-    stroke-width: 3;
+  .controlNode::before {
+    display: none;
   }
-  .stem {
-    stroke-width: 6;
+  .note[data-note="schedule"],
+  .note[data-note="staff"] {
+    display: none;
   }
-  .lane {
-    stroke-width: 3;
-  }
-  .free {
+  .taken,
+  .free,
+  .window,
+  .booking {
     stroke-width: 2.5;
   }
-  .entry {
-    stroke-width: 7;
+  .lane,
+  .axis {
+    stroke-width: 3;
   }
 }
 
@@ -331,87 +515,118 @@
 }
 
 /* entrance — once, then rest.
-   RETAIL (≈1.4 s): the entry point → the flow runs warehouse → stock → branches → sales (stops answer
-   as it passes) → the way back under it → the cycle closes at the entry.
-   SLOT (≈1.2 s): the entry point → the schedule's stem → the lanes run left to right, 80 ms apart →
-   the windows appear in time order with small irregular lags; taken ones fill from their start. */
-:global(.motion) [data-scene] .flow,
-:global(.motion) [data-scene] .back,
-:global(.motion) [data-scene] .stem,
-:global(.motion) [data-scene] .lane {
+   RETAIL (≈1.3 s): the entry → operations left to right, each drops onto the system as it is reached →
+   the system line runs → the controls hang from it.
+   SLOT (≈1.6 s): the time axis and its cadence → the lanes → booked services and free windows in time
+   order → a client arrives, drops into a free window → the window becomes an appointment. */
+:global(.motion) [data-scene] .opNode,
+:global(.motion) [data-scene] .opName {
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 260ms ease-out calc(120ms + var(--k) * 160ms),
+    transform 260ms ease-out calc(120ms + var(--k) * 160ms);
+}
+:global(.motion) [data-scene] .op:not(:last-child)::before {
+  transform: scaleX(0);
+  transition: transform 180ms linear calc(260ms + var(--k) * 160ms);
+}
+:global(.motion) [data-scene] .opNode::after {
+  transform: scaleY(0);
+  transition: transform 220ms ease-out calc(300ms + var(--k) * 160ms);
+}
+:global(.motion) [data-scene] .bus {
+  transform: scaleX(0);
+  transition: transform 640ms cubic-bezier(0.3, 0, 0.2, 1) 360ms;
+}
+:global(.motion) [data-scene] .control,
+:global(.motion) [data-scene] .tier[data-row="control"] {
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 320ms ease-out calc(900ms + var(--k, 0) * 70ms),
+    transform 320ms ease-out calc(900ms + var(--k, 0) * 70ms);
+}
+:global(.motion) [data-scene] .axis,
+:global(.motion) [data-scene] .lane,
+:global(.motion) [data-scene] .bookPath {
   stroke-dashoffset: 1;
 }
-:global(.motion) [data-scene] .flow {
-  transition: stroke-dashoffset 700ms cubic-bezier(0.3, 0, 0.2, 1) 200ms;
+:global(.motion) [data-scene] .axis {
+  transition: stroke-dashoffset 520ms linear 100ms;
 }
-:global(.motion) [data-scene] .back {
-  transition: stroke-dashoffset 500ms cubic-bezier(0.3, 0, 0.2, 1) 900ms;
-}
-:global(.motion) [data-scene] .closed {
+:global(.motion) [data-scene] .tick {
   opacity: 0;
-  transition: opacity 300ms ease-out 1400ms;
-}
-:global(.motion) [data-scene] .stem {
-  transition: stroke-dashoffset 240ms ease-out 150ms;
+  transition: opacity 200ms ease-out calc(100ms + var(--i) * 48ms);
 }
 :global(.motion) [data-scene] .lane {
-  transition: stroke-dashoffset 640ms linear calc(260ms + var(--l) * 80ms);
+  transition: stroke-dashoffset 520ms linear calc(220ms + var(--l) * 80ms);
 }
-:global(.motion) [data-scene] .stopNode {
+:global(.motion) [data-scene] .laneNode {
   opacity: 0;
-  transform: scale(0.5);
-  transition:
-    opacity 160ms ease-out calc(200ms + var(--at) * 700ms),
-    transform 160ms ease-out calc(200ms + var(--at) * 700ms);
-}
-:global(.motion) [data-scene] .chevron {
-  opacity: 0;
-  transition: opacity 200ms ease-out calc(200ms + var(--at) * 700ms);
-}
-:global(.motion) [data-scene] .entry {
-  opacity: 0;
-  transform: scale(0.5);
-  transition:
-    opacity 200ms ease-out,
-    transform 200ms ease-out;
+  transition: opacity 240ms ease-out calc(220ms + var(--l) * 80ms);
 }
 :global(.motion) [data-scene] .taken,
-:global(.motion) [data-scene] .free {
+:global(.motion) [data-scene] .free,
+:global(.motion) [data-scene] .window {
   opacity: 0;
   transition:
-    opacity 180ms ease-out calc(300ms + var(--i) * 56ms + var(--l) * 80ms + var(--lag)),
-    transform 220ms ease-out calc(300ms + var(--i) * 56ms + var(--l) * 80ms + var(--lag));
+    opacity 200ms ease-out calc(320ms + var(--t) * 52ms + var(--l) * 80ms),
+    transform 240ms ease-out calc(320ms + var(--t) * 52ms + var(--l) * 80ms);
 }
 :global(.motion) [data-scene] .taken {
   transform: scaleX(0.3);
 }
-:global(.motion) [data-scene] .stop,
+:global(.motion) [data-scene] .client {
+  opacity: 0;
+  transform: scale(0.4);
+  transition:
+    opacity 240ms ease-out 1000ms,
+    transform 240ms ease-out 1000ms;
+}
+:global(.motion) [data-scene] .bookPath {
+  transition: stroke-dashoffset 260ms ease-in 1180ms;
+}
+:global(.motion) [data-scene] .booking {
+  transform: scaleX(0);
+  transition: transform 320ms cubic-bezier(0.2, 0, 0, 1) 1420ms;
+}
+:global(.motion) [data-scene] .note,
 :global(.motion) [data-scene] .inside,
 :global(.motion) [data-scene] .legend {
   opacity: 0;
-  transition: opacity 500ms var(--ease-sys) 600ms;
+  transition: opacity 500ms var(--ease-sys) 700ms;
 }
-:global(.motion) [data-scene][data-in] .flow,
-:global(.motion) [data-scene][data-in] .back,
-:global(.motion) [data-scene][data-in] .stem,
-:global(.motion) [data-scene][data-in] .lane {
-  stroke-dashoffset: 0;
+:global(.motion) [data-scene] .note[data-note="client"] {
+  transition-delay: 1100ms;
 }
-:global(.motion) [data-scene][data-in] .stopNode,
-:global(.motion) [data-scene][data-in] .entry,
+:global(.motion) [data-scene][data-in] .opNode,
+:global(.motion) [data-scene][data-in] .opName,
+:global(.motion) [data-scene][data-in] .op:not(:last-child)::before,
+:global(.motion) [data-scene][data-in] .opNode::after,
+:global(.motion) [data-scene][data-in] .bus,
+:global(.motion) [data-scene][data-in] .control,
+:global(.motion) [data-scene][data-in] .tier[data-row="control"],
+:global(.motion) [data-scene][data-in] .tick,
+:global(.motion) [data-scene][data-in] .laneNode,
 :global(.motion) [data-scene][data-in] .taken,
-:global(.motion) [data-scene][data-in] .free {
+:global(.motion) [data-scene][data-in] .free,
+:global(.motion) [data-scene][data-in] .window,
+:global(.motion) [data-scene][data-in] .client,
+:global(.motion) [data-scene][data-in] .booking {
   opacity: 1;
   transform: none;
 }
-:global(.motion) [data-scene][data-in] .closed {
-  opacity: 0.45;
-}
-:global(.motion) [data-scene][data-in] .chevron,
-:global(.motion) [data-scene][data-in] .stop,
+/* the notes only fade: their transform is their placement */
+:global(.motion) [data-scene][data-in] .note,
 :global(.motion) [data-scene][data-in] .inside,
 :global(.motion) [data-scene][data-in] .legend {
   opacity: 1;
+}
+:global(.motion) [data-scene][data-in] .axis,
+:global(.motion) [data-scene][data-in] .lane,
+:global(.motion) [data-scene][data-in] .bookPath {
+  stroke-dashoffset: 0;
 }
 
 /* phones: copy a step smaller, the figure closer to its copy */
@@ -430,5 +645,17 @@
 @media (max-width: 767.98px) {
   .section {
     padding-block: 40px;
+  }
+}
+@media (max-width: 359.98px) {
+  .opName {
+    font-size: 0.6875rem;
+    letter-spacing: -0.01em;
+  }
+}
+/* small desktops: the figure one column wider */
+@media (min-width: 1024px) and (max-width: 1279.98px) {
+  .system {
+    grid-column: 6 / -1;
   }
 }
