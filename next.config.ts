@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
+import { isIndexable } from "./src/shared/config/env";
 
-const indexable = process.env.SITE_ENV === "production" && !!process.env.SITE_URL?.trim();
+const indexable = isIndexable();
 
 const config: NextConfig = {
   reactStrictMode: true,

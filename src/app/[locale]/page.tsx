@@ -7,6 +7,8 @@ import { Closing } from "@/components/home/Closing";
 import { resolveLocale, type LocaleParams } from "@/lib/params";
 import { ROUTES, localeHref } from "@/lib/routes";
 import { pageMetadata } from "@/lib/seo";
+import { pageGraph } from "@/lib/structured-data";
+import { JsonLd } from "@/components/seo/JsonLd";
 
 export async function generateMetadata({ params }: LocaleParams): Promise<Metadata> {
   const { t, locale } = await resolveLocale(params);
@@ -19,6 +21,7 @@ export default async function HomePage({ params }: LocaleParams) {
   const { t, locale } = ctx;
   return (
     <>
+      <JsonLd graph={pageGraph({ locale, t, path: ROUTES.home, title: t.meta.home.title, description: t.meta.home.description })} />
       <Source ctx={ctx} />
       <Inside ctx={ctx} />
       <Checks ctx={ctx} />

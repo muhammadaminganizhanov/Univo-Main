@@ -9,6 +9,8 @@ import { WorkDone } from "@/components/about/WorkDone";
 import { resolveLocale, type LocaleParams } from "@/lib/params";
 import { ROUTES } from "@/lib/routes";
 import { pageMetadata } from "@/lib/seo";
+import { pageGraph } from "@/lib/structured-data";
+import { JsonLd } from "@/components/seo/JsonLd";
 
 export async function generateMetadata({ params }: LocaleParams): Promise<Metadata> {
   const { t, locale } = await resolveLocale(params);
@@ -22,8 +24,10 @@ export async function generateMetadata({ params }: LocaleParams): Promise<Metada
  */
 export default async function AboutPage({ params }: LocaleParams) {
   const ctx = await resolveLocale(params);
+  const { t, locale } = ctx;
   return (
     <>
+      <JsonLd graph={pageGraph({ locale, t, path: ROUTES.about, title: t.meta.about.title, description: t.meta.about.description, crumb: t.common.nav.about, type: "AboutPage" })} />
       <AboutHero ctx={ctx} />
       <Spheres ctx={ctx} />
       <Becoming ctx={ctx} />

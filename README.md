@@ -42,12 +42,16 @@ pnpm qa:visual   # Playwright screenshots + overflow / a11y smoke (needs `pnpm s
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `SITE_ENV` | `staging` | `production` allows indexing **only** together with `SITE_URL` |
-| `SITE_URL` | — | Public origin of the site. Domains are not purchased: never hardcode one |
+| `SITE_ENV` | auto | Unset: Vercel production → `production` (indexed), previews / local → `staging` (noindex) |
+| `SITE_URL` | auto | Public origin. Unset on Vercel production: the project's production domain |
 | `TECH_URL` / `PRODUCTION_URL` / `RETAIL_URL` / `SLOT_URL` | — | External URLs of the independent ecosystem sites. Unset: directions → contact form, products → early-access page |
 | `LEAD_DELIVERY` | `staging` | `staging` validates and discards — UI says so. Any other value = live mode with no adapter → honest failure |
 
 Staging is `noindex, nofollow` three ways: `X-Robots-Tag`, meta robots, `robots.txt`.
+
+SEO: per-page title / description / canonical, hreflang (RU, EN, x-default; KY joins once translated),
+OpenGraph + Twitter cards, `sitemap.xml` with alternates, `robots.txt`, web manifest, and schema.org
+JSON-LD (Organization with its directions and products, WebSite, WebPage types, BreadcrumbList).
 
 ## Architecture & deploy
 

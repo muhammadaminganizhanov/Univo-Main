@@ -5,25 +5,25 @@ export const en: Dictionary = {
   meta: {
     siteName: "UNIVO",
     home: {
-      title: "UNIVO — a group of directions and products",
+      title: "UNIVO — technology, production and our own products",
       description:
-        "UNIVO is the masterbrand of a group: technology, production and its own products for retail and online booking. Different businesses, one standard of work.",
+        "UNIVO is a group of directions and products: digital systems, advertising and content, products for retail and online booking. Different businesses, one standard of work.",
     },
     ecosystem: {
-      title: "Ecosystem",
+      title: "Ecosystem: TECH, PRODUCTION, RETAIL and SLOT",
       description:
-        "UNIVO TECH and UNIVO PRODUCTION directions and the UNIVO RETAIL and UNIVO SLOT products: what each part of the group does and how to reach it.",
+        "The UNIVO TECH (technology and digital systems) and UNIVO PRODUCTION (advertising and content) directions and the UNIVO RETAIL and UNIVO SLOT products: what each part does.",
     },
     about: {
-      title: "About the group",
-      description: "What UNIVO is, what connects the group's different businesses and the standards every part of it works by.",
+      title: "About UNIVO: principles and standards",
+      description: "What UNIVO is, why the group's different businesses carry one name and the five standards every part of it works by.",
     },
     contact: {
-      title: "Discuss a project",
-      description: "One form for the whole UNIVO group: describe the task and we will find the part of the group that solves it.",
+      title: "Discuss a project with UNIVO",
+      description: "One request for the whole UNIVO group: describe the task and leave a contact — we will find the direction that solves it and reply.",
     },
     earlyAccess: {
-      description: "{name} is launching soon. Request early access.",
+      description: "{name} is launching soon. Request early access and we will tell you when it opens.",
     },
     notFound: { title: "Page not found" },
   },

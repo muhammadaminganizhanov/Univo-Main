@@ -9,6 +9,8 @@ import { format, getDictionary } from "@/i18n";
 import { showStagingNote } from "@/lib/delivery";
 import { ROUTES, localeHref } from "@/lib/routes";
 import { pageMetadata } from "@/lib/seo";
+import { pageGraph } from "@/lib/structured-data";
+import { JsonLd } from "@/components/seo/JsonLd";
 import styles from "./product.module.css";
 
 type Params = { params: Promise<{ locale: string; product: string }> };
@@ -28,12 +30,18 @@ async function resolve(params: Params["params"]) {
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { ctx, entity } = await resolve(params);
-  return pageMetadata({
+  return pageMetadata(productMeta(ctx, entity));
+}
+
+function productMeta(ctx: ReturnType<typeof getDictionary>, entity: NonNullable<ReturnType<typeof getEntityBySlug>>) {
+  return {
     locale: ctx.locale,
     path: `/ecosystem/${entity.slug}`,
     title: `${entity.name} — ${pick(entity.role, ctx.locale)}`,
     description: format(ctx.t.meta.earlyAccess.description, { name: entity.name }),
-  });
+    // the name already carries "UNIVO": no "— UNIVO" suffix
+    absoluteTitle: true,
+  };
 }
 
 export default async function ProductPage({ params }: Params) {
@@ -43,6 +51,7 @@ export default async function ProductPage({ params }: Params) {
 
   return (
     <div className={`container ${styles.page}`}>
+      <JsonLd graph={pageGraph({ ...productMeta(ctx, entity), t, crumb: entity.name, trail: [{ name: t.common.nav.ecosystem, path: ROUTES.ecosystem }] })} />
       <div className={styles.back}>
         <ArrowLink href={`${localeHref(locale, ROUTES.ecosystem)}#${entity.slug}`} icon="arrowLeft">
           {t.earlyAccess.back}

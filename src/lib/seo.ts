@@ -40,6 +40,7 @@ export function pageMetadata({
       description,
       url: localeHref(locale, path),
       locale: LOCALE_META[locale].ogLocale,
+      alternateLocale: indexableLocales().filter((l) => l !== locale).map((l) => LOCALE_META[l].ogLocale),
       images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "UNIVO" }],
     },
     twitter: { card: "summary_large_image", title, description, images: ["/og-image.png"] },

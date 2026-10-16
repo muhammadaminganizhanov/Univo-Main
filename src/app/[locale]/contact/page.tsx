@@ -10,6 +10,8 @@ import { resolveEntityLink } from "@/lib/entities";
 import { resolveLocale } from "@/lib/params";
 import { ROUTES, localeHref } from "@/lib/routes";
 import { pageMetadata } from "@/lib/seo";
+import { pageGraph } from "@/lib/structured-data";
+import { JsonLd } from "@/components/seo/JsonLd";
 import styles from "./contact.module.css";
 
 type Props = {
@@ -38,6 +40,7 @@ export default async function ContactPage({ params, searchParams }: Props) {
 
   return (
     <div className={styles.page} data-surface="paper">
+      <JsonLd graph={pageGraph({ locale, t, path: ROUTES.contact, title: t.meta.contact.title, description: t.meta.contact.description, crumb: t.common.nav.contact, type: "ContactPage" })} />
       <div className={`container ${styles.layout}`}>
         <header className={styles.head}>
           <h1 id="page-title" className={styles.title}>
