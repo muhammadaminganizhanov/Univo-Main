@@ -5,16 +5,18 @@ this site only links to them.
 Brand source of truth: **UNIVO Brand Book v1.2.2 (APPROVED, 13.10.2026)**.
 
 ```
-apps/
-  univo/        The website                                  :3100
-packages/
-  brand/        Tokens (Brand Book master tokens + web roles), Onest, logo / symbol / lockups
-  config/       Locales, environment (SITE_ENV / URLs), contacts, legal
-  content/      Ecosystem model (entities, statuses, accents) + shared labels
-  ui/           Shared primitives: buttons, fields, status, notice, line+dot, group switcher
-  leads/        Lead model, server-side validation, delivery abstraction (staging only)
-docs/
-  ARCHITECTURE.md · ART-DIRECTION.md
+src/
+  app/          Pages (Next.js App Router): /[locale], /ecosystem, /about, /contact
+  components/   Site sections and forms
+  i18n/         RU / EN / KY dictionaries
+  lib/          Routes, SEO, entity links
+  shared/       brand (tokens, logo, Onest) · config (locales, env, contacts) · content (ecosystem
+                model) · ui (buttons, fields, primitives) · leads (lead validation, delivery)
+public/         Icons, OG image
+assets/brand/   Master brand files (tokens, icons)
+scripts/        Visual QA, brand generators
+tests/          node:test — lead validation, wordmark geometry
+docs/           ARCHITECTURE.md · ART-DIRECTION.md
 ```
 
 ## Run
@@ -22,7 +24,7 @@ docs/
 ```bash
 corepack enable            # pnpm via corepack (packageManager pinned)
 pnpm install
-cp .env.example apps/univo/.env.local   # optional
+cp .env.example .env.local   # optional
 pnpm dev                   # http://localhost:3100 (redirects to /ru)
 ```
 
@@ -30,7 +32,7 @@ pnpm dev                   # http://localhost:3100 (redirects to /ru)
 
 ```bash
 pnpm lint        # ESLint (next/core-web-vitals + typescript)
-pnpm typecheck   # tsc in every workspace
+pnpm typecheck   # tsc
 pnpm test        # node:test — lead validation & staging delivery
 pnpm build       # production build
 pnpm qa:visual   # Playwright screenshots + overflow / a11y smoke (needs `pnpm start` running)
@@ -49,13 +51,12 @@ Staging is `noindex, nofollow` three ways: `X-Robots-Tag`, meta robots, `robots.
 
 ## Architecture & deploy
 
-One frontend: `apps/univo`. Every other entity (TECH, PRODUCTION, RETAIL, SLOT) is an independent website
+One Next.js site. Every other entity (TECH, PRODUCTION, RETAIL, SLOT) is an independent website
 with its own domain, repository/deploy and SEO. This site presents the ecosystem and links out with
-ordinary external links (`TECH_URL`, … — one config: `getEcosystemUrl` in `@univo/config`).
+ordinary external links (`TECH_URL`, … — one config: `getEcosystemUrl` in `src/shared/config`).
 No microfrontends, no shared runtime, no `vercel.json` services.
 
-`packages/*` are build-time libraries (tokens, logo, Onest, locales, ecosystem data, UI primitives,
-lead validation) compiled into the site.
+`src/shared/*` holds brand, config, content, UI and lead code, imported as `@univo/*` (tsconfig paths).
 
-Vercel: one project — import the repo, **Root Directory** `apps/univo`, framework Next.js; Vercel installs
-the pnpm workspace from the repo root. Env vars: see `.env.example`.
+Vercel: import the repo as one Next.js project — Root Directory is the repo root, no `vercel.json`.
+Env vars: see `.env.example`.

@@ -1,4 +1,4 @@
-@import "@univo/brand/base.css";
+@import "../shared/brand/base.css";
 
 /* ── Layout primitives (master site) ─────────────────────────────────── */
 @media (min-width: 1024px) {

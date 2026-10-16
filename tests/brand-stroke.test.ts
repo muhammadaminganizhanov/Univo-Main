@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { strokeGeometry } from "../src/stroke.ts";
+import { strokeGeometry } from "../src/shared/brand/stroke.ts";
 
 test("wordmark proportions: 4 members → 9 stems, height 6w + dot room", () => {
   const g = strokeGeometry(4);
@@ -32,7 +32,7 @@ test("open end adds one dashed crest and widens the drawing by two pitches", () 
   assert.equal(closed.openD, null);
 });
 
-import { skylineGeometry } from "../src/stroke.ts";
+import { skylineGeometry } from "../src/shared/brand/stroke.ts";
 
 test("skyline: crest height carries meaning, turns stay semicircles", () => {
   const g = skylineGeometry(64, [{ height: 40 }, { height: 32 }, { height: 12, groupStart: true }, { height: 6 }], { r: 40, groupGap: 1.5 });

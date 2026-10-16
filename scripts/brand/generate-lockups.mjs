@@ -44,5 +44,5 @@ const out =
   "export const LOCKUP_GEOMETRY = " +
   JSON.stringify(data, null, 2) +
   " as const;\n";
-fs.writeFileSync(here("../src/lockups.generated.ts"), out);
+fs.writeFileSync(here("../../src/shared/brand/lockups.generated.ts"), out);
 console.warn(`lockups: ${NAMES.join(", ")} → src/lockups.generated.ts`);

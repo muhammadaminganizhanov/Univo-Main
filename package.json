@@ -1,22 +1,33 @@
 {
-  "name": "univo-websites",
+  "name": "univo-site",
+  "version": "0.1.0",
   "private": true,
+  "type": "module",
   "packageManager": "pnpm@12.11.2",
   "engines": {
     "node": ">=22"
   },
   "scripts": {
-    "dev": "pnpm --filter @univo/site-univo dev",
-    "build": "pnpm --filter @univo/site-univo build",
-    "start": "pnpm --filter @univo/site-univo start",
+    "dev": "next dev --port 3100",
+    "build": "next build",
+    "start": "next start --port 3100",
     "lint": "eslint .",
-    "typecheck": "pnpm -r --no-bail typecheck",
-    "test": "node --test --experimental-strip-types \"packages/*/test/*.test.ts\"",
+    "typecheck": "next typegen && tsc -p tsconfig.json",
+    "test": "node --test --experimental-strip-types \"tests/*.test.ts\"",
     "qa:visual": "node scripts/visual-qa.mjs",
-    "brand:lockups": "node packages/brand/scripts/generate-lockups.mjs",
-    "brand:sync-icons": "node packages/brand/scripts/sync-icons.mjs"
+    "brand:lockups": "node scripts/brand/generate-lockups.mjs",
+    "brand:sync-icons": "node scripts/brand/sync-icons.mjs"
+  },
+  "dependencies": {
+    "next": "16.4.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
+    "@types/node": "^24.10.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "eslint": "^9.39.1",
     "eslint-config-next": "16.4.0",
     "playwright": "1.64.1",

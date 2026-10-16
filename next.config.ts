@@ -6,7 +6,6 @@ const config: NextConfig = {
   reactStrictMode: true,
   devIndicators: false,
   poweredByHeader: false,
-  transpilePackages: ["@univo/brand", "@univo/config", "@univo/content", "@univo/leads", "@univo/ui"],
   async headers() {
     const security = [
       { key: "X-Content-Type-Options", value: "nosniff" },

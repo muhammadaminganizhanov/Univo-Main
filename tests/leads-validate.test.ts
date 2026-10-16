@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { resolveDeliveryMode, stagingDelivery } from "../src/delivery.ts";
-import { isSpam, isValidContact, validateContact, validateEarlyAccess } from "../src/validate.ts";
+import { resolveDeliveryMode, stagingDelivery } from "../src/shared/leads/delivery.ts";
+import { isSpam, isValidContact, validateContact, validateEarlyAccess } from "../src/shared/leads/validate.ts";
 
 const form = (entries: Record<string, string>) => {
   const f = new FormData();

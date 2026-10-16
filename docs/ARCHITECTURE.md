@@ -13,12 +13,12 @@ Master files: `~/Brand/brand/univo/master-assets/` (logo, symbol, icons, Onest, 
 |---|---|---|---|
 | Tech direction name | UNIVO DEV, Indigo dot | **UNIVO TECH**, Indigo dot | Brief renames the direction. Official TECH lockup files must be issued |
 | Products | Form A: dot = colour of the direction that makes them | RETAIL, SLOT sit directly under UNIVO → **neutral dot** | Book fallback: "otherwise keep the dot neutral". Owner to decide colour |
-| Lockups TECH / RETAIL / SLOT | Not in master-assets | Generated with the book's own lockup rule (`packages/brand/scripts`) | Replace with official files when made |
+| Lockups TECH / RETAIL / SLOT | Not in master-assets | Generated with the book's own lockup rule (`scripts/brand`) | Replace with official files when made |
 | Display size | 128 px @1440 | 120 px @1440 | Headline is a 2-line sentence, not one word |
 
 ## 2. Ecosystem model
 
-`packages/content/src/ecosystem.ts` — one typed list. Every list, link, colour and switcher reads it.
+`src/shared/content/ecosystem.ts` — one typed list. Every list, link, colour and switcher reads it.
 
 ```
 UNIVO               masterbrand  live
@@ -75,7 +75,7 @@ Nowhere else. No decorative underlines, no dots next to list items, no network d
 ## 6. i18n
 
 Locale routes `/ru /en /ky`; `proxy.ts` redirects other paths by Accept-Language.
-Typed dictionaries: `apps/univo/src/i18n/{ru,en,ky}.ts`; `ru` is the reference type, `en` must match it,
+Typed dictionaries: `src/i18n/{ru,en,ky}.ts`; `ru` is the reference type, `en` must match it,
 `ky` is a deep partial merged over `ru`. Incomplete locale → notice on every page, `<main lang="ru">`,
 excluded from hreflang and sitemap. Entity texts: `Localized<T>` with optional `ky`.
 

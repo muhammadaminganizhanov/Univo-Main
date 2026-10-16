@@ -5,7 +5,6 @@ const config = [
   ...nextVitals,
   ...nextTs,
   {
-    settings: { next: { rootDir: ["apps/*/"] } },
     rules: {
       "no-console": ["error", { allow: ["warn", "error"] }],
     },
