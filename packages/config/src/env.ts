@@ -7,9 +7,6 @@
  */
 export type SiteEnv = "staging" | "production";
 
-/** Apps in this repository (each built and deployed on its own). */
-export type AppId = "univo" | "tech" | "production";
-
 /** Ecosystem entities — independent websites / products, each on its own domain. */
 export type EcosystemId = "univo" | "tech" | "production" | "retail" | "slot";
 
@@ -26,7 +23,7 @@ const ECOSYSTEM_URL_ENV: Record<EcosystemId, string> = {
   slot: "SLOT_URL",
 };
 
-const LOCAL_PORT: Record<AppId, number> = { univo: 3100, tech: 3101, production: 3102 };
+const LOCAL_PORT = 3100;
 
 const clean = (value: string | undefined) => {
   const v = value?.trim();
@@ -48,10 +45,10 @@ export function getEcosystemUrl(id: EcosystemId): string | null {
   return clean(process.env[ECOSYSTEM_URL_ENV[id]]);
 }
 
-/** Origin of the current app (metadata, canonical): SITE_URL, else localhost. */
-export function getSelfUrl(app: AppId): { url: string; explicit: boolean } {
+/** Origin of the site (metadata, canonical): SITE_URL, else localhost. */
+export function getSelfUrl(): { url: string; explicit: boolean } {
   const explicit = clean(process.env.SITE_URL);
-  return explicit ? { url: explicit, explicit: true } : { url: `http://localhost:${LOCAL_PORT[app]}`, explicit: false };
+  return explicit ? { url: explicit, explicit: true } : { url: `http://localhost:${LOCAL_PORT}`, explicit: false };
 }
 
 /** Indexing needs BOTH an explicit production env and an explicit public SITE_URL. */

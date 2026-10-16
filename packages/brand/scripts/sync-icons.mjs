@@ -1,4 +1,4 @@
-// Copies the approved master icons (Brand Book v1.2.2 · master-assets/icon) into every app's /public.
+// Copies the approved master icons (Brand Book v1.2.2 · master-assets/icon) into the site's /public.
 import fs from "node:fs";
 
 const src = new URL("../assets/icons/", import.meta.url);

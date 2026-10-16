@@ -4,7 +4,7 @@ import { DEFAULT_LOCALE, LOCALE_META, indexableLocales, type Locale } from "@uni
 import { getSelfUrl, isIndexable } from "@univo/config/server";
 import { localeHref } from "./routes";
 
-export const siteOrigin = () => getSelfUrl("univo").url;
+export const siteOrigin = () => getSelfUrl().url;
 
 /**
  * Page metadata: title, description, canonical, hreflang (complete locales only), OG, robots.
