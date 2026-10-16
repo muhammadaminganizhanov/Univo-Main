@@ -1,0 +1,144 @@
+.hero {
+  padding-block: clamp(32px, 5vw, 80px) clamp(56px, 7vw, 112px);
+  overflow-x: clip;
+}
+.grid {
+  display: grid;
+  gap: 40px;
+}
+.text {
+  display: grid;
+  align-content: start;
+  gap: 18px;
+}
+.kicker {
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.title {
+  max-width: 13ch;
+  color: var(--color-fg);
+  font-size: clamp(2.625rem, 1.2rem + 4.6vw, 6rem);
+  font-weight: 600;
+  line-height: 0.96;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+.lead {
+  max-width: 40ch;
+  margin-top: 6px;
+  color: var(--color-text);
+  font-size: var(--text-lead);
+  line-height: 1.45;
+}
+
+/* the sign, its line, what the name is */
+.source {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: end;
+  column-gap: 20px;
+}
+.mark {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+}
+.symbol {
+  display: block;
+  flex: none;
+  width: auto;
+  height: 88px;
+  color: var(--univo-brand-ink);
+}
+.line {
+  display: none;
+}
+.identity {
+  max-width: 30ch;
+  color: var(--color-fg);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter);
+    align-items: end;
+  }
+  .text {
+    grid-column: 1 / span 7;
+  }
+  .source {
+    grid-column: 9 / -1;
+    grid-template-columns: 1fr;
+    row-gap: 28px;
+    padding-bottom: 6px;
+  }
+  .symbol {
+    height: clamp(160px, 15vw, 232px);
+  }
+  /* from the foot of the n, one line runs on past the edge of the page */
+  .line {
+    display: block;
+    flex: 1 1 auto;
+    height: 3px;
+    margin: 0 calc(-1 * var(--page-margin)) 0 14px;
+    border-radius: 2px 0 0 2px;
+    background: var(--univo-brand-tangerine);
+    transform-origin: left center;
+  }
+  .identity {
+    max-width: 28ch;
+    font-size: 1.125rem;
+  }
+}
+
+/* entrance: the sign forms, its point lands, the line runs on; the words come in after */
+:global(.motion) [data-scene] .symbol path {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 520ms var(--ease-draw) 200ms;
+}
+:global(.motion) [data-scene] .symbol circle {
+  opacity: 0;
+  transform: scale(0.4);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    opacity 260ms var(--ease-sys) 640ms,
+    transform 260ms var(--ease-sys) 640ms;
+}
+:global(.motion) [data-scene] .line {
+  transform: scaleX(0);
+  transition: transform 700ms var(--ease-draw) 760ms;
+}
+:global(.motion) [data-scene] .lead,
+:global(.motion) [data-scene] .identity,
+:global(.motion) [data-scene] .kicker {
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity var(--t-reveal) var(--ease-sys) 420ms,
+    transform var(--t-reveal) var(--ease-sys) 420ms;
+}
+:global(.motion) [data-scene] .kicker {
+  transition-delay: 0ms;
+}
+:global(.motion) [data-scene] .identity {
+  transition-delay: 1000ms;
+}
+:global(.motion) [data-scene][data-in] .symbol path {
+  clip-path: inset(0);
+}
+:global(.motion) [data-scene][data-in] .symbol circle,
+:global(.motion) [data-scene][data-in] .line,
+:global(.motion) [data-scene][data-in] .lead,
+:global(.motion) [data-scene][data-in] .identity,
+:global(.motion) [data-scene][data-in] .kicker {
+  opacity: 1;
+  transform: none;
+}
