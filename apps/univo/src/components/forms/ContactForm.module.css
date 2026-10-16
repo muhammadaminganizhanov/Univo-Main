@@ -17,9 +17,12 @@
   overflow: hidden;
 }
 
+/* 6 px between a field's parts, given by each part after the first — so a closed error takes no room */
 .field {
   display: grid;
-  gap: 6px;
+}
+.field > * + * {
+  margin-top: 6px;
 }
 .label {
   color: var(--color-fg);
@@ -57,12 +60,56 @@
   font: inherit;
   font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
   line-height: 1.45;
-  transition: border-color var(--t-micro) var(--ease-sys);
+  transition: border-color var(--motion-ui, 220ms) ease-out;
   appearance: none;
 }
 .control::placeholder {
   color: color-mix(in srgb, var(--univo-brand-stone) 70%, transparent);
   opacity: 1;
+  transition: opacity var(--motion-ui, 220ms) ease-out;
+}
+.control:focus::placeholder {
+  opacity: 0.6;
+}
+/* browser autofill: no tinted box, no flash — the field keeps the page's own colours */
+.control:-webkit-autofill,
+.control:-webkit-autofill:hover,
+.control:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--color-fg);
+  box-shadow: inset 0 0 0 1000px var(--color-bg);
+  caret-color: var(--color-fg);
+  transition: background-color 600000s 0s;
+}
+/* the focus line: drawn from the left over the field's underline. The task's in Tangerine (the main
+   field), the contact's in ink (calmer); optional fields keep only the underline's own change. */
+.line {
+  position: relative;
+  display: block;
+}
+.line > .control {
+  display: block;
+}
+.line::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--univo-brand-ink);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--motion-ui, 220ms) ease-out;
+  pointer-events: none;
+}
+.line[data-tone="accent"]::after {
+  background: var(--univo-brand-tangerine);
+}
+.line:focus-within::after {
+  transform: scaleX(1);
+}
+.line:has([aria-invalid="true"])::after {
+  background: var(--univo-semantic-error);
 }
 .control:focus {
   outline: none;
@@ -87,6 +134,31 @@ textarea.control {
   padding-block: 8px 10px;
   border-bottom-width: 1.5px;
   font-size: 1rem;
+}
+/* an error opens and closes smoothly; closed, it takes no room (it gives back the field's gap) */
+.field > .errorWrap {
+  margin-top: 0;
+}
+.field > .errorWrap[data-open] {
+  margin-top: 6px;
+}
+.errorWrap {
+  display: grid;
+  align-self: start;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows var(--motion-ui, 220ms) ease-out,
+    margin-top var(--motion-ui, 220ms) ease-out,
+    opacity var(--motion-ui, 220ms) ease-out;
+}
+.errorWrap[data-open] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+.errorWrap > p {
+  min-height: 0;
+  overflow: hidden;
 }
 .error {
   display: flex;
@@ -138,8 +210,13 @@ textarea.control {
   font-weight: 500;
   cursor: pointer;
   transition:
-    border-color var(--t-micro) var(--ease-sys),
-    color var(--t-micro) var(--ease-sys);
+    border-color var(--motion-ui, 220ms) ease-out,
+    color var(--motion-ui, 220ms) ease-out,
+    box-shadow var(--motion-fast, 160ms) ease-out,
+    transform 100ms ease-out;
+}
+.chip:active {
+  transform: scale(0.985);
 }
 .chip input {
   position: absolute;
@@ -154,7 +231,7 @@ textarea.control {
   height: 9px;
   border-radius: 50%;
   box-shadow: inset 0 0 0 2px var(--c);
-  transition: background-color var(--t-micro) var(--ease-sys);
+  transition: background-color var(--motion-fast, 160ms) ease-out;
 }
 .chip:hover {
   border-color: var(--color-control);
@@ -190,13 +267,24 @@ textarea.control {
   margin: 0;
   border: 1.5px solid var(--color-fg);
   border-radius: var(--radius-ui);
-  background: transparent center / 14px no-repeat;
+  background-color: transparent;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5 9.5 17 19 7.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 4px center;
+  background-size: 0 14px;
   appearance: none;
   cursor: pointer;
+  transition:
+    background-color 120ms ease-out,
+    background-size var(--motion-fast, 160ms) ease-out 40ms,
+    transform 100ms ease-out;
+}
+.consent input:active {
+  transform: scale(0.94);
 }
 .consent input:checked {
   background-color: var(--color-fg);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5 9.5 17 19 7.5'/%3E%3C/svg%3E");
+  background-size: 14px 14px;
 }
 .consent input[aria-invalid="true"] {
   border-color: var(--univo-semantic-error);
@@ -224,6 +312,56 @@ textarea.control {
   align-items: center;
   gap: 12px 20px;
   margin-top: 2px;
+}
+.sendWrap {
+  position: relative;
+  display: inline-flex;
+}
+.send {
+  transition-duration: var(--motion-ui, 220ms);
+}
+.send svg {
+  transition-duration: var(--motion-ui, 220ms);
+}
+.send:active {
+  transform: scale(0.985);
+  transition: transform 90ms ease-out;
+}
+/* sending: one short line runs under the button — only as long as the request takes */
+.progress {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: -8px;
+  height: 2px;
+  overflow: hidden;
+  border-radius: 1px;
+}
+.progress::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: var(--univo-brand-tangerine);
+  animation: sending 900ms cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+@keyframes sending {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}
+/* the form steps back while the task is on its way */
+.form {
+  transition: opacity var(--motion-state, 380ms) ease-out;
+}
+.form[data-pending] {
+  opacity: 0.55;
+}
+.form[data-pending] .sendWrap {
+  opacity: 1;
 }
 /* dev / staging only — quiet, never louder than the button */
 .staging {
@@ -263,29 +401,30 @@ textarea.control {
 .home {
   margin-top: 10px;
 }
+/* success: the node, then the statement out of a mask, then the sentence, then the way on (≈700 ms) */
 @media (prefers-reduced-motion: no-preference) {
   .successNode {
-    animation: arrive 320ms var(--ease-sys) both;
+    animation: arrive 300ms cubic-bezier(0.22, 1, 0.36, 1) 120ms both;
   }
   .successTitle,
   .successBody,
   .home {
-    animation: rise 520ms var(--ease-sys) both;
+    animation: rise 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
   .successTitle {
-    animation-delay: 220ms;
+    animation-delay: 240ms;
   }
   .successBody {
-    animation-delay: 360ms;
+    animation-delay: 340ms;
   }
   .home {
-    animation-delay: 480ms;
+    animation-delay: 440ms;
   }
 }
 @keyframes arrive {
   from {
     opacity: 0;
-    transform: scale(0.4);
+    transform: scale(0.8);
   }
 }
 @keyframes rise {
@@ -311,12 +450,38 @@ textarea.control {
   .pair {
     gap: 16px;
   }
-  .submit > button {
+  .submit > .sendWrap,
+  .sendWrap > button {
     width: 100%;
   }
 }
 @media (max-width: 359.98px) {
   .pair {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* reduced motion: states change at once; no drawing, no transforms */
+@media (prefers-reduced-motion: reduce) {
+  .line::after,
+  .errorWrap,
+  .chip,
+  .chipDot,
+  .consent input,
+  .form,
+  .control,
+  .control::placeholder {
+    transition-duration: 0ms !important;
+    transition-delay: 0ms !important;
+  }
+  .chip:active,
+  .send:active,
+  .consent input:active {
+    transform: none;
+  }
+  .progress::after {
+    animation: none;
+    width: 100%;
+    opacity: 0.6;
   }
 }

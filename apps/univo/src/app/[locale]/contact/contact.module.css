@@ -3,7 +3,25 @@
  * mirrors the chosen direction; below, product early access as a secondary note.
  */
 .page {
+  /* one motion rhythm for this page (reduced motion: zero) */
+  --motion-fast: 160ms;
+  --motion-ui: 220ms;
+  --motion-state: 380ms;
+  --motion-route: 520ms;
+  --motion-section: 600ms;
+  --motion-success: 800ms;
+  --ease-state: cubic-bezier(0.22, 1, 0.36, 1);
   padding-block: clamp(28px, 4vw, 64px) clamp(64px, 7vw, 112px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .page {
+    --motion-fast: 0ms;
+    --motion-ui: 0ms;
+    --motion-state: 0ms;
+    --motion-route: 0ms;
+    --motion-section: 0ms;
+    --motion-success: 0ms;
+  }
 }
 .layout {
   display: grid;
@@ -66,6 +84,7 @@
   bottom: 0;
   width: 2px;
   background: var(--univo-brand-ink);
+  transform-origin: center top;
 }
 .taskNode {
   justify-self: center;
@@ -95,14 +114,18 @@
   color: var(--color-muted);
   font-weight: 500;
 }
-/* UNIVO → where it goes: one destination at a time */
+/* UNIVO → where it goes: one destination at a time. All of them share one place, so the preview never
+   changes height; the one that leaves fades, the one that comes is built. */
 .to {
-  display: none;
+  grid-row: 3;
+  grid-column: 1;
   row-gap: 2px;
   margin-top: 38px;
-}
-.to[data-to="unsure"] {
-  display: grid;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 140ms ease-out,
+    visibility 0s linear 140ms;
 }
 .to::before {
   content: "";
@@ -114,10 +137,17 @@
   background: var(--univo-brand-ink);
   transform-origin: center top;
 }
+/* a chosen part: the branch is ink, its colour only close to the node */
+.to:not([data-to="unsure"])::before {
+  background: linear-gradient(180deg, var(--univo-brand-ink) calc(100% - 16px), var(--c) calc(100% - 16px));
+}
+/* still open: a short solid run out of UNIVO, then dotted, to an open end */
 .to[data-to="unsure"]::before {
   left: calc(var(--x) - 1px);
   width: 2px;
-  background: repeating-linear-gradient(180deg, var(--univo-brand-stone) 0 3px, transparent 3px 8px);
+  background:
+    linear-gradient(180deg, var(--univo-brand-ink) 0 12px, transparent 12px),
+    repeating-linear-gradient(180deg, var(--univo-brand-stone) 0 3px, transparent 3px 8px);
 }
 .openNode,
 .partNode {
@@ -168,42 +198,89 @@
   pointer-events: none;
 }
 
-/* the chosen direction — and only it */
+/* the chosen direction — and only it. Before hydration the radios decide; after a successful send
+   (the radios are gone) the remembered route does. */
+.page:has(input[name="interest"][value="unsure"]:checked) .to[data-to="unsure"],
+.page:has([data-done][data-route="unsure"]) .to[data-to="unsure"],
 .page:has(input[name="interest"][value="tech"]:checked) .to[data-to="tech"],
+.page:has([data-done][data-route="tech"]) .to[data-to="tech"],
 .page:has(input[name="interest"][value="production"]:checked) .to[data-to="production"],
+.page:has([data-done][data-route="production"]) .to[data-to="production"],
 .page:has(input[name="interest"][value="retail"]:checked) .to[data-to="retail"],
-.page:has(input[name="interest"][value="slot"]:checked) .to[data-to="slot"] {
-  display: grid;
-}
-.page:has(input[name="interest"]:not([value="unsure"]):checked) .to[data-to="unsure"] {
-  display: none;
+.page:has([data-done][data-route="retail"]) .to[data-to="retail"],
+.page:has(input[name="interest"][value="slot"]:checked) .to[data-to="slot"],
+.page:has([data-done][data-route="slot"]) .to[data-to="slot"] {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 120ms ease-out 120ms;
 }
 
-/* a new destination: UNIVO answers → the short line → the node → the name (≈420 ms) */
+/* A new destination (≈650 ms): the old one fades (0–140) → UNIVO answers (120–280) → the branch is drawn
+   out of it (240–500) → the node (470–600) → the name (520–660). Task → UNIVO stays as it is.
+   The animations are named only for the active destination, so they replay on every choice. */
 @media (prefers-reduced-motion: no-preference) {
-  .to .answer {
-    animation: answer 360ms var(--ease-sys) both;
+  .page .to:is(
+      .page:has(input[name="interest"][value="unsure"]:checked) [data-to="unsure"],
+      .page:has(input[name="interest"][value="tech"]:checked) [data-to="tech"],
+      .page:has(input[name="interest"][value="production"]:checked) [data-to="production"],
+      .page:has(input[name="interest"][value="retail"]:checked) [data-to="retail"],
+      .page:has(input[name="interest"][value="slot"]:checked) [data-to="slot"]
+    )
+    .answer {
+    animation: answer 180ms var(--ease-state) 120ms both;
   }
-  .to::before {
-    animation: draw 200ms var(--ease-draw) 80ms both;
+  .page .to:is(
+      .page:has(input[name="interest"][value="unsure"]:checked) [data-to="unsure"],
+      .page:has(input[name="interest"][value="tech"]:checked) [data-to="tech"],
+      .page:has(input[name="interest"][value="production"]:checked) [data-to="production"],
+      .page:has(input[name="interest"][value="retail"]:checked) [data-to="retail"],
+      .page:has(input[name="interest"][value="slot"]:checked) [data-to="slot"]
+    )::before {
+    animation: draw 260ms var(--ease-state) 240ms both;
   }
-  .openNode,
-  .partNode {
-    animation: arrive 220ms var(--ease-sys) 240ms both;
+  .page .to:is(
+      .page:has(input[name="interest"][value="unsure"]:checked) [data-to="unsure"],
+      .page:has(input[name="interest"][value="tech"]:checked) [data-to="tech"],
+      .page:has(input[name="interest"][value="production"]:checked) [data-to="production"],
+      .page:has(input[name="interest"][value="retail"]:checked) [data-to="retail"],
+      .page:has(input[name="interest"][value="slot"]:checked) [data-to="slot"]
+    )
+    :is(.openNode, .partNode) {
+    animation: arrive 140ms ease-out 470ms both;
   }
-  .toName,
-  .toRole {
-    animation: fade 260ms var(--ease-sys) 300ms both;
+  .page .to:is(
+      .page:has(input[name="interest"][value="unsure"]:checked) [data-to="unsure"],
+      .page:has(input[name="interest"][value="tech"]:checked) [data-to="tech"],
+      .page:has(input[name="interest"][value="production"]:checked) [data-to="production"],
+      .page:has(input[name="interest"][value="retail"]:checked) [data-to="retail"],
+      .page:has(input[name="interest"][value="slot"]:checked) [data-to="slot"]
+    )
+    :is(.toName, .toRole) {
+    animation: fade 150ms ease-out 520ms both;
+  }
+
+  /* sent: the task goes in once more — task → UNIVO, UNIVO takes it, the chosen branch completes */
+  .page:has([data-done]) .stop[data-stop="task"]::after {
+    animation: drawSent 220ms var(--ease-state) both;
+  }
+  .page:has([data-done]) .univoNode {
+    animation: accept 360ms var(--ease-state) 200ms both;
+  }
+  .page:has([data-done]) .to::before {
+    animation: drawSent 260ms var(--ease-state) 380ms both;
+  }
+  .page:has([data-done]) .to :is(.openNode, .partNode) {
+    animation: arriveSent 160ms ease-out 600ms both;
   }
 }
 @keyframes answer {
   from {
-    opacity: 0.8;
-    transform: scale(0.65);
+    opacity: 0.85;
+    transform: scale(0.7);
   }
   to {
     opacity: 0;
-    transform: scale(1.15);
+    transform: scale(1.12);
   }
 }
 @keyframes draw {
@@ -211,16 +288,100 @@
     transform: scaleY(0);
   }
 }
+@keyframes drawSent {
+  from {
+    transform: scaleY(0);
+  }
+}
 @keyframes arrive {
   from {
     opacity: 0;
-    transform: scale(0.4);
+    transform: scale(0.5);
+  }
+}
+@keyframes arriveSent {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
   }
 }
 @keyframes fade {
   from {
     opacity: 0;
-    transform: translateX(-4px);
+  }
+}
+@keyframes accept {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--univo-brand-tangerine) 45%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 9px color-mix(in srgb, var(--univo-brand-tangerine) 0%, transparent);
+  }
+}
+
+/* ── page entrance (once, html.motion only): the headline out of a mask → its point → the lead → the
+   form as one piece → the route preview last (≈950 ms; phones ≈650 ms) ── */
+:global(.motion) .title {
+  animation: rise var(--motion-section) var(--ease-state) both;
+}
+:global(.motion) .title :global(.brand-dot) {
+  display: inline-block;
+  animation: point var(--motion-ui) ease-out 380ms both;
+}
+:global(.motion) .lead {
+  animation: lift 450ms var(--ease-state) 180ms both;
+}
+:global(.motion) .formCol,
+:global(.motion) .more {
+  animation: lift 500ms var(--ease-state) 300ms both;
+}
+:global(.motion) .preview {
+  animation: lift 500ms var(--ease-state) 440ms both;
+}
+:global(.motion) .stop[data-stop="task"]::after {
+  animation: draw 220ms var(--ease-state) 620ms both;
+}
+@media (max-width: 1023.98px) {
+  :global(.motion) .title {
+    animation-duration: 420ms;
+  }
+  :global(.motion) .title :global(.brand-dot) {
+    animation-delay: 260ms;
+  }
+  :global(.motion) .lead {
+    animation-delay: 120ms;
+    animation-duration: 380ms;
+  }
+  :global(.motion) .formCol,
+  :global(.motion) .more {
+    animation-delay: 200ms;
+    animation-duration: 420ms;
+  }
+  :global(.motion) .preview,
+  :global(.motion) .stop[data-stop="task"]::after {
+    animation: none;
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(10px);
+  }
+  to {
+    clip-path: inset(0 0 -20% 0);
+  }
+}
+@keyframes lift {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes point {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
   }
 }
 
@@ -293,5 +454,13 @@
   .more {
     grid-row: 3;
     margin-top: 16px;
+  }
+}
+
+/* reduced motion: the chosen destination is simply there */
+@media (prefers-reduced-motion: reduce) {
+  .to,
+  .page .to {
+    transition: none !important;
   }
 }
