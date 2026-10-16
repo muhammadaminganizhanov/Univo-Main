@@ -1,111 +1,259 @@
+/*
+ * Contact: the form first, nearly the whole first screen. Beside it a compact route preview that
+ * mirrors the chosen direction; below, product early access as a secondary note.
+ */
 .page {
-  padding-block: clamp(32px, 5vw, 72px) var(--section-y);
+  padding-block: clamp(28px, 4vw, 64px) clamp(64px, 7vw, 112px);
 }
 .layout {
   display: grid;
-  gap: clamp(40px, 5vw, 64px);
+  gap: 28px;
 }
 .head {
   display: grid;
-  gap: 20px;
+  gap: 12px;
+}
+.title {
+  color: var(--color-fg);
+  font-size: var(--text-h1);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: var(--tracking-h1);
 }
 .lead {
-  max-width: 36ch;
-}
-.aside {
-  display: grid;
-  align-content: start;
-  gap: 48px;
-}
-.destination {
-  display: grid;
-  gap: 20px;
-}
-.steps {
-  display: grid;
-  border-top: 1px solid var(--color-rule);
-}
-.steps li {
-  display: grid;
-  grid-template-columns: 28px 1fr;
-  gap: 10px;
-  padding-block: 12px;
-  border-bottom: 1px solid var(--color-rule);
+  max-width: 44ch;
   color: var(--color-text);
+  font-size: var(--text-lead);
+  line-height: 1.45;
 }
-.steps .t-meta {
-  padding-top: 2px;
+.formCol {
+  min-width: 0;
 }
-/* Destination preview: UNIVO hub → possible routes. */
-.routes {
+
+/* ── the route preview ── */
+.preview {
+  --x: 11px; /* the line's centre */
+  display: grid;
+  gap: 14px;
+  padding-top: 8px;
+}
+.previewLabel {
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  font-weight: 600;
+}
+.route {
+  display: grid;
+}
+.stop,
+.to {
   position: relative;
   display: grid;
-  gap: 10px;
-  padding: 24px 0 0 0;
-}
-.hub {
-  display: flex;
+  grid-template-columns: 22px 1fr;
+  column-gap: 14px;
   align-items: center;
-  gap: 10px;
+  min-height: 24px;
+}
+.stop[data-stop="task"] {
+  padding-bottom: 34px;
+}
+/* task → UNIVO: the line every task takes */
+.stop[data-stop="task"]::after {
+  content: "";
+  position: absolute;
+  left: calc(var(--x) - 1px);
+  top: 20px;
+  bottom: 0;
+  width: 2px;
+  background: var(--univo-brand-ink);
+}
+.taskNode {
+  justify-self: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2.5px var(--univo-brand-ink);
+}
+.univoNode {
+  justify-self: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--univo-brand-tangerine);
+}
+.stopName,
+.toName {
   color: var(--color-fg);
-  font-size: var(--text-h2);
+  font-size: 1rem;
   font-weight: 600;
-  letter-spacing: -0.02em;
+  line-height: 1.25;
 }
-.routesLabel {
-  margin-top: 6px;
+.stopName {
+  grid-column: 2;
 }
-.routeList {
-  display: grid;
-  gap: 2px;
-  padding-left: 26px;
-  border-left: 3px solid var(--color-fg);
-  margin-left: 6px;
-}
-.routeList li {
-  --route-dot: var(--color-fg);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 34px;
-  color: var(--color-fg);
+.stop[data-stop="task"] .stopName {
+  color: var(--color-muted);
   font-weight: 500;
-  transition: opacity var(--univo-duration-content) var(--univo-ease);
 }
-.decide {
-  margin-left: 35px;
+/* UNIVO → where it goes: one destination at a time */
+.to {
+  display: none;
+  row-gap: 2px;
+  margin-top: 38px;
 }
-/* A chosen direction becomes the route; the others step back. Pure CSS. */
-.layout:has(input[name="interest"][value="tech"]:checked) .routeList li:not([data-route-node="tech"]),
-.layout:has(input[name="interest"][value="production"]:checked) .routeList li:not([data-route-node="production"]),
-.layout:has(input[name="interest"][value="retail"]:checked) .routeList li:not([data-route-node="retail"]),
-.layout:has(input[name="interest"][value="slot"]:checked) .routeList li:not([data-route-node="slot"]) {
-  opacity: 0.32;
+.to[data-to="unsure"] {
+  display: grid;
 }
-.layout:has(input[name="interest"]:not([value="unsure"]):checked) .decide {
-  visibility: hidden;
+.to::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--x) - 1.5px);
+  bottom: calc(100% - 4px);
+  width: 3px;
+  height: 46px;
+  background: var(--univo-brand-ink);
+  transform-origin: center top;
 }
-/* The chosen route lights up in its own colour. Ready for a JS-driven route animation later. */
-.layout:has(input[name="interest"][value="tech"]:checked) [data-route-node="tech"],
-.layout:has(input[name="interest"][value="production"]:checked) [data-route-node="production"],
-.layout:has(input[name="interest"][value="retail"]:checked) [data-route-node="retail"],
-.layout:has(input[name="interest"][value="slot"]:checked) [data-route-node="slot"] {
-  --route-dot: var(--entity-accent);
-  font-weight: 600;
+.to[data-to="unsure"]::before {
+  left: calc(var(--x) - 1px);
+  width: 2px;
+  background: repeating-linear-gradient(180deg, var(--univo-brand-stone) 0 3px, transparent 3px 8px);
 }
-.routeList [data-node] {
-  transition:
-    background-color var(--univo-duration-content) var(--univo-ease),
-    box-shadow var(--univo-duration-content) var(--univo-ease);
+.openNode,
+.partNode {
+  grid-row: 1 / span 2;
+  justify-self: center;
+  border-radius: 50%;
+}
+.openNode {
+  width: 20px;
+  height: 20px;
+  border: 2px dashed var(--univo-brand-stone);
+}
+.partNode {
+  width: 20px;
+  height: 20px;
+  background: var(--c);
+}
+.partNode[data-state="launching"] {
+  background: var(--color-bg);
+  box-shadow: inset 0 0 0 4.5px var(--c);
+}
+.toName[data-open] {
+  color: var(--color-muted);
+  font-weight: 500;
+}
+.toName,
+.toRole {
+  grid-column: 2;
+}
+.to[data-to="unsure"] .toName {
+  grid-row: 1 / span 2;
+}
+.toRole {
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  line-height: 1.35;
+}
+/* UNIVO answers when a direction is chosen: a ring around its point */
+.answer {
+  position: absolute;
+  left: calc(var(--x) - 17px);
+  top: calc(-38px - 24px + 12px - 17px);
+  width: 34px;
+  height: 34px;
+  border: 1.5px solid var(--univo-brand-tangerine);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* the chosen direction — and only it */
+.page:has(input[name="interest"][value="tech"]:checked) .to[data-to="tech"],
+.page:has(input[name="interest"][value="production"]:checked) .to[data-to="production"],
+.page:has(input[name="interest"][value="retail"]:checked) .to[data-to="retail"],
+.page:has(input[name="interest"][value="slot"]:checked) .to[data-to="slot"] {
+  display: grid;
+}
+.page:has(input[name="interest"]:not([value="unsure"]):checked) .to[data-to="unsure"] {
+  display: none;
+}
+
+/* a new destination: UNIVO answers → the short line → the node → the name (≈420 ms) */
+@media (prefers-reduced-motion: no-preference) {
+  .to .answer {
+    animation: answer 360ms var(--ease-sys) both;
+  }
+  .to::before {
+    animation: draw 200ms var(--ease-draw) 80ms both;
+  }
+  .openNode,
+  .partNode {
+    animation: arrive 220ms var(--ease-sys) 240ms both;
+  }
+  .toName,
+  .toRole {
+    animation: fade 260ms var(--ease-sys) 300ms both;
+  }
+}
+@keyframes answer {
+  from {
+    opacity: 0.8;
+    transform: scale(0.65);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.15);
+  }
+}
+@keyframes draw {
+  from {
+    transform: scaleY(0);
+  }
+}
+@keyframes arrive {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+}
+
+/* ── secondary: product early access, direct contacts ── */
+.more {
+  display: grid;
+  gap: 10px;
+  padding-top: 22px;
+  border-top: 1px solid var(--color-rule);
+}
+.moreTitle {
+  color: var(--color-muted);
+  font-size: 0.9375rem;
+  font-weight: 500;
 }
 .products {
-  display: grid;
-  gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 28px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 .direct {
   display: grid;
-  gap: 12px;
-  margin: 16px 0 0;
+  gap: 8px;
+  margin-top: 12px;
+}
+.direct dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+  margin: 0;
 }
 .direct dt {
   color: var(--color-muted);
@@ -113,33 +261,37 @@
 }
 .direct dd {
   margin: 0;
-  color: var(--color-fg);
 }
 
+/* phones: the preview as one compact row after the form */
+@media (max-width: 1023.98px) {
+  .preview {
+    padding-top: 4px;
+  }
+}
+
+/* desktop: form left, preview right beside it */
 @media (min-width: 1024px) {
   .layout {
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--gutter);
-    align-items: start;
+    row-gap: 32px;
   }
-  .head {
-    grid-column: 1 / -1;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    column-gap: var(--gutter);
-    align-items: end;
-  }
-  .head h1 {
+  .head,
+  .formCol,
+  .more {
     grid-column: 1 / span 7;
   }
-  .lead {
-    grid-column: 9 / span 4;
-  }
-  .formCol {
-    grid-column: 1 / span 7;
-  }
-  .aside {
-    grid-column: 9 / span 4;
+  .preview {
+    grid-column: 9 / -1;
+    grid-row: 2;
+    align-self: start;
     position: sticky;
     top: calc(var(--header-h) + 32px);
+    padding-top: 6px;
+  }
+  .more {
+    grid-row: 3;
+    margin-top: 16px;
   }
 }

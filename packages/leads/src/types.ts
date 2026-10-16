@@ -8,7 +8,8 @@ export type EarlyAccessProduct = (typeof EARLY_ACCESS_PRODUCTS)[number];
 
 export interface ContactLead {
   kind: "contact";
-  name: string;
+  /** Optional on the contact form: the task and a way to reply are enough. */
+  name: string | null;
   company: string | null;
   contact: string;
   interest: Interest;

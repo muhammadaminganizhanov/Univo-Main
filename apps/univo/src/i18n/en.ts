@@ -289,28 +289,31 @@ export const en: Dictionary = {
   contact: {
     hero: {
       title: "Discuss a project",
-      lead: "Describe the task. We will work out the route inside the group.",
+      lead: "Describe the task in two sentences. Not sure which direction you need — we will work it out.",
+    },
+    form: {
+      task: "What needs to be done?",
+      taskPlaceholder: "For example: we need a website and a video for opening our second branch.",
+      contact: "Where should we reply?",
+      contactHint: "Phone, WhatsApp, Telegram or email.",
+      contactPlaceholder: "+996 … / @username / name@company.com",
+      direction: "If you know the direction",
+      unsure: "UNIVO decides",
+      submit: "Send the task",
     },
     route: {
-      title: "What happens to your task",
-      entry: "You",
-      steps: [
-        "The task enters UNIVO — one entry point for the whole group.",
-        "We work out the route: a direction, several directions or a product.",
-        "We get in touch via your contact and propose the next step.",
-      ],
-      routeLabel: "Possible route",
-      decide: "UNIVO will decide the route",
-    },
-    groups: {
+      label: "The task's route",
       task: "Task",
-      contact: "How to reach you",
-      direction: "Direction",
-      directionHint: "If you already know. If not, we will work out the route.",
+      open: "We will work out the route",
+    },
+    success: {
+      title: "Task received",
+      body: "We will work through it inside UNIVO and get back to you via the contact you left.",
+      home: "Back to the home page",
     },
     products: {
-      title: "Early access to products",
-      text: "UNIVO RETAIL and UNIVO SLOT have their own forms.",
+      title: "Looking for a UNIVO product?",
+      earlyAccess: "early access",
     },
     direct: {
       title: "UNIVO contacts",
