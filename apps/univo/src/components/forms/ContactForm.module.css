@@ -1,109 +1,13 @@
-/* The form on a route: one vertical line from the entry ring through each group to the action. */
+/*
+ * The quick way in. Two fields carry the weight (task, contact); everything else is set a step
+ * quieter. Same field language as the rest of the site: an underline, no boxes, no cards.
+ */
 .root {
   position: relative;
-  display: grid;
-  gap: 32px;
-  padding-left: 44px;
-}
-.root::before {
-  content: "";
-  position: absolute;
-  left: 9px;
-  top: 22px;
-  bottom: 24px;
-  width: 4px;
-  border-radius: var(--radius-full);
-  background: var(--color-fg);
-}
-/* The entry ring is the task's node: the visitor's route starts with the task. */
-.entry {
-  position: absolute;
-  z-index: 1;
-  left: 0;
-  top: 5px;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: var(--color-bg);
-  box-shadow: inset 0 0 0 4px var(--color-fg);
 }
 .form {
   display: grid;
-  gap: clamp(40px, 5vw, 56px);
-}
-.group {
-  position: relative;
-  display: grid;
-  gap: 24px;
-  min-width: 0;
-}
-/* Node on the line for every group. */
-.group::before {
-  content: "";
-  position: absolute;
-  left: -39px;
-  top: 10px;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--color-fg);
-  box-shadow: 0 0 0 5px var(--color-bg);
-}
-.group[data-node="task"]::before {
-  display: none;
-}
-.groupTitle {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 10px;
-  color: var(--color-fg);
-  font-size: var(--text-h2);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-}
-.optional {
-  color: var(--color-muted);
-  font-size: var(--text-small);
-  font-weight: 400;
-  letter-spacing: 0;
-}
-.hint {
-  margin-top: -14px;
-}
-.pair {
-  display: grid;
-  gap: 24px;
-}
-.submit {
-  position: relative;
-  display: grid;
-  gap: 20px;
-  justify-items: start;
-}
-/* The line arrives at the action. */
-.submit::before {
-  content: "";
-  position: absolute;
-  left: -44px;
-  bottom: 22px;
-  width: 36px;
-  height: 4px;
-  border-radius: var(--radius-full);
-  background: var(--color-fg);
-}
-.staging {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  color: var(--color-muted);
-  font-size: var(--text-small);
-  line-height: 1.45;
-}
-.staging svg {
-  flex: none;
-  margin-top: 1px;
+  gap: 26px;
 }
 .honeypot {
   position: absolute;
@@ -112,11 +16,472 @@
   height: 1px;
   overflow: hidden;
 }
-.again {
-  justify-self: start;
+
+/* 6 px between a field's parts, given by each part after the first — so a closed error takes no room */
+.field {
+  display: grid;
 }
-@media (min-width: 640px) {
+.field > * + * {
+  margin-top: 6px;
+}
+.label {
+  color: var(--color-fg);
+  font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+.labelSmall {
+  padding: 0;
+  color: var(--color-fg);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.3;
+}
+.optional {
+  margin-left: 4px;
+  color: var(--color-muted);
+  font-weight: 400;
+}
+.hint {
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  line-height: 1.4;
+}
+.control {
+  width: 100%;
+  min-height: var(--control-h);
+  padding: 10px 0 12px;
+  border: 0;
+  border-bottom: 2px solid var(--color-control);
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-fg);
+  font: inherit;
+  font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
+  line-height: 1.45;
+  transition: border-color var(--motion-ui, 220ms) ease-out;
+  appearance: none;
+}
+.control::placeholder {
+  color: color-mix(in srgb, var(--univo-brand-stone) 70%, transparent);
+  opacity: 1;
+  transition: opacity var(--motion-ui, 220ms) ease-out;
+}
+.control:focus::placeholder {
+  opacity: 0.6;
+}
+/* browser autofill: no tinted box, no flash — the field keeps the page's own colours */
+.control:-webkit-autofill,
+.control:-webkit-autofill:hover,
+.control:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--color-fg);
+  box-shadow: inset 0 0 0 1000px var(--color-bg);
+  caret-color: var(--color-fg);
+  transition: background-color 600000s 0s;
+}
+/* the focus line: drawn from the left over the field's underline. The task's in Tangerine (the main
+   field), the contact's in ink (calmer); optional fields keep only the underline's own change. */
+.line {
+  position: relative;
+  display: block;
+}
+.line > .control {
+  display: block;
+}
+.line::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--univo-brand-ink);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--motion-ui, 220ms) ease-out;
+  pointer-events: none;
+}
+.line[data-tone="accent"]::after {
+  background: var(--univo-brand-tangerine);
+}
+.line:focus-within::after {
+  transform: scaleX(1);
+}
+.line:has([aria-invalid="true"])::after {
+  background: var(--univo-semantic-error);
+}
+.control:focus {
+  outline: none;
+  border-bottom-color: var(--color-fg);
+}
+.control:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+}
+.control[aria-invalid="true"] {
+  border-bottom-color: var(--univo-semantic-error);
+}
+/* the task grows with what is written, within reason */
+textarea.control {
+  min-height: calc(3 * 1.45em + 22px);
+  max-height: calc(10 * 1.45em + 22px);
+  resize: vertical;
+  field-sizing: content;
+}
+.control[data-size="small"] {
+  min-height: 44px;
+  padding-block: 8px 10px;
+  border-bottom-width: 1.5px;
+  font-size: 1rem;
+}
+/* an error opens and closes smoothly; closed, it takes no room (it gives back the field's gap) */
+.field > .errorWrap {
+  margin-top: 0;
+}
+.field > .errorWrap[data-open] {
+  margin-top: 6px;
+}
+.errorWrap {
+  display: grid;
+  align-self: start;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows var(--motion-ui, 220ms) ease-out,
+    margin-top var(--motion-ui, 220ms) ease-out,
+    opacity var(--motion-ui, 220ms) ease-out;
+}
+.errorWrap[data-open] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+.errorWrap > p {
+  min-height: 0;
+  overflow: hidden;
+}
+.error {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  color: var(--univo-semantic-error);
+  font-size: var(--text-small);
+  font-weight: 500;
+  line-height: 1.4;
+}
+.error svg {
+  flex: none;
+  margin-top: 1px;
+}
+
+/* name and company: one quiet row */
+.pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+  gap: 20px;
+}
+
+/* direction: optional, calm chips — colour only in the dot */
+.directions {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px 0 12px;
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-full);
+  color: var(--color-text);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    border-color var(--motion-ui, 220ms) ease-out,
+    color var(--motion-ui, 220ms) ease-out,
+    box-shadow var(--motion-fast, 160ms) ease-out,
+    transform 100ms ease-out;
+}
+.chip:active {
+  transform: scale(0.985);
+}
+.chip input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+.chipDot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px var(--c);
+  transition: background-color var(--motion-fast, 160ms) ease-out;
+}
+.chip:hover {
+  border-color: var(--color-control);
+  color: var(--color-fg);
+}
+.chip:has(input:checked) {
+  border-color: var(--color-fg);
+  color: var(--color-fg);
+  box-shadow: inset 0 0 0 0.5px var(--color-fg);
+}
+.chip:has(input:checked) .chipDot {
+  background: var(--c);
+}
+.chip:has(input:focus-visible) {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* consent: one compact line */
+.consent {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 12px;
+  align-items: center;
+  color: var(--color-text);
+  font-size: var(--text-small);
+  line-height: 1.45;
+  cursor: pointer;
+}
+.consent input {
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  border: 1.5px solid var(--color-fg);
+  border-radius: var(--radius-ui);
+  background-color: transparent;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5 9.5 17 19 7.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 4px center;
+  background-size: 0 14px;
+  appearance: none;
+  cursor: pointer;
+  transition:
+    background-color 120ms ease-out,
+    background-size var(--motion-fast, 160ms) ease-out 40ms,
+    transform 100ms ease-out;
+}
+.consent input:active {
+  transform: scale(0.94);
+}
+.consent input:checked {
+  background-color: var(--color-fg);
+  background-size: 14px 14px;
+}
+.consent input[aria-invalid="true"] {
+  border-color: var(--univo-semantic-error);
+}
+.consent input:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--univo-semantic-error);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+.alert svg {
+  flex: none;
+  margin-top: 2px;
+}
+.submit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  margin-top: 2px;
+}
+.sendWrap {
+  position: relative;
+  display: inline-flex;
+}
+.send {
+  transition-duration: var(--motion-ui, 220ms);
+}
+.send svg {
+  transition-duration: var(--motion-ui, 220ms);
+}
+.send:active {
+  transform: scale(0.985);
+  transition: transform 90ms ease-out;
+}
+/* sending: one short line runs under the button — only as long as the request takes */
+.progress {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: -8px;
+  height: 2px;
+  overflow: hidden;
+  border-radius: 1px;
+}
+.progress::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: var(--univo-brand-tangerine);
+  animation: sending 900ms cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+@keyframes sending {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}
+/* the form steps back while the task is on its way */
+.form {
+  transition: opacity var(--motion-state, 380ms) ease-out;
+}
+.form[data-pending] {
+  opacity: 0.55;
+}
+.form[data-pending] .sendWrap {
+  opacity: 1;
+}
+/* dev / staging only — quiet, never louder than the button */
+.staging {
+  color: var(--color-muted);
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+/* ── success: the form gives way to one statement ── */
+.success {
+  display: grid;
+  justify-items: start;
+  gap: 14px;
+  padding-block: 8px 24px;
+  outline: none;
+}
+.successNode {
+  width: 28px;
+  height: 28px;
+  margin-bottom: 10px;
+  border-radius: 50%;
+  background: var(--univo-brand-tangerine);
+}
+.successTitle {
+  color: var(--color-fg);
+  font-size: clamp(2rem, 1.3rem + 2.2vw, 3.25rem);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+.successBody {
+  max-width: 38ch;
+  color: var(--color-text);
+  font-size: var(--text-lead);
+  line-height: 1.45;
+}
+.home {
+  margin-top: 10px;
+}
+/* success: the node, then the statement out of a mask, then the sentence, then the way on (≈700 ms) */
+@media (prefers-reduced-motion: no-preference) {
+  .successNode {
+    animation: arrive 300ms cubic-bezier(0.22, 1, 0.36, 1) 120ms both;
+  }
+  .successTitle,
+  .successBody,
+  .home {
+    animation: rise 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .successTitle {
+    animation-delay: 240ms;
+  }
+  .successBody {
+    animation-delay: 340ms;
+  }
+  .home {
+    animation-delay: 440ms;
+  }
+}
+@keyframes arrive {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(8px);
+  }
+  to {
+    clip-path: inset(0 0 -20% 0);
+  }
+}
+
+@media (max-width: 639.98px) {
+  .form {
+    gap: 22px;
+  }
+  /* the optional marker on its own line: both labels of the pair read alike */
+  .pair .optional {
+    display: block;
+    margin-left: 0;
+  }
   .pair {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .submit > .sendWrap,
+  .sendWrap > button {
+    width: 100%;
+  }
+}
+@media (max-width: 359.98px) {
+  .pair {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* reduced motion: states change at once; no drawing, no transforms */
+@media (prefers-reduced-motion: reduce) {
+  .line::after,
+  .errorWrap,
+  .chip,
+  .chipDot,
+  .consent input,
+  .form,
+  .control,
+  .control::placeholder {
+    transition-duration: 0ms !important;
+    transition-delay: 0ms !important;
+  }
+  .chip:active,
+  .send:active,
+  .consent input:active {
+    transform: none;
+  }
+  .progress::after {
+    animation: none;
+    width: 100%;
+    opacity: 0.6;
   }
 }

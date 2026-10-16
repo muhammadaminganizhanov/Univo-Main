@@ -1,111 +1,420 @@
+/*
+ * Contact: the form first, nearly the whole first screen. Beside it a compact route preview that
+ * mirrors the chosen direction; below, product early access as a secondary note.
+ */
 .page {
-  padding-block: clamp(32px, 5vw, 72px) var(--section-y);
+  /* one motion rhythm for this page (reduced motion: zero) */
+  --motion-fast: 160ms;
+  --motion-ui: 220ms;
+  --motion-state: 380ms;
+  --motion-route: 520ms;
+  --motion-section: 600ms;
+  --motion-success: 800ms;
+  --ease-state: cubic-bezier(0.22, 1, 0.36, 1);
+  padding-block: clamp(28px, 4vw, 64px) clamp(64px, 7vw, 112px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .page {
+    --motion-fast: 0ms;
+    --motion-ui: 0ms;
+    --motion-state: 0ms;
+    --motion-route: 0ms;
+    --motion-section: 0ms;
+    --motion-success: 0ms;
+  }
 }
 .layout {
   display: grid;
-  gap: clamp(40px, 5vw, 64px);
+  gap: 28px;
 }
 .head {
   display: grid;
-  gap: 20px;
+  gap: 12px;
+}
+.title {
+  color: var(--color-fg);
+  font-size: var(--text-h1);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: var(--tracking-h1);
 }
 .lead {
-  max-width: 36ch;
-}
-.aside {
-  display: grid;
-  align-content: start;
-  gap: 48px;
-}
-.destination {
-  display: grid;
-  gap: 20px;
-}
-.steps {
-  display: grid;
-  border-top: 1px solid var(--color-rule);
-}
-.steps li {
-  display: grid;
-  grid-template-columns: 28px 1fr;
-  gap: 10px;
-  padding-block: 12px;
-  border-bottom: 1px solid var(--color-rule);
+  max-width: 44ch;
   color: var(--color-text);
+  font-size: var(--text-lead);
+  line-height: 1.45;
 }
-.steps .t-meta {
-  padding-top: 2px;
+.formCol {
+  min-width: 0;
 }
-/* Destination preview: UNIVO hub → possible routes. */
-.routes {
+
+/* ── the route preview ── */
+.preview {
+  --x: 11px; /* the line's centre */
+  display: grid;
+  gap: 14px;
+  padding-top: 8px;
+}
+.previewLabel {
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  font-weight: 600;
+}
+.route {
+  display: grid;
+}
+.stop,
+.to {
   position: relative;
   display: grid;
-  gap: 10px;
-  padding: 24px 0 0 0;
-}
-.hub {
-  display: flex;
+  grid-template-columns: 22px 1fr;
+  column-gap: 14px;
   align-items: center;
-  gap: 10px;
+  min-height: 24px;
+}
+.stop[data-stop="task"] {
+  padding-bottom: 34px;
+}
+/* task → UNIVO: the line every task takes */
+.stop[data-stop="task"]::after {
+  content: "";
+  position: absolute;
+  left: calc(var(--x) - 1px);
+  top: 20px;
+  bottom: 0;
+  width: 2px;
+  background: var(--univo-brand-ink);
+  transform-origin: center top;
+}
+.taskNode {
+  justify-self: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2.5px var(--univo-brand-ink);
+}
+.univoNode {
+  justify-self: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--univo-brand-tangerine);
+}
+.stopName,
+.toName {
   color: var(--color-fg);
-  font-size: var(--text-h2);
+  font-size: 1rem;
   font-weight: 600;
-  letter-spacing: -0.02em;
+  line-height: 1.25;
 }
-.routesLabel {
-  margin-top: 6px;
+.stopName {
+  grid-column: 2;
 }
-.routeList {
-  display: grid;
-  gap: 2px;
-  padding-left: 26px;
-  border-left: 3px solid var(--color-fg);
-  margin-left: 6px;
-}
-.routeList li {
-  --route-dot: var(--color-fg);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 34px;
-  color: var(--color-fg);
+.stop[data-stop="task"] .stopName {
+  color: var(--color-muted);
   font-weight: 500;
-  transition: opacity var(--univo-duration-content) var(--univo-ease);
 }
-.decide {
-  margin-left: 35px;
-}
-/* A chosen direction becomes the route; the others step back. Pure CSS. */
-.layout:has(input[name="interest"][value="tech"]:checked) .routeList li:not([data-route-node="tech"]),
-.layout:has(input[name="interest"][value="production"]:checked) .routeList li:not([data-route-node="production"]),
-.layout:has(input[name="interest"][value="retail"]:checked) .routeList li:not([data-route-node="retail"]),
-.layout:has(input[name="interest"][value="slot"]:checked) .routeList li:not([data-route-node="slot"]) {
-  opacity: 0.32;
-}
-.layout:has(input[name="interest"]:not([value="unsure"]):checked) .decide {
+/* UNIVO → where it goes: one destination at a time. All of them share one place, so the preview never
+   changes height; the one that leaves fades, the one that comes is built. */
+.to {
+  grid-row: 3;
+  grid-column: 1;
+  row-gap: 2px;
+  margin-top: 38px;
+  opacity: 0;
   visibility: hidden;
-}
-/* The chosen route lights up in its own colour. Ready for a JS-driven route animation later. */
-.layout:has(input[name="interest"][value="tech"]:checked) [data-route-node="tech"],
-.layout:has(input[name="interest"][value="production"]:checked) [data-route-node="production"],
-.layout:has(input[name="interest"][value="retail"]:checked) [data-route-node="retail"],
-.layout:has(input[name="interest"][value="slot"]:checked) [data-route-node="slot"] {
-  --route-dot: var(--entity-accent);
-  font-weight: 600;
-}
-.routeList [data-node] {
   transition:
-    background-color var(--univo-duration-content) var(--univo-ease),
-    box-shadow var(--univo-duration-content) var(--univo-ease);
+    opacity 140ms ease-out,
+    visibility 0s linear 140ms;
+}
+.to::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--x) - 1.5px);
+  bottom: calc(100% - 4px);
+  width: 3px;
+  height: 46px;
+  background: var(--univo-brand-ink);
+  transform-origin: center top;
+}
+/* a chosen part: the branch is ink, its colour only close to the node */
+.to:not([data-to="unsure"])::before {
+  background: linear-gradient(180deg, var(--univo-brand-ink) calc(100% - 16px), var(--c) calc(100% - 16px));
+}
+/* still open: a short solid run out of UNIVO, then dotted, to an open end */
+.to[data-to="unsure"]::before {
+  left: calc(var(--x) - 1px);
+  width: 2px;
+  background:
+    linear-gradient(180deg, var(--univo-brand-ink) 0 12px, transparent 12px),
+    repeating-linear-gradient(180deg, var(--univo-brand-stone) 0 3px, transparent 3px 8px);
+}
+.openNode,
+.partNode {
+  grid-row: 1 / span 2;
+  justify-self: center;
+  border-radius: 50%;
+}
+.openNode {
+  width: 20px;
+  height: 20px;
+  border: 2px dashed var(--univo-brand-stone);
+}
+.partNode {
+  width: 20px;
+  height: 20px;
+  background: var(--c);
+}
+.partNode[data-state="launching"] {
+  background: var(--color-bg);
+  box-shadow: inset 0 0 0 4.5px var(--c);
+}
+.toName[data-open] {
+  color: var(--color-muted);
+  font-weight: 500;
+}
+.toName,
+.toRole {
+  grid-column: 2;
+}
+.to[data-to="unsure"] .toName {
+  grid-row: 1 / span 2;
+}
+.toRole {
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  line-height: 1.35;
+}
+/* UNIVO answers when a direction is chosen: a ring around its point */
+.answer {
+  position: absolute;
+  left: calc(var(--x) - 17px);
+  top: calc(-38px - 24px + 12px - 17px);
+  width: 34px;
+  height: 34px;
+  border: 1.5px solid var(--univo-brand-tangerine);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* the chosen direction — and only it. Before hydration the radios decide; after a successful send
+   (the radios are gone) the remembered route does. */
+.page:has(input[name="interest"][value="unsure"]:checked) .to[data-to="unsure"],
+.page:has([data-done][data-route="unsure"]) .to[data-to="unsure"],
+.page:has(input[name="interest"][value="tech"]:checked) .to[data-to="tech"],
+.page:has([data-done][data-route="tech"]) .to[data-to="tech"],
+.page:has(input[name="interest"][value="production"]:checked) .to[data-to="production"],
+.page:has([data-done][data-route="production"]) .to[data-to="production"],
+.page:has(input[name="interest"][value="retail"]:checked) .to[data-to="retail"],
+.page:has([data-done][data-route="retail"]) .to[data-to="retail"],
+.page:has(input[name="interest"][value="slot"]:checked) .to[data-to="slot"],
+.page:has([data-done][data-route="slot"]) .to[data-to="slot"] {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 120ms ease-out 120ms;
+}
+
+/* A new destination (≈650 ms): the old one fades (0–140) → UNIVO answers (120–280) → the branch is drawn
+   out of it (240–500) → the node (470–600) → the name (520–660). Task → UNIVO stays as it is.
+   The animations are named only for the active destination, so they replay on every choice. */
+@media (prefers-reduced-motion: no-preference) {
+  .page .to:is(
+      .page:has(input[name="interest"][value="unsure"]:checked) [data-to="unsure"],
+      .page:has(input[name="interest"][value="tech"]:checked) [data-to="tech"],
+      .page:has(input[name="interest"][value="production"]:checked) [data-to="production"],
+      .page:has(input[name="interest"][value="retail"]:checked) [data-to="retail"],
+      .page:has(input[name="interest"][value="slot"]:checked) [data-to="slot"]
+    )
+    .answer {
+    animation: answer 180ms var(--ease-state) 120ms both;
+  }
+  .page .to:is(
+      .page:has(input[name="interest"][value="unsure"]:checked) [data-to="unsure"],
+      .page:has(input[name="interest"][value="tech"]:checked) [data-to="tech"],
+      .page:has(input[name="interest"][value="production"]:checked) [data-to="production"],
+      .page:has(input[name="interest"][value="retail"]:checked) [data-to="retail"],
+      .page:has(input[name="interest"][value="slot"]:checked) [data-to="slot"]
+    )::before {
+    animation: draw 260ms var(--ease-state) 240ms both;
+  }
+  .page .to:is(
+      .page:has(input[name="interest"][value="unsure"]:checked) [data-to="unsure"],
+      .page:has(input[name="interest"][value="tech"]:checked) [data-to="tech"],
+      .page:has(input[name="interest"][value="production"]:checked) [data-to="production"],
+      .page:has(input[name="interest"][value="retail"]:checked) [data-to="retail"],
+      .page:has(input[name="interest"][value="slot"]:checked) [data-to="slot"]
+    )
+    :is(.openNode, .partNode) {
+    animation: arrive 140ms ease-out 470ms both;
+  }
+  .page .to:is(
+      .page:has(input[name="interest"][value="unsure"]:checked) [data-to="unsure"],
+      .page:has(input[name="interest"][value="tech"]:checked) [data-to="tech"],
+      .page:has(input[name="interest"][value="production"]:checked) [data-to="production"],
+      .page:has(input[name="interest"][value="retail"]:checked) [data-to="retail"],
+      .page:has(input[name="interest"][value="slot"]:checked) [data-to="slot"]
+    )
+    :is(.toName, .toRole) {
+    animation: fade 150ms ease-out 520ms both;
+  }
+
+  /* sent: the task goes in once more — task → UNIVO, UNIVO takes it, the chosen branch completes */
+  .page:has([data-done]) .stop[data-stop="task"]::after {
+    animation: drawSent 220ms var(--ease-state) both;
+  }
+  .page:has([data-done]) .univoNode {
+    animation: accept 360ms var(--ease-state) 200ms both;
+  }
+  .page:has([data-done]) .to::before {
+    animation: drawSent 260ms var(--ease-state) 380ms both;
+  }
+  .page:has([data-done]) .to :is(.openNode, .partNode) {
+    animation: arriveSent 160ms ease-out 600ms both;
+  }
+}
+@keyframes answer {
+  from {
+    opacity: 0.85;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.12);
+  }
+}
+@keyframes draw {
+  from {
+    transform: scaleY(0);
+  }
+}
+@keyframes drawSent {
+  from {
+    transform: scaleY(0);
+  }
+}
+@keyframes arrive {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+@keyframes arriveSent {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes accept {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--univo-brand-tangerine) 45%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 9px color-mix(in srgb, var(--univo-brand-tangerine) 0%, transparent);
+  }
+}
+
+/* ── page entrance (once, html.motion only): the headline out of a mask → its point → the lead → the
+   form as one piece → the route preview last (≈950 ms; phones ≈650 ms) ── */
+:global(.motion) .title {
+  animation: rise var(--motion-section) var(--ease-state) both;
+}
+:global(.motion) .title :global(.brand-dot) {
+  display: inline-block;
+  animation: point var(--motion-ui) ease-out 380ms both;
+}
+:global(.motion) .lead {
+  animation: lift 450ms var(--ease-state) 180ms both;
+}
+:global(.motion) .formCol,
+:global(.motion) .more {
+  animation: lift 500ms var(--ease-state) 300ms both;
+}
+:global(.motion) .preview {
+  animation: lift 500ms var(--ease-state) 440ms both;
+}
+:global(.motion) .stop[data-stop="task"]::after {
+  animation: draw 220ms var(--ease-state) 620ms both;
+}
+@media (max-width: 1023.98px) {
+  :global(.motion) .title {
+    animation-duration: 420ms;
+  }
+  :global(.motion) .title :global(.brand-dot) {
+    animation-delay: 260ms;
+  }
+  :global(.motion) .lead {
+    animation-delay: 120ms;
+    animation-duration: 380ms;
+  }
+  :global(.motion) .formCol,
+  :global(.motion) .more {
+    animation-delay: 200ms;
+    animation-duration: 420ms;
+  }
+  :global(.motion) .preview,
+  :global(.motion) .stop[data-stop="task"]::after {
+    animation: none;
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(10px);
+  }
+  to {
+    clip-path: inset(0 0 -20% 0);
+  }
+}
+@keyframes lift {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes point {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+
+/* ── secondary: product early access, direct contacts ── */
+.more {
+  display: grid;
+  gap: 10px;
+  padding-top: 22px;
+  border-top: 1px solid var(--color-rule);
+}
+.moreTitle {
+  color: var(--color-muted);
+  font-size: 0.9375rem;
+  font-weight: 500;
 }
 .products {
-  display: grid;
-  gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 28px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 .direct {
   display: grid;
-  gap: 12px;
-  margin: 16px 0 0;
+  gap: 8px;
+  margin-top: 12px;
+}
+.direct dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+  margin: 0;
 }
 .direct dt {
   color: var(--color-muted);
@@ -113,33 +422,45 @@
 }
 .direct dd {
   margin: 0;
-  color: var(--color-fg);
 }
 
+/* phones: the preview as one compact row after the form */
+@media (max-width: 1023.98px) {
+  .preview {
+    padding-top: 4px;
+  }
+}
+
+/* desktop: form left, preview right beside it */
 @media (min-width: 1024px) {
   .layout {
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--gutter);
-    align-items: start;
+    row-gap: 32px;
   }
-  .head {
-    grid-column: 1 / -1;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    column-gap: var(--gutter);
-    align-items: end;
-  }
-  .head h1 {
+  .head,
+  .formCol,
+  .more {
     grid-column: 1 / span 7;
   }
-  .lead {
-    grid-column: 9 / span 4;
-  }
-  .formCol {
-    grid-column: 1 / span 7;
-  }
-  .aside {
-    grid-column: 9 / span 4;
+  .preview {
+    grid-column: 9 / -1;
+    grid-row: 2;
+    align-self: start;
     position: sticky;
     top: calc(var(--header-h) + 32px);
+    padding-top: 6px;
+  }
+  .more {
+    grid-row: 3;
+    margin-top: 16px;
+  }
+}
+
+/* reduced motion: the chosen destination is simply there */
+@media (prefers-reduced-motion: reduce) {
+  .to,
+  .page .to {
+    transition: none !important;
   }
 }

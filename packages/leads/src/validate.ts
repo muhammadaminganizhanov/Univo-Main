@@ -41,8 +41,8 @@ function text(
   return value;
 }
 
-function common(form: FormData, errors: Record<string, FieldError>) {
-  const name = text(form, "name", errors, { required: true, min: 2 });
+function common(form: FormData, errors: Record<string, FieldError>, { nameRequired = true } = {}) {
+  const name = text(form, "name", errors, { required: nameRequired, min: 2 });
   const contact = text(form, "contact", errors, { required: true });
   if (contact && !errors.contact && !isValidContact(contact)) errors.contact = "invalid_contact";
   if (form.get("consent") !== "on") errors.consent = "consent_required";
@@ -52,9 +52,10 @@ function common(form: FormData, errors: Record<string, FieldError>) {
 const snapshot = (form: FormData, keys: string[]) =>
   Object.fromEntries(keys.map((k) => [k, str(form, k)]).filter(([, v]) => v !== ""));
 
+/** Contact: only the task and a way to reply are required — the name is optional, checked if given. */
 export function validateContact(form: FormData): Result<ContactLead> {
   const errors: Record<string, FieldError> = {};
-  const { name, contact } = common(form, errors);
+  const { name, contact } = common(form, errors, { nameRequired: false });
   const company = text(form, "company", errors, { required: false });
   const message = text(form, "message", errors, { required: true, min: 10 });
   const interestRaw = str(form, "interest") || "unsure";
@@ -62,7 +63,7 @@ export function validateContact(form: FormData): Result<ContactLead> {
   if (!interest) errors.interest = "invalid_choice";
 
   const values = snapshot(form, ["name", "company", "contact", "message", "interest"]);
-  if (Object.keys(errors).length || !name || !contact || !message || !interest) return { ok: false, errors, values };
+  if (Object.keys(errors).length || !contact || !message || !interest) return { ok: false, errors, values };
   return { ok: true, data: { kind: "contact", name, company, contact, interest, message }, values };
 }
 

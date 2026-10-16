@@ -1,14 +1,14 @@
 import { CONTACTS, hasAnyChannel } from "@univo/config";
-import { getMembers, getPrelaunchProducts } from "@univo/content";
+import { getMembers, getPrelaunchProducts, pick } from "@univo/content";
 import { INTERESTS } from "@univo/leads";
-import { ArrowLink, Dot, Lines } from "@univo/ui";
+import { ArrowLink, Lines } from "@univo/ui";
 import type { Metadata } from "next";
+import type { CSSProperties } from "react";
 import { ContactForm } from "@/components/forms/ContactForm";
-import { entityState } from "@/components/system/GroupStroke";
 import { showStagingNote } from "@/lib/delivery";
 import { resolveEntityLink } from "@/lib/entities";
 import { resolveLocale } from "@/lib/params";
-import { ROUTES } from "@/lib/routes";
+import { ROUTES, localeHref } from "@/lib/routes";
 import { pageMetadata } from "@/lib/seo";
 import styles from "./contact.module.css";
 
@@ -23,8 +23,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 /**
- * One point of entry. The form is the route in; the right column is the destination: UNIVO, then
- * the possible routes. Choosing a direction highlights it with CSS :has() — no JS required.
+ * The quick way into UNIVO: say what needs doing, leave a way to reply. Beside the form, one small
+ * route preview — task → UNIVO → open, until a direction is chosen; then that part, and only it
+ * (CSS :has(), no JS). Product early access sits below, secondary.
  */
 export default async function ContactPage({ params, searchParams }: Props) {
   const ctx = await resolveLocale(params);
@@ -33,12 +34,13 @@ export default async function ContactPage({ params, searchParams }: Props) {
   const preselect = typeof direction === "string" && (INTERESTS as readonly string[]).includes(direction) ? direction : "unsure";
   const own = CONTACTS.univo;
   const c = t.contact;
+  const members = getMembers();
 
   return (
     <div className={styles.page} data-surface="paper">
       <div className={`container ${styles.layout}`}>
         <header className={styles.head}>
-          <h1 id="page-title" className="t-h1">
+          <h1 id="page-title" className={styles.title}>
             <Lines
               text={c.hero.title}
               after={
@@ -48,65 +50,72 @@ export default async function ContactPage({ params, searchParams }: Props) {
               }
             />
           </h1>
-          <p className={`t-lead ${styles.lead}`}>{c.hero.lead}</p>
+          <p className={styles.lead}>{c.hero.lead}</p>
         </header>
 
         <section className={styles.formCol} aria-labelledby="page-title">
-          <ContactForm labels={t.forms} groups={c.groups} locale={locale} defaultInterest={preselect} staging={showStagingNote()} />
+          <ContactForm
+            labels={t.forms}
+            copy={c}
+            locale={locale}
+            defaultInterest={preselect}
+            staging={showStagingNote()}
+            homeHref={localeHref(locale, ROUTES.home)}
+            parts={members.map((e) => ({ id: e.id, word: e.word ?? e.name, accent: e.accent }))}
+          />
         </section>
 
-        <aside className={styles.aside} aria-labelledby="contact-route">
-          <section className={styles.destination}>
-            <h2 id="contact-route" className="t-h3">
-              {c.route.title}
-            </h2>
-            <ol role="list" className={styles.steps}>
-              {c.route.steps.map((s, i) => (
-                <li key={s}>
-                  <span className="t-meta">{String(i + 1).padStart(2, "0")}</span>
-                  <span>{s}</span>
-                </li>
-              ))}
-            </ol>
-
-            <div className={styles.routes} data-route="preview">
-              <p className={styles.hub}>
-                <Dot color="var(--accent-univo)" size={16} node="univo" />
-                <span>UNIVO</span>
-              </p>
-              <p className={`t-meta ${styles.routesLabel}`}>{c.route.routeLabel}</p>
-              <ul role="list" className={styles.routeList}>
-                {getMembers().map((e) => (
-                  <li key={e.id} data-route-node={e.id} data-entity={e.id}>
-                    <Dot color="var(--route-dot)" state={entityState(e)} size={12} />
-                    {e.name}
-                  </li>
-                ))}
-              </ul>
-              <p className={`t-meta ${styles.decide}`}>{c.route.decide}</p>
+        {/* what happens after sending: a mirror of the chosen direction, for sighted readers */}
+        <div className={styles.preview} aria-hidden="true">
+          <p className={styles.previewLabel}>{c.route.label}</p>
+          <div className={styles.route}>
+            <div className={styles.stop} data-stop="task">
+              <span className={styles.taskNode} />
+              <span className={styles.stopName}>{c.route.task}</span>
             </div>
-          </section>
+            <div className={styles.stop} data-stop="univo">
+              <span className={styles.univoNode} />
+              <span className={styles.stopName} translate="no">
+                UNIVO
+              </span>
+            </div>
+            <div className={styles.to} data-to="unsure">
+              <span className={styles.answer} />
+              <span className={styles.openNode} />
+              <span className={styles.toName} data-open="">
+                {c.route.open}
+              </span>
+            </div>
+            {members.map((e) => (
+              <div key={e.id} className={styles.to} data-to={e.id} style={{ "--c": `var(${e.accent})` } as CSSProperties}>
+                <span className={styles.answer} />
+                <span className={styles.partNode} data-state={e.status === "live" ? "live" : "launching"} />
+                <span className={styles.toName} translate="no">
+                  {e.name}
+                </span>
+                <span className={styles.toRole}>{pick(e.role, locale)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
 
-          <section aria-labelledby="contact-products" className={styles.products}>
-            <h2 id="contact-products" className="t-h3">
-              {c.products.title}
-            </h2>
-            <p className="t-small">{c.products.text}</p>
-            <ul role="list">
-              {getPrelaunchProducts().map((e) => (
-                <li key={e.id}>
-                  <ArrowLink href={resolveEntityLink(e, locale, t).href}>{e.name}</ArrowLink>
-                </li>
-              ))}
-            </ul>
-          </section>
-
+        <section className={styles.more} aria-labelledby="contact-products">
+          <h2 id="contact-products" className={styles.moreTitle}>
+            {c.products.title}
+          </h2>
+          <ul role="list" className={styles.products}>
+            {getPrelaunchProducts().map((e) => (
+              <li key={e.id}>
+                <ArrowLink href={resolveEntityLink(e, locale, t).href}>
+                  <span translate="no">{e.name}</span> — {c.products.earlyAccess}
+                </ArrowLink>
+              </li>
+            ))}
+          </ul>
           {hasAnyChannel(own) ? (
-            <section aria-labelledby="contact-direct">
-              <h2 id="contact-direct" className="t-h3">
-                {c.direct.title}
-              </h2>
-              <dl className={styles.direct}>
+            <div className={styles.direct}>
+              <h2 className={styles.moreTitle}>{c.direct.title}</h2>
+              <dl>
                 {(["email", "phone", "telegram", "whatsapp", "city"] as const).map((k) =>
                   own[k] ? (
                     <div key={k}>
@@ -116,9 +125,9 @@ export default async function ContactPage({ params, searchParams }: Props) {
                   ) : null,
                 )}
               </dl>
-            </section>
+            </div>
           ) : null}
-        </aside>
+        </section>
       </div>
     </div>
   );

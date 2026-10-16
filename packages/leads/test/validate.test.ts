@@ -38,6 +38,18 @@ test("contact form: errors are codes and input is kept", () => {
   assert.equal(r.values.contact, "nope");
 });
 
+test("contact form: the task and a way to reply are enough; the name is optional", () => {
+  const r = validateContact(form({ contact: "@univo_team", message: "Нужен сайт к открытию филиала.", consent: "on" }));
+  assert.equal(r.ok, true);
+  assert.equal(r.ok && r.data.name, null);
+});
+
+test("early access: the name is still required", () => {
+  const r = validateEarlyAccess(form({ contact: "a@b.kg", business: "Магазин, 3 филиала", product: "retail", consent: "on" }));
+  assert.equal(r.ok, false);
+  assert.equal(!r.ok && r.errors.name, "required");
+});
+
 test("contact form: interest defaults to unsure", () => {
   const r = validateContact(form({ name: "Ян", contact: "a@b.kg", message: "Хочу обсудить идею.", consent: "on" }));
   assert.equal(r.ok && r.data.interest, "unsure");
