@@ -515,25 +515,33 @@
 }
 
 /* entrance — once, then rest.
-   RETAIL (≈1.3 s): the entry → operations left to right, each drops onto the system as it is reached →
-   the system line runs → the controls hang from it.
+   RETAIL (≈1.4 s): the entry → operations left to right, a node only once the flow has reached it,
+   each dropping onto the system → the system line runs → the controls hang from it.
    SLOT (≈1.6 s): the time axis and its cadence → the lanes → booked services and free windows in time
    order → a client arrives, drops into a free window → the window becomes an appointment. */
-:global(.motion) [data-scene] .opNode,
+:global(.motion) [data-scene] .opNode {
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 160ms ease-out calc(120ms + var(--k) * 200ms),
+    transform 160ms ease-out calc(120ms + var(--k) * 200ms);
+}
 :global(.motion) [data-scene] .opName {
   opacity: 0;
   transform: translateY(4px);
   transition:
-    opacity 260ms ease-out calc(120ms + var(--k) * 160ms),
-    transform 260ms ease-out calc(120ms + var(--k) * 160ms);
+    opacity 200ms ease-out calc(200ms + var(--k) * 200ms),
+    transform 200ms ease-out calc(200ms + var(--k) * 200ms);
 }
+/* the flow to the next operation: it leaves a node as soon as it resolves and reaches the next one
+   exactly when that one resolves */
 :global(.motion) [data-scene] .op:not(:last-child)::before {
   transform: scaleX(0);
-  transition: transform 180ms linear calc(260ms + var(--k) * 160ms);
+  transition: transform 120ms linear calc(200ms + var(--k) * 200ms);
 }
 :global(.motion) [data-scene] .opNode::after {
   transform: scaleY(0);
-  transition: transform 220ms ease-out calc(300ms + var(--k) * 160ms);
+  transition: transform 160ms ease-out calc(220ms + var(--k) * 200ms);
 }
 :global(.motion) [data-scene] .bus {
   transform: scaleX(0);
@@ -600,32 +608,32 @@
 :global(.motion) [data-scene] .note[data-note="client"] {
   transition-delay: 1100ms;
 }
-:global(.motion) [data-scene][data-in] .opNode,
-:global(.motion) [data-scene][data-in] .opName,
-:global(.motion) [data-scene][data-in] .op:not(:last-child)::before,
-:global(.motion) [data-scene][data-in] .opNode::after,
-:global(.motion) [data-scene][data-in] .bus,
-:global(.motion) [data-scene][data-in] .control,
-:global(.motion) [data-scene][data-in] .tier[data-row="control"],
-:global(.motion) [data-scene][data-in] .tick,
-:global(.motion) [data-scene][data-in] .laneNode,
-:global(.motion) [data-scene][data-in] .taken,
-:global(.motion) [data-scene][data-in] .free,
-:global(.motion) [data-scene][data-in] .window,
-:global(.motion) [data-scene][data-in] .client,
-:global(.motion) [data-scene][data-in] .booking {
+.product[data-in] .opNode,
+.product[data-in] .opName,
+.product[data-in] .op:not(:last-child)::before,
+.product[data-in] .opNode::after,
+.product[data-in] .bus,
+.product[data-in] .control,
+.product[data-in] .tier[data-row="control"],
+.product[data-in] .tick,
+.product[data-in] .laneNode,
+.product[data-in] .taken,
+.product[data-in] .free,
+.product[data-in] .window,
+.product[data-in] .client,
+.product[data-in] .booking {
   opacity: 1;
   transform: none;
 }
 /* the notes only fade: their transform is their placement */
-:global(.motion) [data-scene][data-in] .note,
-:global(.motion) [data-scene][data-in] .inside,
-:global(.motion) [data-scene][data-in] .legend {
+.product[data-in] .note,
+.product[data-in] .inside,
+.product[data-in] .legend {
   opacity: 1;
 }
-:global(.motion) [data-scene][data-in] .axis,
-:global(.motion) [data-scene][data-in] .lane,
-:global(.motion) [data-scene][data-in] .bookPath {
+.product[data-in] .axis,
+.product[data-in] .lane,
+.product[data-in] .bookPath {
   stroke-dashoffset: 0;
 }
 

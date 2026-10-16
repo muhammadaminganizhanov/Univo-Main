@@ -427,3 +427,9 @@
     --step: 54px;
   }
 }
+
+/* the first standard's pass waits until the section is in view; choosing another one replays it as before */
+:global(.motion) .section:not([data-in]) .panel :is(.originPoint, .node, .ruleText, .checkText),
+:global(.motion) .section:not([data-in]) .panel .part::before {
+  animation-play-state: paused;
+}

@@ -25,6 +25,18 @@ const LEVEL = { services: 140, products: 272, next: 424 } as const;
 const COLS = [340, 604];
 const WEIGHT = { master: 12, services: 9, products: 6 } as const;
 
+/*
+ * Entrance timing, from the geometry: the axis draws from the point at an even pace, a level's branch
+ * starts when the axis reaches its turn, and a node resolves when its branch reaches it. (ms)
+ */
+const T = { axisStart: 120, axis: 520, branch: 600 };
+const AXIS_END = LEVEL.products - RT;
+const branchStart = (y: number) => Math.round(T.axisStart + (T.axis * (y - RT - UY)) / (AXIS_END - UY));
+const QUARTER = (Math.PI * RT) / 2;
+const reach = (y: number, x: number, end: number) =>
+  Math.round(branchStart(y) + (T.branch * (QUARTER + x - (AX + RT))) / (QUARTER + end - (AX + RT)));
+const ms = (v: number) => `${v}ms`;
+
 const pct = (x: number, y: number) => ({ "--x": `${(x / W) * 100}%`, "--y": `${(y / H) * 100}%` }) as CSSProperties;
 /** From the axis, a quarter turn into a level, then along it. */
 const branch = (y: number, to: number, from = y - RT) => `M${AX} ${from} L${AX} ${y - RT} A${RT} ${RT} 0 0 0 ${AX + RT} ${y} L${to} ${y}`;
@@ -39,8 +51,18 @@ export function MasterMap({ ctx }: { ctx: LocaleContext }) {
   const members = tiers.flatMap((tier) => tier.list);
   const at = (e: Entity) => {
     const tier = tiers.find((x) => x.list.includes(e))!;
-    return { x: COLS[tier.list.indexOf(e)] ?? COLS[0]!, y: LEVEL[tier.id], tier: tier.id };
+    const x = COLS[tier.list.indexOf(e)] ?? COLS[0]!;
+    const y = LEVEL[tier.id];
+    return { x, y, tier: tier.id, arrive: reach(y, x, COLS[tier.list.length - 1] ?? COLS[0]!) };
   };
+  const lastArrival = Math.max(...members.map((e) => at(e).arrive));
+  // reading order on phones: the source, each level and its parts, the next part
+  let order = 0;
+  const seq = new Map<string, number>();
+  for (const tier of tiers) {
+    seq.set(tier.id, ++order);
+    for (const e of tier.list) seq.set(e.id, ++order);
+  }
 
   // focus / hover on a part: UNIVO answers → its path draws from the source → node → panel → arrow
   const css =
@@ -49,7 +71,7 @@ export function MasterMap({ ctx }: { ctx: LocaleContext }) {
       .map((e) => {
         const on = `#ecomap:has([data-part="${e.id}"]:hover,[data-part="${e.id}"]:focus-visible)`;
         return (
-          `${on} [data-path="${e.id}"]{stroke-dashoffset:0;transition-delay:60ms}` +
+          `${on} [data-path="${e.id}"]{stroke-dashoffset:0;opacity:1;transition:stroke-dashoffset var(--t-hover) var(--ease-draw) 60ms,opacity 0s}` +
           `${on} [data-pnode="${e.id}"]{transform:scale(1.3);transition-delay:300ms}` +
           `${on} [data-pnode]:not([data-pnode="${e.id}"]),${on} [data-part]:not([data-part="${e.id}"]){opacity:.5}` +
           `${on} [data-answer]{opacity:1;transform:none}` +
@@ -103,8 +125,8 @@ export function MasterMap({ ctx }: { ctx: LocaleContext }) {
         <nav className={styles.map} aria-label={m.label}>
           <svg className={styles.svg} viewBox={`0 0 ${W} ${H}`} aria-hidden="true" focusable="false">
             {/* the next part: the axis runs on, dashed, and turns into a level of its own */}
-            <path className={styles.next} d={branch(LEVEL.next, COLS[0]! - 13, LEVEL.products - RT)} />
-            <circle className={styles.nextRing} cx={COLS[0]} cy={LEVEL.next} r={11} />
+            <path className={styles.next} d={branch(LEVEL.next, COLS[0]! - 13, LEVEL.products - RT)} style={{ "--at": ms(lastArrival + 60) } as CSSProperties} />
+            <circle className={styles.nextRing} cx={COLS[0]} cy={LEVEL.next} r={11} style={{ "--at": ms(lastArrival + 260) } as CSSProperties} />
             {/* the axis and the two levels; weight by rank */}
             <path className={styles.line} data-l="axis" d={`M${AX} ${UY} L${AX} ${LEVEL.products - RT}`} style={{ strokeWidth: WEIGHT.master }} />
             {tiers.map((tier, i) => (
@@ -113,7 +135,7 @@ export function MasterMap({ ctx }: { ctx: LocaleContext }) {
                 className={styles.line}
                 data-l={tier.id}
                 d={branch(LEVEL[tier.id], COLS[tier.list.length - 1] ?? COLS[0]!)}
-                style={{ strokeWidth: WEIGHT[tier.id], "--i": i } as CSSProperties}
+                style={{ strokeWidth: WEIGHT[tier.id], "--i": i, "--at": ms(branchStart(LEVEL[tier.id])) } as CSSProperties}
               />
             ))}
             {/* each part's path from the source, drawn in its colour on focus/hover */}
@@ -135,7 +157,7 @@ export function MasterMap({ ctx }: { ctx: LocaleContext }) {
             {members.map((e, i) => {
               const p = at(e);
               return (
-                <g key={e.id}>
+                <g key={e.id} style={{ "--at": ms(p.arrive) } as CSSProperties}>
                   {/* an opaque base: a node that steps back never shows another part's path through it */}
                   <circle className={styles.nodeBase} cx={p.x} cy={p.y} r={p.tier === "services" ? 16 : 15} />
                   <circle
@@ -152,7 +174,7 @@ export function MasterMap({ ctx }: { ctx: LocaleContext }) {
             })}
           </svg>
 
-          <p className={styles.sourceLabel} style={pct(AX + 30, UY)}>
+          <p className={styles.sourceLabel} style={{ ...pct(AX + 30, UY), "--o": 0 } as CSSProperties}>
             <span className={styles.sourcePoint} aria-hidden="true" />
             <span className={styles.sourceName} translate="no">
               UNIVO
@@ -163,21 +185,31 @@ export function MasterMap({ ctx }: { ctx: LocaleContext }) {
           <ul role="list" className={styles.tiers}>
             {tiers.map((tier) => (
               <li key={tier.id} className={styles.tier} data-tier={tier.id}>
-                <p className={styles.tierHead} style={pct(AX + RT + 22, LEVEL[tier.id] - 22)}>
+                <p
+                  className={styles.tierHead}
+                  style={{ ...pct(AX + RT + 22, LEVEL[tier.id] - 22), "--at": ms(branchStart(LEVEL[tier.id]) + 120), "--o": seq.get(tier.id) } as CSSProperties}
+                >
                   <span className={styles.tierName}>{tier.title}</span>
                   <span className={styles.tierNote}>{tier.note}</span>
                 </p>
                 <ul role="list" className={styles.parts}>
                   {tier.list.map((e) => {
                     const p = at(e);
-                    return <Part key={e.id} e={e} ctx={ctx} style={{ ...pct(p.x - 13, p.y - 18), "--c": `var(${e.accent})` } as CSSProperties} />;
+                    return (
+                      <Part
+                        key={e.id}
+                        e={e}
+                        ctx={ctx}
+                        style={{ ...pct(p.x - 13, p.y - 18), "--c": `var(${e.accent})`, "--at": ms(p.arrive + 80), "--o": seq.get(e.id) } as CSSProperties}
+                      />
+                    );
                   })}
                 </ul>
               </li>
             ))}
           </ul>
 
-          <p className={styles.nextLabel} style={pct(COLS[0]! + 26, LEVEL.next)}>
+          <p className={styles.nextLabel} style={{ ...pct(COLS[0]! + 26, LEVEL.next), "--at": ms(lastArrival + 340), "--o": order + 1 } as CSSProperties}>
             <span className={styles.nextPoint} aria-hidden="true" />
             <span className={styles.nextName}>{m.next}</span>
             <span className={styles.nextNote}>{m.openEnd}</span>

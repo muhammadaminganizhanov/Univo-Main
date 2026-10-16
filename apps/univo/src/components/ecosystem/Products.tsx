@@ -43,7 +43,7 @@ function Product({ e, ctx, figure }: { e: Entity; ctx: LocaleContext; figure: Re
   const link = resolveEntityLink(e, locale, t);
   const segments = e.segments ? pick(e.segments, locale) : null;
   return (
-    <article id={e.slug} className={styles.product} data-product={e.id} style={{ "--c": `var(${e.accent})` } as CSSProperties} aria-labelledby={`${e.slug}-title`}>
+    <article id={e.slug} className={styles.product} data-product={e.id} data-scene="eco-product" style={{ "--c": `var(${e.accent})` } as CSSProperties} aria-labelledby={`${e.slug}-title`}>
       <div className={styles.identity}>
         <div className={styles.id}>
           <EntityLockup entity={e} className={styles.lockup} decorative />

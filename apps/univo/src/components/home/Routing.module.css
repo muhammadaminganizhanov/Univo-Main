@@ -135,7 +135,8 @@
   stroke: var(--univo-brand-ink);
   stroke-width: 6;
   stroke-dasharray: 1 2;
-  stroke-dashoffset: calc(1 - var(--live));
+  /* hidden: a little past the end, so a waiting branch shows no round-cap dot */
+  stroke-dashoffset: calc(1.02 - var(--live) * 1.02);
   transition: stroke-dashoffset calc(200ms + var(--live) * 60ms) var(--ease-draw) calc(var(--live) * 220ms);
 }
 .onOut {
@@ -222,29 +223,30 @@
   animation-duration: 180ms;
   animation-timing-function: var(--ease-draw);
   animation-delay: 780ms;
-  animation-fill-mode: both;
+  animation-fill-mode: backwards;
 }
-.actTask {
-  animation-duration: 200ms;
-  animation-delay: 0ms;
+/* the owner → result line; while the route is first built (--entering: 1) everything after UNIVO
+   waits for the task to arrive */
+.actLine {
+  animation-delay: calc(780ms + var(--entering, 0) * 380ms);
 }
 .actUnivo {
   animation-duration: 420ms;
   animation-timing-function: var(--ease-sys);
-  animation-delay: 180ms;
+  animation-delay: calc(180ms + var(--entering, 0) * 200ms);
   animation-fill-mode: both;
 }
 .actOwner {
   animation-duration: 220ms;
   animation-timing-function: var(--ease-sys);
-  animation-delay: 740ms;
-  animation-fill-mode: both;
+  animation-delay: calc(740ms + var(--entering, 0) * 380ms);
+  animation-fill-mode: backwards;
 }
 .actResult {
   animation-duration: 260ms;
   animation-timing-function: var(--ease-sys);
-  animation-delay: 920ms;
-  animation-fill-mode: both;
+  animation-delay: calc(920ms + var(--entering, 0) * 420ms);
+  animation-fill-mode: backwards;
 }
 
 
@@ -340,5 +342,107 @@
   .partNode,
   .partNode circle {
     transition: none;
+  }
+}
+
+/* ── entrance: built once, when the route comes into view (≈1.5 s; phones ≈15 % quicker) ──
+   task (0) → its line to UNIVO (120–370) → UNIVO (360) and its answer (380) → branches out of UNIVO
+   (460–800) → the parts they reach (780) → converge (860–1120) → owner (1120) → line on (1160–1340) →
+   result (1340) → its label. Everything is set in place and paused until [data-in]; nothing
+   changes value when it starts, so no transition fires. Without motion: the final state, at once. */
+@property --entering {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+.section {
+  --pace: 1;
+}
+@media (max-width: 767.98px) {
+  .section {
+    --pace: 0.85;
+  }
+}
+:global(.motion) .section[data-in] {
+  animation: entering calc(1700ms * var(--pace)) step-end;
+}
+@keyframes entering {
+  from {
+    --entering: 1;
+  }
+  to {
+    --entering: 0;
+  }
+}
+:global(.motion) .section:not([data-in]) {
+  --entering: 1;
+}
+:global(.motion) .section .taskNow,
+:global(.motion) .section .taskNode {
+  animation: routeFade calc(200ms * var(--pace)) ease-out backwards;
+}
+:global(.motion) .section .taskLine {
+  animation: home-route-draw calc(250ms * var(--pace)) linear calc(120ms * var(--pace)) backwards;
+}
+:global(.motion) .section .univo {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: routeNode calc(140ms * var(--pace)) ease-out calc(360ms * var(--pace)) backwards;
+}
+:global(.motion) .section .on {
+  animation: routeBranch calc(340ms * var(--pace)) linear calc(460ms * var(--pace)) backwards;
+}
+:global(.motion) .section .onOut {
+  animation: routeBranch calc(260ms * var(--pace)) linear calc(860ms * var(--pace)) backwards;
+}
+:global(.motion) .section .partNode {
+  animation: routePart calc(160ms * var(--pace)) ease-out calc(780ms * var(--pace)) backwards;
+}
+:global(.motion) .section .partNode circle {
+  animation: routeScale calc(160ms * var(--pace)) ease-out calc(780ms * var(--pace)) backwards;
+}
+:global(.motion) .section .nodeLabel[data-l="univo"] {
+  animation: routeFade calc(180ms * var(--pace)) ease-out calc(440ms * var(--pace)) backwards;
+}
+:global(.motion) .section .nodeLabel[data-l="owner"] {
+  animation: routeFade calc(180ms * var(--pace)) ease-out calc(1200ms * var(--pace)) backwards;
+}
+:global(.motion) .section .nodeLabel[data-l="result"] {
+  animation: routeFade calc(180ms * var(--pace)) ease-out calc(1440ms * var(--pace)) backwards;
+}
+/* held until the route comes into view */
+:global(.motion) .section:not([data-in]) :is(.taskNow, .taskNode, .taskLine, .univo, .on, .partNode, .partNode circle, .nodeLabel, .act *) {
+  animation-play-state: paused;
+}
+@keyframes routeFade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes routeNode {
+  from {
+    opacity: 0;
+    transform: scale(0.82);
+  }
+}
+@keyframes routeBranch {
+  from {
+    stroke-dashoffset: 1.02;
+  }
+}
+@keyframes routePart {
+  from {
+    opacity: 0.35;
+  }
+}
+@keyframes routeScale {
+  from {
+    transform: scale(0.8);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :global(.motion) .section,
+  :global(.motion) .section * {
+    animation: none !important;
   }
 }

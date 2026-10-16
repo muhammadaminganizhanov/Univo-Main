@@ -22,7 +22,9 @@ export function MotionRoot() {
           }
         }
       },
-      { rootMargin: "0px 0px -12% 0px", threshold: 0.08 },
+      // a scene (or a diagram marked as one) starts once its top has come a fifth of the way up the
+      // screen — late enough to be seen, early enough for tall sections; once only
+      { rootMargin: "0px 0px -20% 0px", threshold: 0 },
     );
     const observe = () => document.querySelectorAll("[data-scene]:not([data-in])").forEach((el) => io.observe(el));
     observe();

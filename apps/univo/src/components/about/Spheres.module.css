@@ -137,7 +137,8 @@
   }
 }
 
-/* entrance: the kinds of work, their plumb lines, the principle runs under them; then what is shared */
+/* entrance: the kinds of work, each dropping its plumb line; once they have all come down, the one
+   principle runs under them; then what is shared */
 :global(.motion) [data-scene] .sphere {
   opacity: 0;
   transform: translateY(8px);
@@ -151,15 +152,15 @@
 }
 :global(.motion) [data-scene] .principle {
   transform: scaleX(0);
-  transition: transform 800ms var(--ease-draw) 560ms;
+  transition: transform 700ms var(--ease-draw) 920ms;
 }
 :global(.motion) [data-scene] .shared,
 :global(.motion) [data-scene] .note {
   opacity: 0;
   transform: translateY(8px);
   transition:
-    opacity var(--t-reveal) var(--ease-sys) 1000ms,
-    transform var(--t-reveal) var(--ease-sys) 1000ms;
+    opacity var(--t-reveal) var(--ease-sys) 1480ms,
+    transform var(--t-reveal) var(--ease-sys) 1480ms;
 }
 :global(.motion) [data-scene][data-in] .sphere,
 :global(.motion) [data-scene][data-in] .plumb,

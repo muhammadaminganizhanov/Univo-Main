@@ -209,7 +209,8 @@ export function Source({ ctx }: { ctx: LocaleContext }) {
             {segs.map((s) => {
               const d = pos(s.id, "d");
               const p = pos(s.id, "p");
-              const style = { "--dx": d.x, "--dy": d.y, "--px": p.x, "--py": p.y } as CSSProperties;
+              // --i: the label's part, so it can follow its own node in the entrance
+              const style = { "--dx": d.x, "--dy": d.y, "--px": p.x, "--py": p.y, "--i": segs.indexOf(s) } as CSSProperties;
               if (s.id === "univo") {
                 return (
                   <li key={s.id} className={`${styles.label} ${styles.master}`} style={style}>

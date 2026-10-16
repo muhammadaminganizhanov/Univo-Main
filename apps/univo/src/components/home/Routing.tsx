@@ -9,9 +9,10 @@ import styles from "./Routing.module.css";
  * brand stroke — round caps, turns by quarter circles. CSS only (radios + :has); the steps below
  * carry the meaning for every reader.
  *
- * Changing the task is one short sequence (≈1 s): the previous branches retract; the task's line
- * runs to UNIVO, UNIVO answers, the new branches draw out of it, their parts light, the branches
- * converge, the owner takes it, the line runs on, the result comes out.
+ * Coming into view, the route is built once (≈1.5 s): the task, its line to UNIVO, UNIVO answers, the
+ * branches draw out of it to the parts the task needs, converge, the owner takes it, the result comes
+ * out. Changing the task reroutes only what comes after UNIVO (≈1 s): the previous branches retract,
+ * UNIVO answers, the new branches draw, their parts light, converge, owner, result.
  * Owner and result are re-lit per task (one layer per task, shown only for the chosen one), so the
  * sequence replays on every change. Without motion the final state is simply shown.
  */
@@ -94,7 +95,7 @@ export function Routing({ ctx }: { ctx: LocaleContext }) {
       // SVG keeps animating inside display:none, so the sequence is (re)started by naming it only
       // for the chosen task; keyframes live in globals.css
       `@media (prefers-reduced-motion:no-preference){` +
-      `${on} [data-act="${task.id}"] [data-a="task"],${on} [data-act="${task.id}"] [data-a="line"]{animation-name:home-route-draw}` +
+      `${on} [data-act="${task.id}"] [data-a="line"]{animation-name:home-route-draw}` +
       `${on} [data-act="${task.id}"] [data-a="univo"]{animation-name:home-route-answer}` +
       `${on} [data-act="${task.id}"] [data-a="owner"],${on} [data-act="${task.id}"] [data-a="result"]{animation-name:home-route-arrive}}`
     );
@@ -110,11 +111,9 @@ export function Routing({ ctx }: { ctx: LocaleContext }) {
         {/* resting tracks: task → UNIVO, owner → result; each task draws its own live layer over them */}
         <path className={styles.idle} d={path([L.task, L.univo])} />
         <path className={styles.idle} d={path([L.owner, L.result])} />
-        {TASKS.map((task) => (
-          <g key={task.id} className={styles.act} data-act={task.id}>
-            <path className={`${styles.actLine} ${styles.actTask}`} data-a="task" d={path([L.task, L.univo])} pathLength={1} />
-          </g>
-        ))}
+        {/* the task's way into UNIVO: one line, the same for every task — choosing another task
+            reroutes only what comes after UNIVO */}
+        <path className={`${styles.actLine} ${styles.taskLine}`} d={path([L.task, L.univo])} pathLength={1} />
         {parts.map((e, i) => {
           const y = L.partYs[i]!;
           const into = path([L.univo, [L.fan, L.univo[1]], [L.fan, y], [L.partX, y]]);
@@ -154,11 +153,11 @@ export function Routing({ ctx }: { ctx: LocaleContext }) {
                   <circle cx={ux} cy={uy} r={30} className={styles.actUnivo} data-a="univo" />
                 </g>
               ))}
-              <text x={ux} y={phone ? uy + 6 : uy - 38} dx={phone ? 36 : 0} className={styles.nodeLabel} textAnchor={phone ? "start" : "middle"}>
+              <text x={ux} y={phone ? uy + 6 : uy - 38} dx={phone ? 36 : 0} className={styles.nodeLabel} data-l="univo" textAnchor={phone ? "start" : "middle"}>
                 {h.router}
               </text>
               <circle cx={ox} cy={oy} r={14} className={styles.ownerIdle} />
-              <text x={ox} y={phone ? oy + 6 : oy + 48} dx={phone ? 30 : 0} className={styles.nodeLabel} textAnchor={phone ? "start" : "middle"}>
+              <text x={ox} y={phone ? oy + 6 : oy + 48} dx={phone ? 30 : 0} className={styles.nodeLabel} data-l="owner" textAnchor={phone ? "start" : "middle"}>
                 {h.owner}
               </text>
               <circle cx={rx} cy={ry} r={18} className={styles.resultIdle} />
@@ -169,7 +168,7 @@ export function Routing({ ctx }: { ctx: LocaleContext }) {
                   <circle cx={rx} cy={ry} r={20} className={`${styles.result} ${styles.actResult}`} data-a="result" />
                 </g>
               ))}
-              <text x={rx} y={phone ? ry + 6 : ry - 38} dx={phone ? 36 : 0} className={styles.nodeLabel} textAnchor={phone ? "start" : "end"}>
+              <text x={rx} y={phone ? ry + 6 : ry - 38} dx={phone ? 36 : 0} className={styles.nodeLabel} data-l="result" textAnchor={phone ? "start" : "end"}>
                 {h.result}
               </text>
             </>

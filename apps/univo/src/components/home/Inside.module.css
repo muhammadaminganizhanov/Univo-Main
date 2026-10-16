@@ -294,15 +294,24 @@
 }
 
 /* entrance (foundation): the spine draws down from the source, the parts resolve in spine order */
+/* entrance: the spine runs down from the source at an even pace; each row appears as the spine
+   reaches it (row kk of 7 at ≈ 150 + kk × 90 ms), the next part last */
 :global(.motion) [data-scene] .index::before {
   transform: scaleY(0);
   transform-origin: top;
-  transition: transform 900ms cubic-bezier(0.65, 0, 0.35, 1) 150ms;
+  transition: transform 700ms linear 150ms;
 }
 :global(.motion) [data-scene] .item,
 :global(.motion) [data-scene] .tierHead {
   opacity: 0;
-  transition: opacity 420ms var(--univo-ease, ease) calc(200ms + var(--kk, 0) * 90ms);
+  transition: opacity 240ms cubic-bezier(0.22, 1, 0.36, 1) calc(170ms + var(--kk, 0) * 90ms);
+}
+:global(.motion) [data-scene] .nextRow {
+  opacity: 0;
+  transition: opacity 320ms cubic-bezier(0.22, 1, 0.36, 1) 820ms;
+}
+:global(.motion) [data-scene][data-in] .nextRow {
+  opacity: 1;
 }
 :global(.motion) [data-scene][data-in] .index::before {
   transform: none;

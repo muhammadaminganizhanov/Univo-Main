@@ -422,46 +422,66 @@
   }
 }
 
-/* ═══ Entrance: each line draws from the task down; the clusters and stages follow; then the u ═══ */
+/* ═══ Entrance — each line on its own, when it comes into view: from the task down, piece by piece;
+   a node resolves when its line arrives (140 + k × 110 ms), its words 80 ms after; TECH's clusters
+   branch off the trunk in turn. Then, when the join comes into view, the two lines turn and meet, and
+   the UNIVO point appears where they meet; the statement last. ═══ */
 :global(.motion) [data-scene] .step::before {
   transform: scaleY(0);
-  transition: transform 220ms var(--ease-draw) calc(140ms + var(--k) * 110ms);
+  transition: transform 220ms linear calc(140ms + var(--k) * 110ms);
 }
 :global(.motion) [data-scene] .node {
   opacity: 0;
-  transform: scale(0.5);
+  transform: scale(0.82);
   transition:
-    opacity 240ms var(--ease-sys) calc(100ms + var(--k) * 110ms),
-    transform 240ms var(--ease-sys) calc(100ms + var(--k) * 110ms);
+    opacity 160ms cubic-bezier(0.22, 1, 0.36, 1) calc(140ms + var(--k) * 110ms),
+    transform 160ms cubic-bezier(0.22, 1, 0.36, 1) calc(140ms + var(--k) * 110ms);
 }
 :global(.motion) [data-scene] .step[data-kind="branch"] .node {
   transform: scaleX(0);
 }
+:global(.motion) [data-scene] .step > :not(.node) {
+  opacity: 0;
+  transition: opacity 200ms ease-out calc(220ms + var(--k) * 110ms);
+}
 :global(.motion) [data-scene] .join,
 :global(.motion) [data-scene] .mini {
   clip-path: inset(0 0 100% 0);
-  transition: clip-path var(--t-reveal) var(--ease-draw) 820ms;
+  /* the two lines arrive first (≈700 ms when both are in view), then they turn and meet */
+  transition: clip-path 420ms linear 720ms;
+}
+:global(.motion) [data-scene] .join::after,
+:global(.motion) [data-scene] .mini::after {
+  opacity: 0;
+  transition: opacity 180ms ease-out 1150ms;
 }
 :global(.motion) [data-scene] .togetherText {
   opacity: 0;
   transform: translateY(8px);
   transition:
-    opacity var(--t-reveal) var(--ease-sys) 1100ms,
-    transform var(--t-reveal) var(--ease-sys) 1100ms;
+    opacity var(--t-reveal) cubic-bezier(0.22, 1, 0.36, 1) 1260ms,
+    transform var(--t-reveal) cubic-bezier(0.22, 1, 0.36, 1) 1260ms;
 }
-:global(.motion) [data-scene][data-in] .step::before {
+.lane[data-in] .step::before {
   transform: none;
 }
-:global(.motion) [data-scene][data-in] .node,
-:global(.motion) [data-scene][data-in] .step[data-kind="branch"] .node {
+.lane[data-in] .node,
+.lane[data-in] .step[data-kind="branch"] .node {
   opacity: 1;
   transform: none;
 }
-:global(.motion) [data-scene][data-in] .join,
-:global(.motion) [data-scene][data-in] .mini {
+.lane[data-in] .step > :not(.node) {
+  opacity: 1;
+}
+.together[data-in] .join,
+.together[data-in] .mini {
   clip-path: inset(0 -20px -20px -20px);
 }
-:global(.motion) [data-scene][data-in] .togetherText {
+.together[data-in] .join::after,
+.together[data-in] .mini::after {
+  opacity: 1;
+}
+.together[data-in] .togetherText {
   opacity: 1;
   transform: none;
 }

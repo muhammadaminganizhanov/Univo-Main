@@ -119,28 +119,44 @@
   }
 }
 
-/* each standard reveals as it is reached: the word out of a mask, then what it means */
+/* each standard reveals as it is reached: its number → the word out of a mask → what it means → how it
+   is checked (≈90 ms apart), once */
+:global(.motion) .item[data-scene] .num {
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
 :global(.motion) .item[data-scene] .word {
   clip-path: inset(0 -0.1em 100% -0.1em);
   transform: translateY(0.3em);
   transition:
-    clip-path 560ms var(--ease-draw),
-    transform 560ms var(--ease-sys);
+    clip-path 520ms var(--ease-draw) 80ms,
+    transform 520ms cubic-bezier(0.22, 1, 0.36, 1) 80ms;
 }
-:global(.motion) .item[data-scene] .body,
-:global(.motion) .item[data-scene] .num {
+:global(.motion) .item[data-scene] .rule,
+:global(.motion) .item[data-scene] .check,
+:global(.motion) .item[data-scene] .aside {
   opacity: 0;
-  transform: translateY(8px);
+  transform: translateY(6px);
   transition:
-    opacity 520ms var(--ease-sys) 180ms,
-    transform 520ms var(--ease-sys) 180ms;
+    opacity 420ms cubic-bezier(0.22, 1, 0.36, 1) 260ms,
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1) 260ms;
+}
+:global(.motion) .item[data-scene] .check {
+  transition-delay: 350ms;
+}
+:global(.motion) .item[data-scene] .aside {
+  transition-delay: 440ms;
+}
+:global(.motion) .item[data-scene][data-in] .num {
+  opacity: 1;
 }
 :global(.motion) .item[data-scene][data-in] .word {
   clip-path: inset(-0.1em -0.1em -0.2em -0.1em);
   transform: none;
 }
-:global(.motion) .item[data-scene][data-in] .body,
-:global(.motion) .item[data-scene][data-in] .num {
+:global(.motion) .item[data-scene][data-in] .rule,
+:global(.motion) .item[data-scene][data-in] .check,
+:global(.motion) .item[data-scene][data-in] .aside {
   opacity: 1;
   transform: none;
 }

@@ -74,7 +74,11 @@
   stroke-linecap: round;
   stroke-dasharray: 1 1;
   stroke-dashoffset: 1;
-  transition: stroke-dashoffset var(--t-hover) var(--ease-draw);
+  opacity: 0;
+  /* leaving: the path fades (140 ms), then resets out of sight */
+  transition:
+    opacity 140ms ease-out,
+    stroke-dashoffset 0s linear 160ms;
 }
 .source {
   fill: var(--univo-brand-tangerine);
@@ -391,69 +395,68 @@
   }
 }
 
-/* entrance: the point → the axis draws down → the levels → the nodes → the names (≈1 s, once) */
+/* ── entrance (once, held until the map is in view): the point → the axis runs down → each level's
+   branch leaves the axis when the axis reaches its turn → every node resolves when its branch reaches
+   it (--at, computed from the geometry in MasterMap.tsx), its name 80 ms after → the next part, dashed,
+   last (≈1.5 s). Animations fill backwards only: afterwards nothing of them remains, so hover keeps
+   its own immediate response. ── */
 @media (min-width: 1024px) {
-  :global(.motion) [data-scene] .source,
-  :global(.motion) [data-scene] .node {
-    opacity: 0;
-    transform: scale(0.4);
-    transition:
-      opacity 320ms var(--ease-sys) calc(520ms + var(--i, 0) * 90ms),
-      transform 320ms var(--ease-sys) calc(520ms + var(--i, 0) * 90ms);
-  }
   :global(.motion) [data-scene] .source {
     transform-box: fill-box;
     transform-origin: center;
-    transition-delay: 0ms;
-  }
-  :global(.motion) [data-scene] .line {
-    stroke-dasharray: 1 2;
-    stroke-dashoffset: 1;
+    animation: mmNode 200ms var(--ease-state, cubic-bezier(0.22, 1, 0.36, 1)) 0ms backwards paused;
   }
   :global(.motion) [data-scene] .line[data-l="axis"] {
-    transition: stroke-dashoffset 520ms var(--ease-draw) 120ms;
+    animation: mmDraw 520ms linear 120ms backwards paused;
   }
   :global(.motion) [data-scene] .line[data-l="services"],
   :global(.motion) [data-scene] .line[data-l="products"] {
-    transition: stroke-dashoffset 600ms var(--ease-draw) calc(300ms + var(--i, 0) * 140ms);
+    animation: mmDraw 600ms linear var(--at) backwards paused;
   }
-  :global(.motion) [data-scene] .next,
-  :global(.motion) [data-scene] .nextRing,
-  :global(.motion) [data-scene] .sourceLabel,
-  :global(.motion) [data-scene] .tierHead,
-  :global(.motion) [data-scene] .part,
-  :global(.motion) [data-scene] .nextLabel,
-  :global(.motion) [data-scene] .readout {
-    opacity: 0;
-    transition: opacity var(--t-reveal) var(--ease-sys) 700ms;
+  :global(.motion) [data-scene] .node,
+  :global(.motion) [data-scene] .nodeBase {
+    animation: mmNode 160ms cubic-bezier(0.22, 1, 0.36, 1) var(--at) backwards paused;
   }
   :global(.motion) [data-scene] .sourceLabel {
-    transition-delay: 200ms;
+    animation: mmFade 220ms ease-out 120ms backwards paused;
   }
-  :global(.motion) [data-scene] .tierHead {
-    transition-delay: 480ms;
+  :global(.motion) [data-scene] :is(.tierHead, .part, .next, .nextRing, .nextLabel) {
+    animation: mmFade 220ms ease-out var(--at) backwards paused;
   }
-  :global(.motion) [data-scene] .next,
-  :global(.motion) [data-scene] .nextRing,
-  :global(.motion) [data-scene] .nextLabel {
-    transition-delay: 940ms;
+  :global(.motion) [data-scene] :is(.next, .nextRing) {
+    animation-duration: 400ms;
   }
-  :global(.motion) [data-scene][data-in] .source,
-  :global(.motion) [data-scene][data-in] .node {
-    opacity: 1;
-    transform: none;
+  :global(.motion) [data-scene] .aside {
+    animation: mmFade var(--t-reveal) ease-out 240ms backwards paused;
   }
-  :global(.motion) [data-scene][data-in] .line {
+  :global(.motion) [data-scene][data-in] :is(.source, .line, .node, .nodeBase, .sourceLabel, .tierHead, .part, .next, .nextRing, .nextLabel, .aside) {
+    animation-play-state: running;
+  }
+}
+@keyframes mmDraw {
+  from {
+    stroke-dasharray: 1 2;
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dasharray: 1 2;
     stroke-dashoffset: 0;
   }
-  :global(.motion) [data-scene][data-in] .next,
-  :global(.motion) [data-scene][data-in] .nextRing,
-  :global(.motion) [data-scene][data-in] .sourceLabel,
-  :global(.motion) [data-scene][data-in] .tierHead,
-  :global(.motion) [data-scene][data-in] .part,
-  :global(.motion) [data-scene][data-in] .nextLabel,
-  :global(.motion) [data-scene][data-in] .readout {
-    opacity: 1;
+}
+@keyframes mmNode {
+  from {
+    opacity: 0;
+    transform: scale(0.82);
+  }
+}
+@keyframes mmFade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes mmGrow {
+  from {
+    transform: scaleY(0);
   }
 }
 
@@ -633,5 +636,23 @@
   }
   .stage {
     gap: 24px;
+  }
+}
+
+/* phones and tablets: the same structure read top-down — the point, then each level and its parts in
+   reading order (--o), each piece of line growing down before what it reaches (≈0.7 s) */
+@media (max-width: 1023.98px) {
+  :global(.motion) [data-scene] :is(.sourceLabel, .tierHead, .part, .nextLabel) {
+    animation: mmFade 200ms ease-out calc(var(--o, 0) * 80ms + 60ms) backwards paused;
+  }
+  :global(.motion) [data-scene] .sourceLabel::after,
+  :global(.motion) [data-scene] .part::before {
+    transform-origin: center top;
+    animation: mmGrow 200ms linear calc(var(--o, 0) * 80ms + 40ms) backwards paused;
+  }
+  :global(.motion) [data-scene][data-in] :is(.sourceLabel, .tierHead, .part, .nextLabel),
+  :global(.motion) [data-scene][data-in] .sourceLabel::after,
+  :global(.motion) [data-scene][data-in] .part::before {
+    animation-play-state: running;
   }
 }

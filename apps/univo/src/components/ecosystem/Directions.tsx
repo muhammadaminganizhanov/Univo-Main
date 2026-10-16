@@ -79,7 +79,7 @@ export function Directions({ ctx }: { ctx: LocaleContext }) {
           </Lane>
 
           {/* the culmination: both lines meet at the UNIVO point */}
-          <div className={styles.together}>
+          <div className={styles.together} data-scene="eco-together">
             <span className={styles.join} aria-hidden="true" />
             <span className={styles.mini} aria-hidden="true">
               <span style={{ "--c": `var(${tech.accent})` } as CSSProperties} />
@@ -113,7 +113,7 @@ function Lane({ e, ctx, label, children }: { e: Entity; ctx: LocaleContext; labe
   const d = t.ecosystem.directions;
   const link = resolveEntityLink(e, locale, t);
   return (
-    <article id={e.slug} className={styles.lane} data-lane={e.id} style={{ "--c": `var(${e.accent})` } as CSSProperties} aria-labelledby={`${e.slug}-title`}>
+    <article id={e.slug} className={styles.lane} data-lane={e.id} data-scene="eco-lane" style={{ "--c": `var(${e.accent})` } as CSSProperties} aria-labelledby={`${e.slug}-title`}>
       <div className={styles.identity}>
         <EntityLockup entity={e} className={styles.lockup} decorative />
         <h3 id={`${e.slug}-title`} className={styles.role}>
