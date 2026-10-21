@@ -1,4 +1,4 @@
-import { CONTACTS, hasAnyChannel } from "@univo/config";
+import { CONTACTS, hasAnyChannel, telHref, whatsappHref } from "@univo/config";
 import { getMembers, getPrelaunchProducts, pick } from "@univo/content";
 import { INTERESTS } from "@univo/leads";
 import { ArrowLink, Lines } from "@univo/ui";
@@ -119,11 +119,27 @@ export default async function ContactPage({ params, searchParams }: Props) {
             <div className={styles.direct}>
               <h2 className={styles.moreTitle}>{c.direct.title}</h2>
               <dl>
-                {(["email", "phone", "telegram", "whatsapp", "city"] as const).map((k) =>
-                  own[k] ? (
+                {(
+                  [
+                    ["phone", own.phone, own.phone ? telHref(own.phone) : null],
+                    ["whatsapp", own.whatsapp, own.whatsapp ? whatsappHref(own.whatsapp) : null],
+                    ["email", own.email, own.email ? `mailto:${own.email}` : null],
+                    ["telegram", own.telegram, own.telegram ? `https://t.me/${own.telegram.replace(/^@/, "")}` : null],
+                    ["city", own.city ? own.city[locale] : null, null],
+                  ] as const
+                ).map(([k, value, href]) =>
+                  value ? (
                     <div key={k}>
                       <dt>{c.direct[k]}</dt>
-                      <dd>{own[k]}</dd>
+                      <dd>
+                        {href ? (
+                          <a className={styles.directLink} href={href} {...(href.startsWith("https:") ? { target: "_blank", rel: "noopener" } : {})}>
+                            {value}
+                          </a>
+                        ) : (
+                          value
+                        )}
+                      </dd>
                     </div>
                   ) : null,
                 )}

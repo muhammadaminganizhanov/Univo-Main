@@ -15,6 +15,7 @@
     "typecheck": "next typegen && tsc -p tsconfig.json",
     "test": "node --test --experimental-strip-types \"tests/*.test.ts\"",
     "qa:visual": "node scripts/visual-qa.mjs",
+    "og:images": "node scripts/og-images.mjs",
     "brand:lockups": "node scripts/brand/generate-lockups.mjs",
     "brand:sync-icons": "node scripts/brand/sync-icons.mjs"
   },

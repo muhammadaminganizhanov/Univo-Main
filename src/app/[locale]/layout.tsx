@@ -46,7 +46,6 @@ export const viewport: Viewport = {
 export default async function LocaleLayout({ children, params }: LocaleParams & { children: ReactNode }) {
   const ctx = await resolveLocale(params);
   const htmlLang = LOCALE_META[ctx.locale].htmlLang;
-  const mainLang = ctx.contentLang === htmlLang ? undefined : ctx.contentLang;
 
   return (
     <html lang={htmlLang} className={onest.variable} suppressHydrationWarning>
@@ -56,16 +55,11 @@ export default async function LocaleLayout({ children, params }: LocaleParams & 
       </head>
       <body>
         <MotionRoot />
-        <a href="#main" className="skip-link" lang={mainLang}>
+        <a href="#main" className="skip-link">
           {ctx.t.common.skipToContent}
         </a>
-        {ctx.fallbackNotice ? (
-          <div className="locale-notice" role="note">
-            <p className="container">{ctx.fallbackNotice}</p>
-          </div>
-        ) : null}
         <Header ctx={ctx} groupItems={groupSwitcherItems(ctx.locale, ctx.t)} />
-        <main id="main" tabIndex={-1} lang={mainLang}>
+        <main id="main" tabIndex={-1}>
           {children}
         </main>
         <Footer ctx={ctx} />

@@ -6,6 +6,9 @@ import { localeHref } from "./routes";
 
 export const siteOrigin = () => getSelfUrl().url;
 
+/** Per-page share image (scripts/og-images.mjs): /og/<locale>/<home|ecosystem|about|contact|retail|slot>.png */
+export const ogImage = (locale: Locale, path: string) => `/og/${locale}/${path === "/" ? "home" : path.split("/").pop()}.png`;
+
 /**
  * Page metadata: title, description, canonical, hreflang (complete locales only), OG, robots.
  * Staging is always noindex/nofollow; production needs SITE_ENV=production + SITE_URL.
@@ -24,6 +27,7 @@ export function pageMetadata({
   absoluteTitle?: boolean;
 }): Metadata {
   const indexable = isIndexable() && LOCALE_META[locale].complete;
+  const image = ogImage(locale, path);
   const languages: Record<string, string> = {};
   for (const l of indexableLocales()) languages[LOCALE_META[l].htmlLang] = localeHref(l, path);
   languages["x-default"] = localeHref(DEFAULT_LOCALE, path);
@@ -41,8 +45,8 @@ export function pageMetadata({
       url: localeHref(locale, path),
       locale: LOCALE_META[locale].ogLocale,
       alternateLocale: indexableLocales().filter((l) => l !== locale).map((l) => LOCALE_META[l].ogLocale),
-      images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "UNIVO" }],
+      images: [{ url: image, width: 1200, height: 630, alt: title }],
     },
-    twitter: { card: "summary_large_image", title, description, images: ["/og-image.png"] },
+    twitter: { card: "summary_large_image", title, description, images: [image] },
   };
 }

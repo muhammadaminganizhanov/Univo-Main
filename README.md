@@ -49,9 +49,11 @@ pnpm qa:visual   # Playwright screenshots + overflow / a11y smoke (needs `pnpm s
 
 Staging is `noindex, nofollow` three ways: `X-Robots-Tag`, meta robots, `robots.txt`.
 
-SEO: per-page title / description / canonical, hreflang (RU, EN, x-default; KY joins once translated),
+SEO: per-page title / description / canonical, hreflang (RU, EN, KY, x-default),
 OpenGraph + Twitter cards, `sitemap.xml` with alternates, `robots.txt`, web manifest, and schema.org
 JSON-LD (Organization with its directions and products, WebSite, WebPage types, BreadcrumbList).
+Share images per page and language: `public/og/<locale>/<page>.png`. After changing a page headline, run
+the site and `pnpm og:images` to redraw them.
 
 ## Architecture & deploy
 

@@ -73,17 +73,19 @@ export const ENTITIES: Entity[] = [
     markets: ["kg", "international"],
     locales: ["ru", "en", "ky"],
     order: 0,
-    role: { ru: "Группа UNIVO", en: "UNIVO group" },
+    role: { ru: "Группа UNIVO", en: "UNIVO group", ky: "UNIVO тобу" },
     shortDescription: {
       ru: "Одно имя для направлений и продуктов одних владельцев.",
       en: "One name for the directions and products of the same owners.",
+      ky: "Бир ээлерге таандык багыттар жана продуктулар үчүн бир ат.",
     },
     description: {
       ru: "Мастер-бренд группы. Говорит от имени всех её частей.",
       en: "The group's masterbrand. It speaks for every part of the group.",
+      ky: "Топтун мастер-бренди. Топтун бардык бөлүктөрүнүн атынан сүйлөйт.",
     },
-    scope: { ru: [], en: [] },
-    cta: { ru: "Обсудить задачу", en: "Discuss a project" },
+    scope: { ru: [], en: [], ky: [] },
+    cta: { ru: "Обсудить задачу", en: "Discuss a project", ky: "Тапшырманы талкуулоо" },
   },
   {
     id: "tech",
@@ -100,20 +102,23 @@ export const ENTITIES: Entity[] = [
     markets: ["kg", "international"],
     locales: ["ru", "en", "ky"],
     order: 1,
-    role: { ru: "Технологии и цифровые системы", en: "Technology and digital systems" },
+    role: { ru: "Технологии и цифровые системы", en: "Technology and digital systems", ky: "Технологиялар жана санариптик системалар" },
     shortDescription: {
       ru: "Сайты, платформы, приложения и внутренние системы, которыми пользуются каждый день.",
       en: "Websites, platforms, apps and internal systems that people use every day.",
+      ky: "Күн сайын колдонулган сайттар, платформалар, тиркемелер жана ички системалар.",
     },
     description: {
       ru: "Направление разработки. Проектирует и запускает цифровые продукты и системы для бизнеса — от сайта до автоматизации внутренних процессов.",
       en: "The development direction. It designs and launches digital products and systems for businesses — from a website to automated internal processes.",
+      ky: "Иштеп чыгуу багыты. Бизнес үчүн санариптик продуктуларды жана системаларды долбоорлоп, ишке киргизет — сайттан тартып ички процесстерди автоматташтырууга чейин.",
     },
     scope: {
       ru: ["Сайты", "Платформы", "Мобильные приложения", "CRM", "Внутренние системы", "Автоматизация", "Боты", "Интеграции ИИ"],
       en: ["Websites", "Platforms", "Mobile apps", "CRM", "Internal systems", "Automation", "Bots", "AI integrations"],
+      ky: ["Сайттар", "Платформалар", "Мобилдик тиркемелер", "CRM", "Ички системалар", "Автоматташтыруу", "Боттор", "ЖИ интеграциялары"],
     },
-    cta: { ru: "Перейти в UNIVO TECH", en: "Go to UNIVO TECH" },
+    cta: { ru: "Перейти в UNIVO TECH", en: "Go to UNIVO TECH", ky: "UNIVO TECHке өтүү" },
   },
   {
     id: "production",
@@ -129,21 +134,24 @@ export const ENTITIES: Entity[] = [
     markets: ["kg"],
     locales: ["ru", "en", "ky"],
     order: 2,
-    role: { ru: "Реклама и контент", en: "Advertising and content" },
+    role: { ru: "Реклама и контент", en: "Advertising and content", ky: "Жарнама жана контент" },
     shortDescription: {
       ru: "Рекламные ролики и контент: сценарий, съёмка, монтаж.",
       en: "Commercials and content: script, shoot, edit.",
+      ky: "Жарнамалык роликтер жана контент: сценарий, тартуу, монтаж.",
     },
     description: {
       ru: "Продакшн-направление группы. Снимает видео для брендов и бизнеса в Кыргызстане.",
       en: "The group's production direction. It makes video for brands and businesses in Kyrgyzstan.",
+      ky: "Топтун продакшн багыты. Кыргызстандагы бренддер жана бизнес үчүн видео тартат.",
     },
     // Source: Brand Book p. 34, 55 ("Ролики, съёмка, монтаж"). Full service list — TODO(owner).
     scope: {
       ru: ["Рекламные ролики", "Контент для соцсетей", "Сценарий", "Съёмка", "Монтаж"],
       en: ["Commercials", "Social media content", "Script", "Shooting", "Editing"],
+      ky: ["Жарнамалык роликтер", "Социалдык тармактар үчүн контент", "Сценарий", "Тартуу", "Монтаж"],
     },
-    cta: { ru: "Перейти в UNIVO PRODUCTION", en: "Go to UNIVO PRODUCTION" },
+    cta: { ru: "Перейти в UNIVO PRODUCTION", en: "Go to UNIVO PRODUCTION", ky: "UNIVO PRODUCTIONго өтүү" },
   },
   {
     id: "retail",
@@ -159,20 +167,23 @@ export const ENTITIES: Entity[] = [
     markets: [], // TODO(owner): launch market(s)
     locales: ["ru", "en", "ky"],
     order: 3,
-    role: { ru: "Управление торговым бизнесом", en: "Retail business management" },
+    role: { ru: "Управление торговым бизнесом", en: "Retail business management", ky: "Соода бизнесин башкаруу" },
     shortDescription: {
       ru: "Товары, продажи, остатки, склад и филиалы — в одной системе.",
       en: "Products, sales, stock, warehouse and branches — in one system.",
+      ky: "Товарлар, сатуу, калдыктар, кампа жана филиалдар — бир системада.",
     },
     description: {
       ru: "Система для торгового бизнеса: от учёта товара на складе до продаж в филиалах, долгов, сотрудников и отчётов.",
       en: "A system for retail businesses: from stock in the warehouse to sales across branches, debts, staff and reports.",
+      ky: "Соода бизнеси үчүн система: кампадагы товар эсебинен филиалдардагы сатууга, карыздарга, кызматкерлерге жана отчётторго чейин.",
     },
     scope: {
       ru: ["Товары", "Продажи", "Остатки", "Склад", "Филиалы", "Долги", "Сотрудники и роли", "Аналитика", "Торговые операции"],
       en: ["Products", "Sales", "Stock", "Warehouse", "Branches", "Debts", "Staff and roles", "Analytics", "Trade operations"],
+      ky: ["Товарлар", "Сатуу", "Калдыктар", "Кампа", "Филиалдар", "Карыздар", "Кызматкерлер жана ролдор", "Аналитика", "Соода операциялары"],
     },
-    cta: { ru: "Получить ранний доступ", en: "Get early access" },
+    cta: { ru: "Получить ранний доступ", en: "Get early access", ky: "Эрте кирүүнү алуу" },
   },
   {
     id: "slot",
@@ -188,24 +199,28 @@ export const ENTITIES: Entity[] = [
     markets: [], // TODO(owner): launch market(s)
     locales: ["ru", "en", "ky"],
     order: 4,
-    role: { ru: "Онлайн-запись и сервисный бизнес", en: "Online booking for service businesses" },
+    role: { ru: "Онлайн-запись и сервисный бизнес", en: "Online booking for service businesses", ky: "Онлайн-жазылуу жана тейлөө бизнеси" },
     shortDescription: {
       ru: "Расписание, услуги, сотрудники и запись клиентов без звонков.",
       en: "Schedules, services, staff and client booking without phone calls.",
+      ky: "Иш графиги, кызматтар, кызматкерлер жана кардарларды чалуусуз жазуу.",
     },
     description: {
       ru: "Система онлайн-записи и управления для бизнеса, который работает по записи: клиенты выбирают свободное время сами, а команда видит всё расписание.",
       en: "Online booking and management for appointment-based businesses: clients pick a free slot themselves, and the team sees the whole schedule.",
+      ky: "Жазылуу менен иштеген бизнес үчүн онлайн-жазылуу жана башкаруу системасы: кардарлар бош убакытты өздөрү тандашат, ал эми команда бүт графикти көрүп турат.",
     },
     scope: {
       ru: ["Расписание", "Сотрудники", "Услуги", "Клиенты", "Записи", "Свободные слоты"],
       en: ["Schedule", "Staff", "Services", "Clients", "Appointments", "Time slots"],
+      ky: ["Иш графиги", "Кызматкерлер", "Кызматтар", "Кардарлар", "Жазылуулар", "Бош убакыттар"],
     },
     segments: {
       ru: ["Салоны красоты", "Стоматологии", "Сервисы по записи"],
       en: ["Beauty", "Dental", "Appointment-based services"],
+      ky: ["Сулуулук салондору", "Стоматологиялар", "Жазылуу менен иштеген кызматтар"],
     },
-    cta: { ru: "Получить ранний доступ", en: "Get early access" },
+    cta: { ru: "Получить ранний доступ", en: "Get early access", ky: "Эрте кирүүнү алуу" },
   },
 ];
 

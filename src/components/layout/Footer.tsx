@@ -1,4 +1,4 @@
-import { CONTACTS, LEGAL, LOCALE_META } from "@univo/config";
+import { CONTACTS, LEGAL, telHref, whatsappHref } from "@univo/config";
 import { Logo } from "@univo/brand";
 import { STATUS_SHORT, getMembers, pick } from "@univo/content";
 import { Dot } from "@univo/ui";
@@ -16,12 +16,7 @@ export function Footer({ ctx }: { ctx: LocaleContext }) {
   const year = new Date().getFullYear();
 
   return (
-    <footer
-      className={styles.footer}
-      data-surface="ink"
-      data-scene="end"
-      lang={ctx.contentLang === LOCALE_META[locale].htmlLang ? undefined : ctx.contentLang}
-    >
+    <footer className={styles.footer} data-surface="ink" data-scene="end">
       <div className="container">
         <div className={`grid ${styles.map}`}>
           <nav className={styles.col} aria-labelledby="footer-nav">
@@ -87,11 +82,19 @@ export function Footer({ ctx }: { ctx: LocaleContext }) {
               ) : null}
               {own.phone ? (
                 <li>
-                  <a className={styles.link} href={`tel:${own.phone.replace(/[^\d+]/g, "")}`}>
+                  <a className={styles.link} href={telHref(own.phone)}>
                     {own.phone}
                   </a>
                 </li>
               ) : null}
+              {own.whatsapp ? (
+                <li>
+                  <a className={styles.link} href={whatsappHref(own.whatsapp)} target="_blank" rel="noopener">
+                    WhatsApp
+                  </a>
+                </li>
+              ) : null}
+              {own.city ? <li className={styles.city}>{own.city[locale]}</li> : null}
             </ul>
           </div>
 

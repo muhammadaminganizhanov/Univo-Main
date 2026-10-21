@@ -52,6 +52,12 @@
   text-decoration: underline;
   text-underline-offset: 0.25em;
 }
+.city {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  color: var(--color-muted);
+}
 .soonTag {
   white-space: nowrap;
   color: var(--color-muted);

@@ -32,21 +32,6 @@
   background: var(--univo-brand-white);
 }
 
-.locale-notice {
-  border-bottom: 1px solid var(--color-rule);
-  background: var(--univo-brand-white);
-  color: var(--color-text);
-  font-size: var(--text-small);
-  line-height: 1.45;
-}
-.locale-notice .container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 40px;
-  padding-block: 8px;
-}
-
 main:focus {
   outline: none;
 }

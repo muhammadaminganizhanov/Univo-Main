@@ -423,6 +423,19 @@
 .direct dd {
   margin: 0;
 }
+.directLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--color-rule);
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color var(--t-micro, 200ms) ease;
+}
+.directLink:hover {
+  text-decoration-color: currentColor;
+}
 
 /* phones: the preview as one compact row after the form */
 @media (max-width: 1023.98px) {

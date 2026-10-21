@@ -1,13 +1,11 @@
 /**
  * Locale registry. Route prefixes: /ru, /en, /ky.
- * `complete: false` → the locale keeps the full structure, but untranslated copy falls back to
- * Russian. Such a locale is excluded from hreflang / sitemap until it is complete.
+ * `complete: false` → the locale is not advertised to search engines (noindex, no hreflang / sitemap).
  */
 export const LOCALES = ["ru", "en", "ky"] as const;
 export type Locale = (typeof LOCALES)[number];
 
 export const DEFAULT_LOCALE: Locale = "ru";
-export const FALLBACK_LOCALE: Locale = "ru";
 
 export interface LocaleMeta {
   code: Locale;
@@ -25,8 +23,7 @@ export interface LocaleMeta {
 export const LOCALE_META: Record<Locale, LocaleMeta> = {
   ru: { code: "ru", htmlLang: "ru", ogLocale: "ru_RU", nativeName: "Русский", shortName: "RU", complete: true },
   en: { code: "en", htmlLang: "en", ogLocale: "en_US", nativeName: "English", shortName: "EN", complete: true },
-  // TODO(owner): professional Kyrgyz translation. Until then KY copy falls back to RU.
-  ky: { code: "ky", htmlLang: "ky", ogLocale: "ky_KG", nativeName: "Кыргызча", shortName: "KY", complete: false },
+  ky: { code: "ky", htmlLang: "ky", ogLocale: "ky_KG", nativeName: "Кыргызча", shortName: "KY", complete: true },
 };
 
 export const isLocale = (value: string | undefined | null): value is Locale =>

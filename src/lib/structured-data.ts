@@ -4,7 +4,7 @@ import { getEcosystemUrl } from "@univo/config/server";
 import { getEntity, getMembers, pick } from "@univo/content";
 import type { Dictionary } from "@/i18n";
 import { ROUTES, localeHref } from "./routes";
-import { siteOrigin } from "./seo";
+import { ogImage, siteOrigin } from "./seo";
 
 /*
  * schema.org JSON-LD. Only facts the site already states: no invented address, phone or rating.
@@ -34,8 +34,20 @@ export function siteGraph(locale: Locale): Node[] {
   };
   const contactPoint =
     own.email || own.phone
-      ? [{ "@type": "ContactPoint", contactType: "customer service", ...(own.email ? { email: own.email } : {}), ...(own.phone ? { telephone: own.phone } : {}) }]
+      ? [
+          {
+            "@type": "ContactPoint",
+            contactType: "customer service",
+            ...(own.email ? { email: own.email } : {}),
+            ...(own.phone ? { telephone: own.phone } : {}),
+            ...(own.country ? { areaServed: own.country } : {}),
+            availableLanguage: ["Russian", "English", "Kyrgyz"],
+          },
+        ]
       : undefined;
+  const address = own.city
+    ? { "@type": "PostalAddress", addressLocality: own.city[locale], ...(own.country ? { addressCountry: own.country } : {}) }
+    : undefined;
 
   return [
     {
@@ -49,6 +61,9 @@ export function siteGraph(locale: Locale): Node[] {
       description: pick(univo.shortDescription, locale),
       subOrganization: members.filter((e) => e.type === "service").map((e) => memberNode(e, "Organization")),
       brand: members.filter((e) => e.type === "product").map((e) => memberNode(e, "Brand")),
+      ...(own.phone ? { telephone: own.phone } : {}),
+      ...(own.email ? { email: own.email } : {}),
+      ...(address ? { address } : {}),
       ...(contactPoint ? { contactPoint } : {}),
     },
     {
@@ -98,7 +113,7 @@ export function pageGraph({
     inLanguage: LOCALE_META[locale].htmlLang,
     isPartOf: { "@id": site },
     about: { "@id": org },
-    primaryImageOfPage: { "@type": "ImageObject", url: abs("/og-image.png") },
+    primaryImageOfPage: { "@type": "ImageObject", url: abs(ogImage(locale, path)), width: 1200, height: 630 },
   };
   if (crumbs.length < 2) return [page];
   page.breadcrumb = { "@id": `${url}#breadcrumb` };
